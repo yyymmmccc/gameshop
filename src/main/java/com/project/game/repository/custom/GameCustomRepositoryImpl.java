@@ -1,0 +1,78 @@
+package com.project.game.repository.custom;
+
+import com.project.game.dto.response.game.GameListResponseDto;
+import com.project.game.dto.response.game.QGameListResponseDto;
+import com.project.game.dto.response.order.OrderFormGameListResponseDto;
+import com.project.game.dto.response.order.QOrderFormGameListResponseDto;
+import com.project.game.entity.GameCategoryEntity;
+import com.project.game.entity.GameEntity;
+import com.project.game.entity.GameImageEntity;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.project.game.entity.QGameEntity.gameEntity;
+import static com.project.game.entity.QGameImageEntity.gameImageEntity;
+import static com.project.game.entity.QReviewEntity.reviewEntity;
+
+@Repository
+@AllArgsConstructor
+public class GameCustomRepositoryImpl implements GameCustomRepository {
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public Page<GameListResponseDto> findAllLeftFetchJoin(Pageable pageable, GameCategoryEntity gameCategoryEntity, String searchKeyword) {
+        JPQLQuery<GameListResponseDto> query =
+                jpaQueryFactory.select(new QGameListResponseDto(
+                        gameEntity.gameId,
+                        gameEntity.gameName,
+                        gameEntity.price,
+                        gameEntity.reviewCount,
+                        reviewEntity.rating.avg(),
+                        gameImageEntity.gameImageUrl
+                        ))
+                        .from(gameEntity)
+                        .leftJoin(gameImageEntity)
+                        .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
+                            .and(gameImageEntity.thumbnail.eq("Y")))
+                        .leftJoin(reviewEntity)
+                        .on(gameEntity.gameId.eq(reviewEntity.gameEntity.gameId))
+                        .where(gameEntity.gameCategoryEntity.eq(gameCategoryEntity))
+                        .groupBy(
+                                gameEntity.gameId,
+                                gameEntity.gameName,
+                                gameEntity.price,
+                                gameEntity.reviewCount,
+                                gameImageEntity.gameImageUrl
+                        )
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(gameEntity.gameId.desc());
+        if(!searchKeyword.isEmpty()){
+            query.where(gameEntity.gameName.contains(searchKeyword)
+                    .or(gameEntity.gameDc.contains(searchKeyword)));
+        }
+
+        JPAQuery<GameEntity> queryCount = jpaQueryFactory.selectFrom(gameEntity)
+                .where(gameEntity.gameCategoryEntity.eq(gameCategoryEntity));
+        if(!searchKeyword.isEmpty()){
+            query.where(gameEntity.gameName.contains(searchKeyword)
+                    .or(gameEntity.gameDc.contains(searchKeyword)));
+        }
+
+        List<GameListResponseDto> result = query.fetch();
+        long count = queryCount.fetchCount();
+
+        return new PageImpl<>(result, pageable, count);
+    }
+}
