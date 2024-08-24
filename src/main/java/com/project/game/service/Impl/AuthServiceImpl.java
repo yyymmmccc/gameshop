@@ -10,6 +10,7 @@ import com.project.game.provider.EmailProvider;
 import com.project.game.provider.JwtProvider;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.AuthService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -52,9 +53,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity checkAuthentication(CheckAuthenticationRequestDto dto) {
+    public ResponseEntity checkAuthentication(HttpSession session, CheckAuthenticationRequestDto dto) {
         if (!validateAuthCode(dto.getEmail(), dto.getAuthenticationCode()))
             throw new CustomException(ResponseCode.AUTHENTICATION_FAIL);
+
+        session.setAttribute("emailVerified_" + dto.getAuthenticationCode() + "_" + dto.getEmail(), true);
 
         return ResponseDto.success(null);
     }
@@ -77,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity checkTel(CheckTelRequestDto dto) {
-        if(userRepository.existsByNickname(dto.getTel()))
+        if(userRepository.existsByTel(dto.getTel()))
             throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
         return ResponseDto.success(null);
@@ -85,11 +88,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public ResponseEntity join(JoinRequestDto dto) {
+    public ResponseEntity join(HttpSession session, JoinRequestDto dto) {
         if (userRepository.existsByEmail(dto.getEmail()))
             throw new CustomException(ResponseCode.DUPLICATE_EMAIL);
 
-        if (!validateAuthCode(dto.getEmail(), dto.getAuthenticationCode()))
+        if(session.getAttribute("emailVerified_" + dto.getAuthenticationCode() + "_" + dto.getEmail()) == null)
             throw new CustomException(ResponseCode.AUTHENTICATION_FAIL);
 
         if (!dto.getPassword().equals(dto.getCheckPassword()))

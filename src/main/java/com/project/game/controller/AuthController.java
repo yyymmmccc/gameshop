@@ -7,6 +7,7 @@ import com.project.game.service.Impl.RedisServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,9 @@ public class AuthController {
 
     @Operation(summary = "인증번호 체크", description = "회원가입 인증번호 전송 후 받은 인증번호 체크")
     @PostMapping("/check-authentication")
-    public ResponseEntity checkAuthentication(@RequestBody @Valid CheckAuthenticationRequestDto dto){
+    public ResponseEntity checkAuthentication(HttpSession session, @RequestBody @Valid CheckAuthenticationRequestDto dto){
 
-        return authService.checkAuthentication(dto);
+        return authService.checkAuthentication(session, dto);
     }
 
     @Operation(summary = "비밀번호 체크", description = "회원가입 비밀번호, 비밀번호 확인 두 개가 일치하는지 체크")
@@ -58,9 +59,9 @@ public class AuthController {
     }
     @Operation(summary = "회원가입", description = "회원가입에 필요한 모든 정보를 입력 후 체크하고 저장하는 API")
     @PostMapping("/join")
-    public ResponseEntity join(@RequestBody @Valid JoinRequestDto dto){
+    public ResponseEntity join(HttpSession session, @RequestBody @Valid JoinRequestDto dto){
 
-        return authService.join(dto);
+        return authService.join(session, dto);
     }
     @Operation(summary = "OAuth 회원가입", description = "OAuth 로그인 후 회원가입에 필요한 추가 정보를 저장하는 API")
     @PostMapping("/oauth-join")

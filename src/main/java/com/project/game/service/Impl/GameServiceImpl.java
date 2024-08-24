@@ -31,9 +31,7 @@ public class GameServiceImpl implements GameService {
     private final GameCategoryRepository gameCategoryRepository;
     private final GameImageRepository gameImageRepository;
 
-    private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
-
 
     @Transactional
     @Override
@@ -45,7 +43,8 @@ public class GameServiceImpl implements GameService {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        if(!userEntity.getRole().equals("ROLE_ADMIN")) throw new CustomException(ResponseCode.NO_PERMISSION);
+        if(!userEntity.getRole().equals("ROLE_ADMIN"))
+            throw new CustomException(ResponseCode.NO_PERMISSION);
 
         GameEntity gameEntity = gameRepository.save(dto.toEntity(gameCategoryEntity, userEntity));
 
