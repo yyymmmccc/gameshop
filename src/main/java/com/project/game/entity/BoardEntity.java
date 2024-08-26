@@ -39,8 +39,8 @@ public class BoardEntity {
     @Column(name = "favorite_count")
     private int favoriteCount;
 
-    @Column(name = "board_category")
-    private int boardCategory;
+    @Column(name = "category_id")
+    private int categoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_email")  // board Table 에 있는 외래키 user_email
@@ -56,10 +56,10 @@ public class BoardEntity {
     @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavoriteEntity> favoriteEntitieList = new ArrayList<>();
 
-    public void update(String title, String content, int boardCategory){
+    public void update(String title, String content, int categoryId){
         this.title = title;
         this.content = content;
-        this.boardCategory = boardCategory;
+        this.categoryId = categoryId;
 
     }
 

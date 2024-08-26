@@ -1,22 +1,20 @@
 package com.project.game.controller;
 
-import com.project.game.dto.request.comment.CommentRequestDto;
+import com.project.game.controller.swagger.SwaggerReviewApi;
 import com.project.game.dto.request.review.ReviewRequestDto;
-import com.project.game.service.CommentService;
 import com.project.game.service.ReviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/review")
 @RequiredArgsConstructor
 @Tag(name = "게임후기", description = "구매한 게임 평가 API")
-public class ReviewController {
+public class ReviewController implements SwaggerReviewApi {
 
     private final ReviewService reviewService;
 

@@ -106,16 +106,9 @@ public class JwtProvider {
     // 요청 해더에 담겨 있는 리프레시토큰 추출
    public String extractRefreshToken(HttpServletRequest request) {
 
-        String authorization = request.getHeader(REFRESH_TOKEN_HEADER);
+        String token = request.getHeader(REFRESH_TOKEN_HEADER);
+        if(token == null) return null;
 
-        boolean hasAuthorization = StringUtils.hasText(authorization); // 헤더에 시작부분이 Bearer 인지 검사
-        if (!hasAuthorization) return null;
-
-        boolean isBearer = authorization.startsWith("Bearer "); // 헤더에 시작부분이 Bearer 인지 검사
-        if (!isBearer) return null;
-
-        String token = authorization.substring(7);
-        // jwt 추출
         return token;
     }
 }

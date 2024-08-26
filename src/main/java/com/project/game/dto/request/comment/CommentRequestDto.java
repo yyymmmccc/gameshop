@@ -3,6 +3,7 @@ package com.project.game.dto.request.comment;
 import com.project.game.entity.BoardEntity;
 import com.project.game.entity.CommentEntity;
 import com.project.game.entity.UserEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CommentRequestDto {
 
+    @Schema(example = "댓글 내용을 입력해주세요")
     @NotBlank(message = "댓글 내용을 입력해주세요.")
     private String content;
 

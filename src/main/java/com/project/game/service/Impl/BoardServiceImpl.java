@@ -56,7 +56,7 @@ public class BoardServiceImpl implements BoardService {
         if(!boardEntity.getUserEntity().getEmail().equals(email))
             throw new CustomException(ResponseCode.NO_PERMISSION);
 
-        boardEntity.update(dto.getTitle(), dto.getContent(), dto.getBoardCategory()); // 기존 BoardEntity에 수정 dto로 값을 바꿔줌
+        boardEntity.update(dto.getTitle(), dto.getContent(), dto.getCategoryId()); // 기존 BoardEntity에 수정 dto로 값을 바꿔줌
 
         List<BoardImageEntity> boardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
         boardImageRepository.deleteAll(boardImageEntityList);

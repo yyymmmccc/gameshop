@@ -1,15 +1,11 @@
 package com.project.game.controller;
 
+import com.project.game.controller.swagger.SwaggerCartApi;
 import com.project.game.dto.request.cart.CartDeleteRequestDto;
-import com.project.game.dto.request.game.GameRequestDto;
 import com.project.game.service.CartService;
-import com.project.game.service.GameService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
 @Tag(name = "장바구니", description = "게임 상품 장바구니에 생성, 조회, 삭제 API")
-public class CartController {
+public class CartController implements SwaggerCartApi {
 
     private final CartService cartService;
 

@@ -14,18 +14,20 @@ public enum ResponseCode {
      * 400 BAD_REQUEST: 잘못된 요청
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-    DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "이미 사용 중인 이메일입니다."),
     PASSWORD_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "새 비밀번호가 현재 비밀번호와 동일합니다."),
     PASSWORD_CHECK_FAIL(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NEW_PASSWORD_CHECK_FAIL(HttpStatus.BAD_REQUEST, "새 비밀번호가 일치하지 않습니다."),
-    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "이미 사용 중인 닉네임입니다."),
-    DUPLICATE_TEL_NUMBER(HttpStatus.BAD_REQUEST, "이미 사용 중인 전화번호입니다."),
     AUTHENTICATION_FAIL(HttpStatus.BAD_REQUEST, "인증번호가 올바르지 않습니다."),
     LOGIN_FAIL(HttpStatus.BAD_REQUEST, "이메일 또는 비밀번호가 잘못되었습니다."),
     VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "입력값이 형식에 맞지 않습니다."),
-    CART_POST_FAIL(HttpStatus.BAD_REQUEST, "이미 장바구니에 있는 게임입니다."),
-    CART_POST_ORDER_FAIL(HttpStatus.BAD_REQUEST, "이미 구매한 게임입니다."),
     FILE_REQUEST_FAIL(HttpStatus.BAD_REQUEST, "jpg, jpeg, png 이미지 파일만 가능합니다."),
+
+    // 409 Conflict : 중복된 자원
+    DUPLICATE_ORDER(HttpStatus.CONFLICT, "이미 구매한 게임입니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
+    DUPLICATE_TEL_NUMBER(HttpStatus.CONFLICT, "이미 사용 중인 전화번호입니다."),
+    DUPLICATE_CART(HttpStatus.CONFLICT, "이미 장바구니에 있는 게임입니다."),
 
     // 401 Unauthorized : 요청자는 인증(authentication) 되지 않아 수행할 수 없음을 표현
     AUTHORIZATION_FAIL(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),
@@ -59,6 +61,6 @@ public enum ResponseCode {
 
     private final HttpStatus status;
     private final String message;
-
 }
+
 

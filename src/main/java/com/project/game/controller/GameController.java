@@ -1,9 +1,7 @@
 package com.project.game.controller;
 
+import com.project.game.controller.swagger.SwaggerGameApi;
 import com.project.game.dto.request.game.GameRequestDto;
-import com.project.game.dto.request.user.UserDeleteRequestDto;
-import com.project.game.dto.request.user.UserPasswordRequestDto;
-import com.project.game.dto.request.user.UserUpdateRequestDto;
 import com.project.game.service.GameService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -19,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/game")
 @RequiredArgsConstructor
 @Tag(name = "게임상품", description = "게임상품 생성, 수정, 삭제, 조회")
-public class GameController {
+public class GameController implements SwaggerGameApi {
 
     private final GameService gameService;
 

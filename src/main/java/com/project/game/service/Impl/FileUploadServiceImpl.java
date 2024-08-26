@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -29,25 +30,23 @@ public class FileUploadServiceImpl implements FileUploadService {
     private String bucket;
 
     private final List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/jpg", "image/png");
-
-
     private final AmazonS3Client amazonS3Client;
 
     @Override
-    public ResponseEntity<String> uploadFile(MultipartFile file) {
+    public ResponseEntity uploadFile(MultipartFile[] files) throws IOException {
 
-        String contentType = file.getContentType();
-        if (!allowedMimeTypes.contains(contentType)) {
-            throw new CustomException(ResponseCode.FILE_REQUEST_FAIL);
-        }
+        List<URL> list = new ArrayList<>();
 
-        try {
+        for (MultipartFile file : files) {
+            String contentType = file.getContentType();
+            if (!allowedMimeTypes.contains(contentType)) {
+                throw new CustomException(ResponseCode.FILE_REQUEST_FAIL);
+            }
             String fileName = file.getOriginalFilename();
             String uuid = UUID.randomUUID().toString();
             String fileUrl = "images/" + uuid + "_" + fileName;
 
             // 파일의 Content-Type 설정
-
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
 
@@ -56,13 +55,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 
             amazonS3Client.putObject(putObjectRequest);
 
-
             URL url = amazonS3Client.getUrl(bucket, fileUrl);
-
-            return ResponseDto.success(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+            list.add(url);
         }
+        return ResponseDto.success(list);
     }
 }

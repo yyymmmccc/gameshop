@@ -13,11 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @NoArgsConstructor
 public class JoinRequestDto {
 
-    @Schema(example = "test@example.com")
+    @Schema(example = "이메일을 입력")
     @NotBlank (message = "이메일을 입력해주세요.")
     private String email;
 
-    @Schema(example = "숫자 4자리")
+    @Schema(example = "메일 인증코드 4자리")
     @NotBlank (message = "인증코드를 입력해주세요.")
     private String authenticationCode;
 
@@ -30,6 +30,7 @@ public class JoinRequestDto {
     @NotBlank (message = "비밀번호 확인을 입력해주세요.")
     private String checkPassword;
 
+    @Schema(example = "이름을 입력")
     @NotBlank(message = "이름을 입력해주세요.")
     private String name;
 
@@ -43,6 +44,10 @@ public class JoinRequestDto {
     @Pattern(regexp = "^[0-9]{11,13}$", message = "전화번호를 잘못입력하셨습니다.") // 0부터 9까지 면서 길이는 11, 13
     private String tel;
 
+    @Schema(example = "M, W 으로 입력해주세요")
+    @NotBlank(message = "성별을 선택해주세요.")
+    private String gender;
+
     @Schema(example = "ex. 1998-01-14")
     @NotBlank(message = "생년월일 입력해주세요.")
     @NotBlank
@@ -55,6 +60,7 @@ public class JoinRequestDto {
                 .name(name)
                 .nickname(nickname)
                 .tel(tel)
+                .gender(gender)
                 .birthDate(birthDate)
                 .provider("local")
                 .role("ROLE_USER")

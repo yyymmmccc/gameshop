@@ -22,7 +22,7 @@ public class BoardResponseDto {
     private int hit;
     private String createdDate;
     private String updatedDate;
-    private int boardCategory;
+    private int categoryId;
     private int commentCount;
     private int favoriteCount;
     private String nickname;
@@ -38,7 +38,7 @@ public class BoardResponseDto {
                 .updatedDate(boardEntity.getUpdatedDate())
                 .commentCount(boardEntity.getCommentCount())
                 .favoriteCount(boardEntity.getFavoriteCount())
-                .boardCategory(boardEntity.getBoardCategory())
+                .categoryId(boardEntity.getCategoryId())
                 .nickname(boardEntity.getUserEntity().getNickname())
                 .imageUrlList(convertToDtoList(boardImageEntityList))
                 .build();

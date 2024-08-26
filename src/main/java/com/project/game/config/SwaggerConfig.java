@@ -1,5 +1,6 @@
 package com.project.game.config;
 
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -7,7 +8,6 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 
 @Configuration
 public class SwaggerConfig {
@@ -17,31 +17,33 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        String jwt = "JWT";
+        String accessKey = "Access Token";  // 설명
+        String refreshKey = "Refresh Token";  // 입력칸 설명
 
         // JWT SecurityRequirement 설정
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(accessKey).addList(refreshKey);
 
-        // Authorization 헤더와 Refresh Token 헤더 SecurityScheme 설정
+        SecurityScheme accessTokenSecurityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("Jwt")
+                .in(SecurityScheme.In.HEADER)
+                .name(AUTHORIZATION_HEADER); // 헤더 키 AUTHORIZATION_HEADER
+
+        SecurityScheme refreshTokenSecurityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.HEADER)
+                .name(REFRESH_TOKEN_HEADER); // 헤더 키 REFRESH_TOKEN_HEADER
+
         Components components = new Components()
-                .addSecuritySchemes(AUTHORIZATION_HEADER, new SecurityScheme()
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")
-                        .name(AUTHORIZATION_HEADER)
-                        .in(SecurityScheme.In.HEADER))
-                .addSecuritySchemes(REFRESH_TOKEN_HEADER, new SecurityScheme()
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")
-                        .name(REFRESH_TOKEN_HEADER)
-                        .in(SecurityScheme.In.HEADER));
+                .addSecuritySchemes(accessKey, accessTokenSecurityScheme)
+                .addSecuritySchemes(refreshKey, refreshTokenSecurityScheme);
 
-        // OpenAPI 객체 생성 및 설정
         return new OpenAPI()
-                .components(components)
                 .info(apiInfo())
-                .addSecurityItem(securityRequirement);
+                .addSecurityItem(securityRequirement)
+                .components(components);
+
     }
 
     private Info apiInfo() {

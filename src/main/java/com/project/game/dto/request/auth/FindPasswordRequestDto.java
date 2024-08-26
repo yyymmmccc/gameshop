@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FindPasswordRequestDto {
 
-    @Schema(example = "test@example.com")
+    @Schema(example = "이메일을 입력하고 요청시 해당 메일로 비밀번호 변경 메일 전송")
     @NotBlank(message = "이메일을 입력해주세요.")
     @Pattern(regexp="^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])+[.][a-zA-Z]{2,3}$"
             , message="이메일 주소 양식을 확인해주세요.")

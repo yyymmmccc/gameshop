@@ -9,5 +9,5 @@ import java.net.MalformedURLException;
 
 public interface FileUploadService {
 
-    ResponseEntity<String> uploadFile(MultipartFile file);
+    ResponseEntity uploadFile(MultipartFile[] files) throws IOException;
 }

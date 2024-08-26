@@ -24,7 +24,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<BoardListResponseDto> findAllSearch(Pageable pageable, int categoryId, String searchType, String searchKeyword) {
+    public Page<BoardListResponseDto> findAllSearch(Pageable pageable, int boardCategoryId, String searchType, String searchKeyword) {
         JPQLQuery<BoardListResponseDto> query =
                 jpaQueryFactory.select(new QBoardListResponseDto(
                         boardEntity.boardId,
@@ -33,11 +33,11 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                         boardEntity.hit,
                         boardEntity.updatedDate,
                         boardEntity.commentCount,
-                        boardEntity.boardCategory,
+                        boardEntity.categoryId,
                         boardEntity.userEntity.nickname
                         ))
                         .from(boardEntity)
-                        .where(boardEntity.boardCategory.eq(categoryId))
+                        .where(boardEntity.categoryId.eq(boardCategoryId))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .orderBy(boardEntity.boardId.desc());

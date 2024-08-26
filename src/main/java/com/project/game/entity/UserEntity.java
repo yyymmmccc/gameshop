@@ -25,6 +25,7 @@ public class UserEntity {
     private String name;
     private String nickname;
     private String tel;
+    private String gender;
 
     @Column(name = "profile_image")
     private String profileImage;
@@ -58,6 +59,7 @@ public class UserEntity {
         this.name = dto.getName();
         this.nickname = dto.getNickname();
         this.tel = dto.getTel();
+        this.gender = dto.getGender();
         this.birthDate = dto.getBirthDate();
         this.role = "ROLE_USER";
     }

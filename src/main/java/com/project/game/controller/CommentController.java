@@ -1,5 +1,6 @@
 package com.project.game.controller;
 
+import com.project.game.controller.swagger.SwaggerCommentApi;
 import com.project.game.dto.request.comment.CommentRequestDto;
 import com.project.game.service.CommentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/comment")
 @RequiredArgsConstructor
 @Tag(name = "게시판 댓글", description = "게시판 댓글 생성, 수정, 삭제, 조회")
-public class CommentController {
+public class CommentController implements SwaggerCommentApi {
 
     private final CommentService commentService;
 

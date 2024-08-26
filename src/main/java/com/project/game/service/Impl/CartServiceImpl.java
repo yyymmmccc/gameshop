@@ -43,12 +43,11 @@ public class CartServiceImpl implements CartService {
                 -> new CustomException(ResponseCode.GAME_NOT_FOUND));
 
         boolean isLibraryExists = libraryRepository.existsByUserEntityAndGameEntity(userEntity, gameEntity);
-        if(isLibraryExists) throw new CustomException(ResponseCode.CART_POST_ORDER_FAIL);
+        if(isLibraryExists) throw new CustomException(ResponseCode.DUPLICATE_ORDER);
 
         boolean isCartCheck = cartRepository.existsByUserEntityAndGameEntity(userEntity, gameEntity);
-        log.info("Checking if cart exists for user: {} and game: {} - Result: {}", email, gameId, isCartCheck);
 
-        if(isCartCheck) throw new CustomException(ResponseCode.CART_POST_FAIL);
+        if(isCartCheck) throw new CustomException(ResponseCode.DUPLICATE_CART);
 
         CartEntity cartEntity = new CartEntity(userEntity, gameEntity);
 

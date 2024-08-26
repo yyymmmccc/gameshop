@@ -32,7 +32,7 @@ public class WebSecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final DefaultOAuth2UserService defaultOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final String[] swaggerPath = {"/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error"};
+    private final String[] swaggerPath = {"/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/error", "configuratuin/security"};
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {

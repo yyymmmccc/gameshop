@@ -20,19 +20,19 @@ public class BoardListResponseDto {
     private int hit;
     private String updatedDate;
     private int commentCount;
-    private int boardCategory;
+    private int categoryId;
     private String nickname;
 
     @QueryProjection
     public BoardListResponseDto(int boardId, String title, String content, int hit, String updatedDate,
-                                int commentCount, int boardCategory, String nickname){
+                                int commentCount, int categoryId, String nickname){
         this.boardId = boardId;
         this.title = title;
         this.content = content;
         this.hit = hit;
         this.updatedDate = updatedDate;
         this.commentCount = commentCount;
-        this.boardCategory = boardCategory;
+        this.categoryId = categoryId;
         this.nickname = nickname;
     }
 

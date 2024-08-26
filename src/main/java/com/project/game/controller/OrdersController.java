@@ -1,5 +1,6 @@
 package com.project.game.controller;
 
+import com.project.game.controller.swagger.SwaggerOrderApi;
 import com.project.game.dto.request.order.KakaoPayReadyRequestDto;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.service.KakaoPayService;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "주문", description = "결제 및 주문내역 생성, 조회, 삭제")
-public class OrderController {
+public class OrdersController implements SwaggerOrderApi {
 
     private final OrdersService ordersService;
     private final KakaoPayService kakaoPayService;

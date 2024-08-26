@@ -1,6 +1,7 @@
 package com.project.game.dto.request.order;
 
 import com.project.game.entity.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
@@ -14,7 +15,9 @@ import java.util.stream.IntStream;
 @Builder
 public class KakaoPayReadyRequestDto {
 
+    @Schema(example = "장바구니 번호 하나 이상을 입력")
     private List<Integer> cartIdList;
+    @Schema(example = "해당 가격들을 입력(쿠폰 적용으로 할인될 수 있으니)")
     private List<Integer> priceList;
 
     public static OrdersEntity toOrderEntity(String orderId, String tid, UserEntity userEntity) {
