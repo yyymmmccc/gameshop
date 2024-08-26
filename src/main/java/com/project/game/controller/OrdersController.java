@@ -24,7 +24,7 @@ public class OrdersController implements SwaggerOrderApi {
     private final KakaoPayService kakaoPayService;
 
     // 장바구니 -> 주문페이지 넘어갈 때, 주문 페이지에서 보여줄 정보
-    @GetMapping("/form")
+    @PostMapping("/form")
     public ResponseEntity getOrderFormGames(@RequestBody @Valid OrderFormRequestDto dto,
                                             @AuthenticationPrincipal String email){
 

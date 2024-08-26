@@ -32,7 +32,7 @@ public class LibraryCustomRepositoryImpl implements LibraryCustomRepository{
                 ))
                         .from(libraryEntity)
                         .leftJoin(gameImageEntity)
-                        .on(libraryEntity.gameEntity.gameId.eq(gameImageEntity.gameImageId)
+                        .on(libraryEntity.gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
                                 .and(gameImageEntity.thumbnail.eq("Y")))
                         .where(libraryEntity.userEntity.eq(userEntity))
                         .orderBy(libraryEntity.addDate.desc());

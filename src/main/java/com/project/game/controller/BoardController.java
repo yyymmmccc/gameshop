@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
 @Tag(name = "게시판", description = "게시글 생성, 수정, 삭제, 조회 및 게시글 좋아요")
+@Slf4j
 public class BoardController implements SwaggerBoardApi {
 
     private final BoardService boardService;
