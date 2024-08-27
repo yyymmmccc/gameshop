@@ -16,6 +16,7 @@ import com.project.game.repository.BoardRepository;
 import com.project.game.repository.FavoriteRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.BoardService;
+import com.project.game.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -34,6 +36,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardImageRepository boardImageRepository;
     private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
+    private final RedisService redisService;
 
     @Transactional
     @Override
@@ -83,11 +86,17 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public ResponseEntity getBoard(int boardId, String email) {
-        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
+        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
+                -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
 
         // 이메일이 없는 경우 조회수 증가 x
         UserEntity userEntity = userRepository.findById(email).orElse(null);
-        if(userEntity != null) boardEntity.incViewCount();
+        if(userEntity != null) { // 로그인은 했지만 아무게시물도 방문 안한경우
+            if(redisService.getValues(userEntity.getEmail() + "_" + boardEntity.getBoardId()).equals("false")){
+                redisService.setValues(userEntity.getEmail() + "_" + boardEntity.getBoardId(),"ok", Duration.ofDays(1));
+                boardEntity.incViewCount();
+            }
+        }
 
         List<BoardImageEntity> boardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
 
