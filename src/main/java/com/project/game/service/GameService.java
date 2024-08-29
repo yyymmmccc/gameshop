@@ -10,5 +10,5 @@ public interface GameService {
     ResponseEntity patchGame(int gameId, GameRequestDto dto, String email);
     ResponseEntity deleteGame(int gameId, String email);
     ResponseEntity getGame(int gameId);
-    ResponseEntity getGames(Pageable pageable, int categoryId, String searchKeyword);
+    ResponseEntity getGames(int page, String orderBy, int categoryId, String searchKeyword);
 }

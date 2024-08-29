@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,19 +104,18 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public ResponseEntity getGames(Pageable pageable, int categoryId, String searchKeyword) {
+    public ResponseEntity getGames(int page, String orderBy, int categoryId, String searchKeyword) {
 
         GameCategoryEntity gameCategoryEntity = gameCategoryRepository.findById(categoryId).orElseThrow(()
                 -> new CustomException(ResponseCode.CATEGORY_NOT_FOUND));
 
-        Page <GameListResponseDto> gameListDto = gameRepository.findAllLeftFetchJoin(pageOf(pageable), gameCategoryEntity, searchKeyword);
+        Page <GameListResponseDto> gameListDto =
+                gameRepository.findAllLeftFetchJoin(pageOf(page, orderBy), gameCategoryEntity, searchKeyword);
 
         return ResponseDto.success(PaginatedResponseDto.of(gameListDto));
     }
 
-    public Pageable pageOf(Pageable pageable){
-        return PageRequest.of(pageable.getPageNumber() > 0 ? pageable.getPageNumber() - 1 : 0,
-                pageable.getPageSize(),
-                pageable.getSort());
+    public Pageable pageOf(int page, String orderBy){
+        return PageRequest.of(page > 0 ? page - 1 : 0, 10, Sort.by(orderBy).descending());
     }
 }

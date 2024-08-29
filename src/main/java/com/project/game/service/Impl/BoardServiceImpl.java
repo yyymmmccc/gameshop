@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,8 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public ResponseEntity patchBoard(BoardRequestDto dto, int boardId, String email) {
-        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
+        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
+                -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
 
         if(!boardEntity.getUserEntity().getEmail().equals(email))
             throw new CustomException(ResponseCode.NO_PERMISSION);
@@ -105,10 +107,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public ResponseEntity getBoards(Pageable pageable, int categoryId, String searchType, String searchKeyword) {
-        // Page <BoardListView> boardListViews = boardRepository.findByBoardCategory(pageOf(pageable), categoryId);
+    public ResponseEntity getBoards(int page, String orderBy, int categoryId, String searchType, String searchKeyword) {
 
-        Page <BoardListResponseDto> boardListViews = boardRepository.findAllSearch(pageOf(pageable), categoryId, searchType, searchKeyword);
+        Page <BoardListResponseDto> boardListViews =
+                boardRepository.findAllSearch(pageOf(page, orderBy), categoryId, searchType, searchKeyword);
 
         return ResponseDto.success(PaginatedResponseDto.of(boardListViews));
     }
@@ -117,8 +119,10 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ResponseEntity putFavorite(int boardId, String email) {
 
-        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
-        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
+                -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
+                -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         FavoriteEntity favoriteEntity = favoriteRepository.findByBoardEntityAndUserEntity(boardEntity, userEntity);
         if(favoriteEntity == null) {
@@ -132,10 +136,7 @@ public class BoardServiceImpl implements BoardService {
 
         return ResponseDto.success(ResponseCode.SUCCESS);
     }
-
-    public Pageable pageOf(Pageable pageable){
-        return PageRequest.of(pageable.getPageNumber() > 0 ? pageable.getPageNumber() - 1 : 0,
-                pageable.getPageSize(),
-                pageable.getSort());
+    public Pageable pageOf(int page, String orderBy){
+        return PageRequest.of(page > 0 ? page - 1 : 0, 10, Sort.by(orderBy).descending());
     }
 }

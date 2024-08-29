@@ -8,13 +8,17 @@ import com.project.game.entity.GameCategoryEntity;
 import com.project.game.entity.GameEntity;
 import com.project.game.entity.GameImageEntity;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,6 +30,7 @@ import static com.project.game.entity.QReviewEntity.reviewEntity;
 
 @Repository
 @AllArgsConstructor
+@Slf4j
 public class GameCustomRepositoryImpl implements GameCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
@@ -38,6 +43,8 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         gameEntity.gameName,
                         gameEntity.price,
                         gameEntity.reviewCount,
+                        gameEntity.purchaseCount,
+                        gameEntity.regDate,
                         reviewEntity.rating.avg(),
                         gameImageEntity.gameImageUrl
                         ))
@@ -57,7 +64,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         )
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(gameEntity.gameId.desc());
+                        .orderBy(orderSpecifier(pageable), gameEntity.regDate.desc());
         if(!searchKeyword.isEmpty()){
             query.where(gameEntity.gameName.contains(searchKeyword)
                     .or(gameEntity.gameDc.contains(searchKeyword)));
@@ -74,5 +81,19 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         long count = queryCount.fetchCount();
 
         return new PageImpl<>(result, pageable, count);
+    }
+
+    private OrderSpecifier orderSpecifier(Pageable pageable){
+
+        for(Sort.Order order : pageable.getSort()){
+
+            log.info("ㄴㄴ : " + order.getProperty());
+            switch (order.getProperty()){
+                case "rating": return new OrderSpecifier(Order.DESC, reviewEntity.rating.avg());
+                case "recent": return new OrderSpecifier(Order.DESC, gameEntity.regDate);
+            }
+        }
+
+        return null;
     }
 }

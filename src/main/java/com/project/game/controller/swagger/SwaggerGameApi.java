@@ -52,7 +52,8 @@ public interface SwaggerGameApi {
     @ApiResponse(responseCode = "200", description = "게임 리스트 조회 성공")
     @ApiResponse(responseCode = "404", description = "카테고리 찾을 수 없음")
     @GetMapping("/{categoryId}/list")
-    ResponseEntity getGames(@PageableDefault(page = 1, size = 10, sort = "gameId", direction = Sort.Direction.DESC) Pageable pageable,
+    ResponseEntity getGames(@RequestParam(defaultValue = "1") int page,
+                            @RequestParam(defaultValue = "rating") String orderBy,
                             @PathVariable("categoryId") int categoryId,
                             @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword);
 }

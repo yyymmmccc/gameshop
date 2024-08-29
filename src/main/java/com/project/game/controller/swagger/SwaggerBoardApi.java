@@ -51,7 +51,8 @@ public interface SwaggerBoardApi {
     @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/{categoryId}/list")
-    ResponseEntity getBoards(@PageableDefault(page = 1, size = 10, sort = "boardId", direction = Sort.Direction.DESC) Pageable pageable,
+    ResponseEntity getBoards(@RequestParam(defaultValue = "1") int page,
+                             @RequestParam(defaultValue = "recent") String orderBy,
                              @PathVariable("categoryId") int categoryId,
                              @RequestParam(value = "searchType", defaultValue = "") String searchType,
                              @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword);

@@ -20,15 +20,19 @@ public class GameListResponseDto {
     private String gameName;
     private int price;
     private int reviewCount;
+    private int purchaseCount;
+    private String regDate;
     private double rating;
     private String gameImageUrl;
 
     @QueryProjection
-    public GameListResponseDto(int gameId, String gameName, int price, int reviewCount, double rating, String gameImageUrl){
+    public GameListResponseDto(int gameId, String gameName, int price, int reviewCount, int purchaseCount, String regDate, double rating, String gameImageUrl){
         this.gameId = gameId;
         this.gameName = gameName;
         this.price = price;
         this.reviewCount = reviewCount;
+        this.purchaseCount = purchaseCount;
+        this.regDate = regDate;
         this.rating = rating;
         this.gameImageUrl = gameImageUrl;
     }

@@ -55,12 +55,13 @@ public class BoardController implements SwaggerBoardApi {
     }
 
     @GetMapping("/{categoryId}/list")
-    public ResponseEntity getBoards(@Parameter(name = "1") @PageableDefault (page = 1, size = 10, sort = "boardId", direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity getBoards(@RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "recent") String orderBy,
                                     @PathVariable("categoryId") int categoryId,
                                     @RequestParam(value = "searchType", defaultValue = "") String searchType,
                                     @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword){
 
-        return boardService.getBoards(pageable, categoryId, searchType, searchKeyword);
+        return boardService.getBoards(page, orderBy, categoryId, searchType, searchKeyword);
     }
 
     @PutMapping("/{boardId}/favorite")

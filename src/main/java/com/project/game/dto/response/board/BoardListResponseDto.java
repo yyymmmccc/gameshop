@@ -18,18 +18,20 @@ public class BoardListResponseDto {
     private String title;
     private String content;
     private int hit;
+    private String createdDate;
     private String updatedDate;
     private int commentCount;
     private int categoryId;
     private String nickname;
 
     @QueryProjection
-    public BoardListResponseDto(int boardId, String title, String content, int hit, String updatedDate,
+    public BoardListResponseDto(int boardId, String title, String content, int hit, String createdDate, String updatedDate,
                                 int commentCount, int categoryId, String nickname){
         this.boardId = boardId;
         this.title = title;
         this.content = content;
         this.hit = hit;
+        this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.commentCount = commentCount;
         this.categoryId = categoryId;

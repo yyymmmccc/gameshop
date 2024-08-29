@@ -9,6 +9,6 @@ public interface BoardService {
     ResponseEntity patchBoard(BoardRequestDto dto, int boardId, String email);
     ResponseEntity deleteBoard(int boardId, String email);
     ResponseEntity getBoard(int boardId, String email);
-    ResponseEntity getBoards(Pageable pageable, int categoryId, String searchType, String searchKeyword);
+    ResponseEntity getBoards(int page, String orderBy, int categoryId, String searchType, String searchKeyword);
     ResponseEntity putFavorite(int boardId, String email);
 }
