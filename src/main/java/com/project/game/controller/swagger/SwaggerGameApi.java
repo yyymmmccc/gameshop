@@ -1,6 +1,7 @@
 package com.project.game.controller.swagger;
 
 import com.project.game.dto.request.game.GameRequestDto;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -53,7 +54,7 @@ public interface SwaggerGameApi {
     @ApiResponse(responseCode = "404", description = "카테고리 찾을 수 없음")
     @GetMapping("/{categoryId}/list")
     ResponseEntity getGames(@RequestParam(defaultValue = "1") int page,
-                            @RequestParam(defaultValue = "rating") String orderBy,
+                            @RequestParam(defaultValue = "rating") @Parameter(description = "rating(평점순), recent(최신순)") String orderBy,
                             @PathVariable("categoryId") int categoryId,
-                            @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword);
+                            @RequestParam(value = "searchKeyword", defaultValue = "") @Parameter(description = "게임 검색") String searchKeyword);
 }

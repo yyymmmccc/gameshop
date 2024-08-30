@@ -3,6 +3,7 @@ package com.project.game.controller;
 import com.project.game.controller.swagger.SwaggerGameApi;
 import com.project.game.dto.request.game.GameRequestDto;
 import com.project.game.service.GameService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,11 +55,9 @@ public class GameController implements SwaggerGameApi {
 
     @GetMapping("/{categoryId}/list")
     public ResponseEntity getGames(@RequestParam(defaultValue = "1") int page,
-                                   @RequestParam(defaultValue = "rating") String orderBy,
+                                   @RequestParam(defaultValue = "rating")  String orderBy,
                                    @PathVariable("categoryId") int categoryId,
                                    @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword){
-
-        log.info("ffd: " + orderBy);
 
         return gameService.getGames(page,  orderBy, categoryId, searchKeyword);
     }

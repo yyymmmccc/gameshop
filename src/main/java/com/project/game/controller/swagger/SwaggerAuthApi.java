@@ -39,15 +39,15 @@ public interface SwaggerAuthApi {
     @ApiResponse(responseCode = "200", description = "닉네임 체크 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "409", description = "중복된 닉네임")
-    @PostMapping("/check-nickname")
-    ResponseEntity checkNickname(@RequestBody @Valid CheckNicknameRequestDto dto);
+    @GetMapping("/check-nickname")
+    ResponseEntity checkNickname(@RequestParam(name = "nickname") String nickname);
 
     @Operation(summary = "전화번호 체크", description = "회원가입 전화번호 중복되는지 체크")
     @ApiResponse(responseCode = "200", description = "전화번호 체크 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "409", description = "중복된 전화번호")
-    @PostMapping("/check-tel")
-    ResponseEntity checkTel(@RequestBody @Valid CheckTelRequestDto dto);
+    @GetMapping("/check-tel")
+    ResponseEntity checkTel(@RequestParam(name = "tel") String tel);
 
     @Operation(summary = "회원가입", description = "회원가입에 필요한 모든 정보를 입력 후 체크하고 저장하는 API")
     @ApiResponse(responseCode = "200", description = "회원가입 성공")
@@ -92,13 +92,6 @@ public interface SwaggerAuthApi {
     @ApiResponse(responseCode = "500", description = "서버 오류")
     @PostMapping("/find-password")
     ResponseEntity findPassword(@RequestBody @Valid FindPasswordRequestDto dto);
-
-    @Operation(summary = "비밀번호 리셋 토큰 검증", description = "메일을 통해 받은 비밀번호 재설정 버튼을 눌렀을 시 토큰 검증")
-    @ApiResponse(responseCode = "200", description = "비밀번호 리셋 토큰 검증 성공")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청")
-    @ApiResponse(responseCode = "404", description = "비밀번호 리셋 토큰 없음")
-    @GetMapping("/reset-token")
-    ResponseEntity validPasswordResetToken(@RequestParam(name = "token") String token);
 
     @Operation(summary = "비밀번호 찾기 변경", description = "토큰 검증이 완료된 후 비밀번호 변경")
     @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공")

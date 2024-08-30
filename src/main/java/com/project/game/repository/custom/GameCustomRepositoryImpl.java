@@ -86,8 +86,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
     private OrderSpecifier orderSpecifier(Pageable pageable){
 
         for(Sort.Order order : pageable.getSort()){
-
-            log.info("ㄴㄴ : " + order.getProperty());
+            
             switch (order.getProperty()){
                 case "rating": return new OrderSpecifier(Order.DESC, reviewEntity.rating.avg());
                 case "recent": return new OrderSpecifier(Order.DESC, gameEntity.regDate);

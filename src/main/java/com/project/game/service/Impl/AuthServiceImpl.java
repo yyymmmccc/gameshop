@@ -32,7 +32,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final RedisServiceImpl redisService;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
     @Transactional
     @Override
     public ResponseEntity sendEmailAuthentication(SendEmailAuthenticationRequestDto dto) {
@@ -71,16 +70,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity checkNickname(CheckNicknameRequestDto dto) {
-       if(userRepository.existsByNickname(dto.getNickname()))
+    public ResponseEntity checkNickname(String nickname) {
+       if(userRepository.existsByNickname(nickname))
            throw new CustomException(ResponseCode.DUPLICATE_NICKNAME);
 
         return ResponseDto.success(null);
     }
 
     @Override
-    public ResponseEntity checkTel(CheckTelRequestDto dto) {
-        if(userRepository.existsByTel(dto.getTel()))
+    public ResponseEntity checkTel(String tel) {
+        if(userRepository.existsByTel(tel))
             throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
         return ResponseDto.success(null);
@@ -169,6 +168,7 @@ public class AuthServiceImpl implements AuthService {
         return ResponseDto.success(userEntity.getEmail());
     }
 
+    @Transactional
     @Override
     public ResponseEntity findPassword(FindPasswordRequestDto dto) {
 
@@ -189,20 +189,20 @@ public class AuthServiceImpl implements AuthService {
     public ResponseEntity postNewPassword(NewPasswordRequestDto dto) {
 
         String userEmail = redisService.getValues(dto.getResetToken());
-
         if(userEmail.equals("false"))
             throw new CustomException(ResponseCode.NO_PASSWORD_RESET_TOKEN);
+
+        if (!dto.getPassword().equals(dto.getCheckPassword())) // 변경할 비밀번호와 변경비밀번호 확인이 다른경우
+            throw new CustomException(ResponseCode.PASSWORD_CHECK_FAIL);
 
         UserEntity userEntity = userRepository.findByEmail(userEmail).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        if (!dto.getPassword().equals(dto.getCheckPassword()))
-            throw new CustomException(ResponseCode.PASSWORD_CHECK_FAIL);
-
-        if(passwordEncoder.matches(dto.getPassword(), userEntity.getPassword()))
+        if(passwordEncoder.matches(dto.getPassword(), userEntity.getPassword())) // 기존 비밀번호와, 변경할 이메일이 같은경우
             throw new CustomException(ResponseCode.PASSWORD_UPDATE_FAIL);
 
         redisService.deleteValues(dto.getResetToken());
+
         userEntity.passwordUpdate(passwordEncoder.encode(dto.getPassword()));
 
         return ResponseDto.success(null);
@@ -213,11 +213,11 @@ public class AuthServiceImpl implements AuthService {
 
         String userEmail = redisService.getValues(refreshToken);
         // 레디스 저장소에 해당 refreshToken 이 만료되거나 해서 존재하지않을경우
-        if(userEmail.equals("false"))
+        if (userEmail.equals("false"))
             throw new CustomException(ResponseCode.NO_REFRESH_TOKEN);
 
         boolean isValid = jwtProvider.refreshValidate(refreshToken);
-        if(!isValid) throw new CustomException(ResponseCode.AUTHORIZATION_FAIL);
+        if (!isValid) throw new CustomException(ResponseCode.AUTHORIZATION_FAIL);
 
         String accessToken = jwtProvider.createAccessToken(userEmail); // 새로 발급받은 토큰
         String newRefreshToken = jwtProvider.createRefreshToken();
@@ -229,20 +229,9 @@ public class AuthServiceImpl implements AuthService {
         return ResponseDto.success(new TokenResponseDto(accessToken, newRefreshToken));
     }
 
-    @Override
-    public ResponseEntity validPasswordResetToken(String token) {
-
-        String resetToken = redisService.getValues(token);
-        if(resetToken.equals("false"))
-            throw new CustomException(ResponseCode.NO_PASSWORD_RESET_TOKEN);
-
-        return ResponseDto.success(token);
-    }
-
     public boolean validateAuthCode(String email, String code) {
         String redisAuthCode = redisService.getValues(email);
-        if(!redisAuthCode.equals(code) || redisAuthCode.equals("false"))
-            return false;
+        if(!redisAuthCode.equals(code) || redisAuthCode.equals("false")) return false;
 
         return true;
     }

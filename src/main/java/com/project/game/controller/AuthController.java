@@ -2,12 +2,9 @@ package com.project.game.controller;
 
 import com.project.game.controller.swagger.SwaggerAuthApi;
 import com.project.game.dto.request.auth.*;
-import com.project.game.dto.response.auth.TokenResponseDto;
 import com.project.game.provider.JwtProvider;
 import com.project.game.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -42,15 +39,15 @@ public class AuthController implements SwaggerAuthApi {
 
         return authService.checkPassword(dto);
     }
-    @PostMapping("/check-nickname")
-    public ResponseEntity checkNickname(@RequestBody @Valid CheckNicknameRequestDto dto) {
+    @GetMapping("/check-nickname")
+    public ResponseEntity checkNickname(@RequestParam(name = "nickname") String nickname) {
 
-        return authService.checkNickname(dto);
+        return authService.checkNickname(nickname);
     }
-    @PostMapping("/check-tel")
-    public ResponseEntity checkTel(@RequestBody @Valid CheckTelRequestDto dto) {
+    @GetMapping("/check-tel")
+    public ResponseEntity checkTel(@RequestParam(name = "tel") String tel) {
 
-        return authService.checkTel(dto);
+        return authService.checkTel(tel);
     }
     @PostMapping("/join")
     public ResponseEntity join(HttpSession session, @RequestBody @Valid JoinRequestDto dto) {
@@ -82,11 +79,6 @@ public class AuthController implements SwaggerAuthApi {
     public ResponseEntity findPassword(@RequestBody @Valid FindPasswordRequestDto dto) {
 
         return authService.findPassword(dto);
-    }
-    @GetMapping("/reset-token")
-    public ResponseEntity validPasswordResetToken(@RequestParam(name = "token") String token) {
-
-        return authService.validPasswordResetToken(token);
     }
     @PostMapping("/new-password")
     public ResponseEntity postNewPassword(@RequestBody @Valid NewPasswordRequestDto dto) {
