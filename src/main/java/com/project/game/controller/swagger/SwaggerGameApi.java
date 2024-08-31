@@ -47,7 +47,8 @@ public interface SwaggerGameApi {
     @ApiResponse(responseCode = "200", description = "게임 조회 성공")
     @ApiResponse(responseCode = "404", description = "게임 찾을 수 없음")
     @GetMapping("/{gameId}")
-    ResponseEntity getGame(@PathVariable("gameId") int gameId);
+    ResponseEntity getGame(@PathVariable("gameId") int gameId,
+                           @AuthenticationPrincipal String email);
 
     @Operation(summary = "게임 리스트 조회", description = "카테고리별 게임상품 목록을 조회")
     @ApiResponse(responseCode = "200", description = "게임 리스트 조회 성공")

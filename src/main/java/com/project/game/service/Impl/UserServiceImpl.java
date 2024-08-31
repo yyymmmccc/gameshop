@@ -11,17 +11,24 @@ import com.project.game.handler.CustomException;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RedisServiceImpl redisService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -101,6 +108,17 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(userEntity);
 
         return ResponseDto.success(null);
+    }
+
+    @Override
+    public ResponseEntity getRecentProductList(String email) {
+
+        UserEntity userEntity = userRepository.findById(email).orElseThrow(()
+                -> new CustomException(ResponseCode.USER_NOT_FOUND));
+
+        List<Integer> recentViewList = redisService.getRecentViewGame(userEntity.getEmail());
+
+        return ResponseDto.success(userRepository.recentProductList(recentViewList));
     }
 
 }

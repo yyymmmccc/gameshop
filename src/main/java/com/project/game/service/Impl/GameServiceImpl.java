@@ -31,7 +31,7 @@ public class GameServiceImpl implements GameService {
     private final GameRepository gameRepository;
     private final GameCategoryRepository gameCategoryRepository;
     private final GameImageRepository gameImageRepository;
-
+    private final RedisServiceImpl redisService;
     private final UserRepository userRepository;
 
     @Transactional
@@ -93,10 +93,14 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public ResponseEntity getGame(int gameId) {
+    public ResponseEntity getGame(int gameId, String email) {
 
         GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
                 -> new CustomException(ResponseCode.GAME_NOT_FOUND));
+
+        if(!email.equals("anonymousUser")) {
+            redisService.setRecentViewGame(email, gameId);
+        }
 
         List <GameImageEntity> gameImageEntityList = gameImageRepository.findByGameEntity(gameEntity);
 

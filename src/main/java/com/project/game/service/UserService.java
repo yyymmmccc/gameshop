@@ -10,4 +10,6 @@ public interface UserService {
     ResponseEntity patchUser(UserUpdateRequestDto dto, String email);
     ResponseEntity patchUserPassword(UserPasswordRequestDto dto, String email);
     ResponseEntity deleteUser(String email);
+
+    ResponseEntity getRecentProductList(String email);
 }

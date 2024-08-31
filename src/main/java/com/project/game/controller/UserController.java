@@ -20,14 +20,12 @@ public class UserController implements SwaggerUserApi {
 
     private final UserService userService;
 
-    @Operation(summary = "마이페이지", description = "마이페이지 내 정보 불러오기")
     @GetMapping("")
     public ResponseEntity getUser(@AuthenticationPrincipal String email){
 
         return userService.getUser(email);
     }
 
-    @Operation(summary = "마이페이지 정보 수정", description = "마이페이지에서 내 정보 수정하기")
     @PatchMapping("")
     public ResponseEntity patchUser(@RequestBody @Valid UserUpdateRequestDto dto,
                                     @AuthenticationPrincipal String email){
@@ -35,19 +33,23 @@ public class UserController implements SwaggerUserApi {
         return userService.patchUser(dto, email);
     }
 
-    @Operation(summary = "마이페이지 비밀번호 수정", description = "마이페이지에서 비밀번호 수정하기")
     @PatchMapping("/password")
     public ResponseEntity patchUserPassword(@RequestBody @Valid UserPasswordRequestDto dto,
                                     @AuthenticationPrincipal String email){
 
         return userService.patchUserPassword(dto, email);
     }
-
-    @Operation(summary = "회원탈퇴", description = "회원탈퇴")
     @DeleteMapping("")
     public ResponseEntity deleteUser(//@RequestBody @Valid UserDeleteRequestDto dto,
                                      @AuthenticationPrincipal String email){
 
         return userService.deleteUser(email);
     }
+
+    @GetMapping("recent-list")
+    public ResponseEntity getRecentProductList(@AuthenticationPrincipal String email){
+
+        return userService.getRecentProductList(email);
+    }
+
 }
