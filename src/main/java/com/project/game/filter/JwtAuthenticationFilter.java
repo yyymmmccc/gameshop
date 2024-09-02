@@ -4,6 +4,7 @@ import com.project.game.entity.UserEntity;
 import com.project.game.provider.JwtProvider;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.Impl.RedisServiceImpl;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
         String accessToken = jwtProvider.extractAccessToken(request); // 사용자에 요청에서 token을 꺼냄
 
         if (accessToken == null) {
@@ -44,14 +48,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String email = jwtProvider.accessValidate(accessToken); // 토큰 유효성 검사 및 이메일 추출
-        if (email == null) {
+        Claims claims = jwtProvider.accessValidate(accessToken); // 토큰 유효성 검사 및 이메일 추출
+        String role = claims.get("role", String.class);
+        String email = claims.get("email", String.class);
+        if (role == null || email == null) { // 둘 중 하나의 값만 없어도 return
             filterChain.doFilter(request, response); // 토큰이 유효하지 않으면 다음 필터로 이동
             return;
         }
 
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+
         AbstractAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, null, AuthorityUtils.NO_AUTHORITIES);
+                new UsernamePasswordAuthenticationToken(email, null, authorities);
         // 인증된 사용자의 정보를 저장
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -64,5 +72,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
 }

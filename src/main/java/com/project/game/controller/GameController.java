@@ -24,7 +24,7 @@ public class GameController implements SwaggerGameApi {
 
     private final GameService gameService;
 
-    @PostMapping("")
+    @PostMapping("/admin")
     public ResponseEntity postGame(@RequestBody @Valid GameRequestDto dto,
                                    @AuthenticationPrincipal String email) {
 

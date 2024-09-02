@@ -26,7 +26,7 @@ public class JwtProvider {
     private final Date REFRESH_TOKEN_TIME = Date.from(Instant.now().plus(14, ChronoUnit.DAYS));
 
     // 사용자에게 줄 토큰을 만들어주는 메서드
-    public String createAccessToken(String email){
+    public String createAccessToken(String email, String role){
 
         String jwt = Jwts.builder() // builder는 jwt를 만들기 위한 객체를 생성함
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
@@ -34,6 +34,7 @@ public class JwtProvider {
                 .setIssuedAt(new Date())    // setIssuedAt은 토큰 발행일
                 .setExpiration(ACCESS_TOKEN_TIME) // 만료일 설정
                 .claim("email", email) // 이메일 클레임 추가
+                .claim("role", role)
                 .compact();
 
         return jwt;
@@ -52,22 +53,20 @@ public class JwtProvider {
     }
 
     // 액세스 토큰을 secretKey로 검증
-    public String accessValidate(String accessToken){
+    public Claims accessValidate(String accessToken){
 
-        Claims claims = null;
+        Claims claims;
 
         try {
-
             claims = Jwts.parser()
                     .setSigningKey(secretKey) //jwt 를 secretKey로 정상적인지 검증
                     .parseClaimsJws(accessToken)
                     .getBody();
 
+            return claims;
         } catch (Exception e){
             return null;
         }
-
-        return claims.get("email", String.class);
     }
 
     // 리프레시 토큰을 secretKey로 검증
@@ -90,6 +89,7 @@ public class JwtProvider {
     public String extractAccessToken(HttpServletRequest request) {
 
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
+
         boolean hasAuthorization = StringUtils.hasText(authorization); // 헤더가 비어있는지 검사 -> 비어있으면 false
         if (!hasAuthorization) {
             return null;

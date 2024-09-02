@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -18,6 +19,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -40,23 +42,25 @@ public class WebSecurityConfig {
         httpSecurity
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())
-                )
+                ) // cors 정책 허용
+
                 .csrf(CsrfConfigurer::disable) // JWT를 사용하기 때문에 비활성화 (CSRF라는 보안 기능)
                 .httpBasic(HttpBasicConfigurer::disable) // JWT를 사용하기 때문에 비활성화 (기본 HTTP 인증 방식)
+
                 .sessionManagement(sessionManagement -> sessionManagement // JWT를 사용하기 때문에 비활성화 (사용자 세션)
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+
                 .authorizeHttpRequests(request -> request
                         .requestMatchers( "/api/auth/join", "/api/auth/login",
                                 "/api/auth/refresh-token", "/api/auth/check-certification", "/api/auth/**"
                                 , "/oauth2/**", "/api/comment/**", "/file/**", "/api/auth/find-email"
                                 , "/api/order/pay/approve", "/api/order/pay/cancel").permitAll()
                         .requestMatchers(swaggerPath).permitAll()
+                        .requestMatchers("/api/game/admin").hasRole("ADMIN")
                         // 모든 사용자는 해당 url 접근을 허용시킨다는 말
-
                         .requestMatchers(HttpMethod.GET, "/api/board/**", "/api/game/**", "/api/review/**", "/api/cart/**").permitAll()
                         // 모든사용자는 해당 url GET방식은 허용
-
                         .anyRequest().authenticated()
                 )       // 그 외의 요청은 인증을 필요로 한다는 말 (로그인 한 사용자만 가능)
 
@@ -66,8 +70,10 @@ public class WebSecurityConfig {
                         // 사용자가 OAuth 아이디, 비밀번호를 치고 로그인 버튼 눌렀을 때defaultOAuth2UserService 여기서 처리
                         .successHandler(oAuth2SuccessHandler)  // defaultOAuth2UserService 성공적일 때
                 )
+
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
+                        .accessDeniedHandler(new FailedAccessDeniedHandler())
                         // Security 컨택스트에 사용자의 정보가 없으면 인증 실패로 간주
                 )       // 인증 실패 시 예외 처리 로직을 정의 -> new FailedAuthentication
 
@@ -93,7 +99,8 @@ public class WebSecurityConfig {
     }
 
     // 401 에러 즉, 사용자 인증 실패하면 실행 후 commence() 메서드 실행
-    class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint{
+
+    class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
@@ -101,6 +108,17 @@ public class WebSecurityConfig {
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{ \"code\": \"AUTHORIZATION_FAIL\", \"message\": \"사용자 인증에 실패하였습니다.\" }");
+        }
+    }
+
+    class FailedAccessDeniedHandler implements AccessDeniedHandler{
+
+        @Override
+        public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{ \"code\": \"FORBIDDEN_FAIL\", \"message\": \"권한이 없습니다.\" }");
         }
     }
 }

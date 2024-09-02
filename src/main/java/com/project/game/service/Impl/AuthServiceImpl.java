@@ -143,7 +143,7 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(dto.getPassword(), userEntity.getPassword()))
             throw new CustomException(ResponseCode.LOGIN_FAIL);
 
-        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail());
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getRole());
         String refreshToken = jwtProvider.createRefreshToken();
 
         redisService.setValues(refreshToken, userEntity.getEmail(), Duration.ofDays(14));
@@ -216,10 +216,13 @@ public class AuthServiceImpl implements AuthService {
         if (userEmail.equals("false"))
             throw new CustomException(ResponseCode.NO_REFRESH_TOKEN);
 
+        UserEntity userEntity = userRepository.findByEmail(userEmail).orElseThrow(()
+                -> new CustomException(ResponseCode.USER_NOT_FOUND));
+
         boolean isValid = jwtProvider.refreshValidate(refreshToken);
         if (!isValid) throw new CustomException(ResponseCode.AUTHORIZATION_FAIL);
 
-        String accessToken = jwtProvider.createAccessToken(userEmail); // 새로 발급받은 토큰
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getRole()); // 새로 발급받은 토큰
         String newRefreshToken = jwtProvider.createRefreshToken();
         // accessToken 재발급 할 때 refreshToken도 재 발급하여 보안 관리
 
