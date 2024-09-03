@@ -46,7 +46,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository{
 
         // CASE 문으로 순서 정렬
         NumberExpression<Integer> orderByCase = new CaseBuilder()
-                .when(gameEntity.gameId.eq(recentViewList.get(0))).then(0)
+                .when(gameEntity.gameId.eq(recentViewList.getFirst())).then(0)
                 .otherwise(1); // 초기화
 
         for (int i = 0; i < recentViewList.size(); i++) {
