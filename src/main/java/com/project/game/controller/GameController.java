@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/game")
+@RequestMapping("/api/user/game")
 @RequiredArgsConstructor
 public class GameController implements SwaggerGameApi {
 

@@ -10,11 +10,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "유저 마이페이지", description = "회원정보 수정, 비밀번호 변경, 회원 탈퇴 API")
+@Tag(name = "유저 - 마이페이지", description = "회원정보 수정, 비밀번호 변경, 회원 탈퇴 API")
 @RequestMapping("/api/user")
 public interface SwaggerUserApi {
 
-    @Operation(summary = "마이페이지", description = "마이페이지 내 정보 불러오기")
+    @Operation(summary = "내 정보", description = "마이페이지 내 정보 불러오기")
     @ApiResponse(responseCode = "200", description = "정보 조회 성공")
     @ApiResponse(responseCode = "404", description = "사용자 찾을 수 없음")
     @GetMapping("")

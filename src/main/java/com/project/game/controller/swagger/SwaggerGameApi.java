@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "유저 게임상품", description = "유저 게임상품 조회 API")
+@Tag(name = "유저 - 게임상품", description = "유저 게임상품 조회 API")
 public interface SwaggerGameApi {
 
     @Operation(summary = "게임 조회", description = "단일 게임상품을 조회")

@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/api/user/comment")
 @RequiredArgsConstructor
 public class CommentController implements SwaggerCommentApi {
 

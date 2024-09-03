@@ -12,7 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/user/mypage")
 @RequiredArgsConstructor
 public class UserController implements SwaggerUserApi {
 
@@ -44,7 +44,7 @@ public class UserController implements SwaggerUserApi {
         return userService.deleteUser(email);
     }
 
-    @GetMapping("recent-list")
+    @GetMapping("/recent-list")
     public ResponseEntity getRecentProductList(@AuthenticationPrincipal String email){
 
         return userService.getRecentProductList(email);

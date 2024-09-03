@@ -14,7 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/user/order")
 @RequiredArgsConstructor
 @Slf4j
 public class OrdersController implements SwaggerOrderApi {

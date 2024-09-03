@@ -16,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/user/board")
 @RequiredArgsConstructor
 @Slf4j
 public class BoardController implements SwaggerBoardApi {

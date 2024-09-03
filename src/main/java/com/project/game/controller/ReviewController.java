@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/review")
+@RequestMapping("/api/user/review")
 @RequiredArgsConstructor
 public class ReviewController implements SwaggerReviewApi {
 

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "유저 게임 구매목록", description = "구매 상품 조회, 삭제 및 실행 API")
+@Tag(name = "유저 - 내 게임", description = "구매 상품 조회, 삭제 및 실행 API")
 @RequestMapping("/api/library")
 public interface SwaggerLibraryApi {
 

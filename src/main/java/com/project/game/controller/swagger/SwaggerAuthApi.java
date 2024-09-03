@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "유저 인증", description = "유저 회원가입, 로그인, 로그아웃 등")
+@Tag(name = "유저 - 인증", description = "유저 회원가입, 로그인, 로그아웃 등")
 public interface SwaggerAuthApi {
 
     @Operation(summary = "이메일 인증", description = "회원가입 이메일 중복체크 후 인증번호 발송")

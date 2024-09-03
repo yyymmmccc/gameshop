@@ -54,10 +54,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers("/api/admin/game").hasRole("ADMIN")
 
-                        .requestMatchers( "/api/auth/join", "/api/auth/login",
-                                "/api/auth/refresh-token", "/api/auth/check-certification", "/api/auth/**"
+                        .requestMatchers( "/api/user/auth/join", "/api/user/auth/login",
+                                "/api/auth/user/refresh-token", "/api/auth/user/check-certification", "/api/user/auth/**"
                                 , "/oauth2/**", "/api/comment/**", "/file/**", "/api/auth/find-email"
                                 , "/api/order/pay/approve", "/api/order/pay/cancel").permitAll()
+
                         .requestMatchers(swaggerPath).permitAll()
 
                         // 모든 사용자는 해당 url 접근을 허용시킨다는 말

@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "유저 게임상품 주문", description = "결제 및 주문내역 생성, 조회, 삭제 API")
+@Tag(name = "유저 - 주문", description = "결제 및 주문내역 생성, 조회, 삭제 API")
 @RequestMapping("/api/order")
 public interface SwaggerOrderApi {
 

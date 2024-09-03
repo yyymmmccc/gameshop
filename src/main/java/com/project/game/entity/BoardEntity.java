@@ -1,5 +1,6 @@
 package com.project.game.entity;
 
+import com.project.game.dto.request.board.BoardRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,7 +21,6 @@ public class BoardEntity {
     @Column(name = "board_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int boardId;
-
     private String title;
     private String content;
     private int hit;
@@ -43,7 +43,7 @@ public class BoardEntity {
     private int categoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_email")  // board Table 에 있는 외래키 user_email
+    @JoinColumn(name = "user_email")
     private UserEntity userEntity;
 
     // cascade
@@ -56,11 +56,10 @@ public class BoardEntity {
     @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavoriteEntity> favoriteEntitieList = new ArrayList<>();
 
-    public void update(String title, String content, int categoryId){
-        this.title = title;
-        this.content = content;
-        this.categoryId = categoryId;
-
+    public void update(BoardRequestDto dto){
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.categoryId = dto.getCategoryId();
     }
 
     public void incViewCount() {

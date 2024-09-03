@@ -16,6 +16,7 @@ import com.project.game.repository.BoardRepository;
 import com.project.game.repository.FavoriteRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.BoardService;
+import com.project.game.service.S3Service;
 import com.project.game.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +40,8 @@ public class BoardServiceImpl implements BoardService {
     private final BoardImageRepository boardImageRepository;
     private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
+    private final S3Service s3Service;
     private final RedisService redisService;
-
     @Transactional
     @Override
     public ResponseEntity postBoard(BoardRequestDto dto, String email) {
@@ -61,10 +64,24 @@ public class BoardServiceImpl implements BoardService {
         if(!boardEntity.getUserEntity().getEmail().equals(email))
             throw new CustomException(ResponseCode.NO_PERMISSION);
 
-        boardEntity.update(dto.getTitle(), dto.getContent(), dto.getCategoryId()); // 기존 BoardEntity에 수정 dto로 값을 바꿔줌
+        boardEntity.update(dto);
 
-        List<BoardImageEntity> boardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
-        boardImageRepository.deleteAll(boardImageEntityList);
+        List<BoardImageEntity> deleteImageList = new ArrayList<>();
+        List<BoardImageEntity> oldBoardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
+
+        for(BoardImageEntity boardImageEntity : oldBoardImageEntityList){
+            if(!dto.getImageList().contains(boardImageEntity.getImageUrl())){
+                deleteImageList.add(boardImageEntity);
+            }
+        }
+
+        List<String> deleteImageUrlList = deleteImageList.stream()
+                .map(BoardImageEntity::getImageUrl)
+                .collect(Collectors.toList());
+
+        s3Service.deleteFile(deleteImageUrlList); // DB 사용하지 않는 이미지 찾아서 S3 버킷에서 삭제
+
+        boardImageRepository.deleteAll(deleteImageList);
 
         boardImageRepository.saveAll(dto.convertToEntityList(dto.getImageList(), boardEntity));
 

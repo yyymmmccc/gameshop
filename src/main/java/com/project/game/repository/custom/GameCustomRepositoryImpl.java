@@ -1,5 +1,7 @@
 package com.project.game.repository.custom;
 
+import com.project.game.dto.response.game.admin.AdminGameListResponseDto;
+import com.project.game.dto.response.game.admin.QAdminGameListResponseDto;
 import com.project.game.dto.response.game.user.UserGameListResponseDto;
 import com.project.game.dto.response.game.user.QUserGameListResponseDto;
 import com.project.game.entity.GameCategoryEntity;
@@ -31,7 +33,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<UserGameListResponseDto> findAllLeftFetchJoin(Pageable pageable, GameCategoryEntity gameCategoryEntity, String searchKeyword) {
+    public Page<UserGameListResponseDto> findUserGameAll(Pageable pageable, GameCategoryEntity gameCategoryEntity, String searchKeyword) {
         JPQLQuery<UserGameListResponseDto> query =
                 jpaQueryFactory.select(new QUserGameListResponseDto(
                         gameEntity.gameId,
@@ -67,9 +69,9 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
         JPAQuery<GameEntity> queryCount = jpaQueryFactory.selectFrom(gameEntity)
                 .where(gameEntity.gameCategoryEntity.eq(gameCategoryEntity));
+
         if(!searchKeyword.isEmpty()){
-            query.where(gameEntity.gameName.contains(searchKeyword)
-                    .or(gameEntity.gameDc.contains(searchKeyword)));
+            query.where(gameEntity.gameName.contains(searchKeyword));
         }
 
         List<UserGameListResponseDto> result = query.fetch();
@@ -77,6 +79,44 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
         return new PageImpl<>(result, pageable, count);
     }
+
+    @Override
+    public Page<AdminGameListResponseDto> findAdminGameAll(Pageable pageable, int categoryId, String searchKeyword) {
+        JPQLQuery<AdminGameListResponseDto> query =
+                jpaQueryFactory.select(new QAdminGameListResponseDto(
+                        gameEntity.gameId,
+                        gameImageEntity.gameImageUrl,
+                        gameEntity.gameName,
+                        gameEntity.price,
+                        gameEntity.purchaseCount
+                ))
+                        .from(gameEntity)
+                        .leftJoin(gameImageEntity)
+                        .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
+                                .and(gameImageEntity.thumbnail.eq("Y")))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(gameEntity.purchaseCount.desc());
+
+        long count;
+
+        if(categoryId != 0){
+            query.where(gameEntity.gameCategoryEntity.categoryId.eq(categoryId));
+            count = jpaQueryFactory.selectFrom(gameEntity)
+                    .where(gameEntity.gameCategoryEntity.categoryId.eq(categoryId))
+                    .fetchCount();
+        }
+        else count = query.fetchCount();
+
+        if(!searchKeyword.isEmpty()){
+            query.where(gameEntity.gameName.contains(searchKeyword));
+        }
+
+        List<AdminGameListResponseDto> result = query.fetch();
+
+        return new PageImpl<>(result, pageable, count);
+    }
+
 
     private OrderSpecifier orderSpecifier(Pageable pageable){
 

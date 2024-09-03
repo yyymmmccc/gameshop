@@ -9,9 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/library")
+@RequestMapping("/api/user/library")
 @RequiredArgsConstructor
-@Tag(name = "유저 게임상품 구매목록", description = "구매 상품 조회, 삭제 및 실행 API")
 public class LibraryController implements SwaggerLibraryApi {
 
     private final LibraryService libraryService;

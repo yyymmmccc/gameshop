@@ -52,7 +52,7 @@ public class GameServiceImpl implements GameService {
                 -> new CustomException(ResponseCode.CATEGORY_NOT_FOUND));
 
         Page <UserGameListResponseDto> gameListDto =
-                gameRepository.findAllLeftFetchJoin(pageOf(page, orderBy), gameCategoryEntity, searchKeyword);
+                gameRepository.findUserGameAll(pageOf(page, orderBy), gameCategoryEntity, searchKeyword);
 
         return ResponseDto.success(PaginatedResponseDto.of(gameListDto));
     }
