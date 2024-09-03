@@ -13,7 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.validation.Valid;
 
-@Tag(name = "게시판", description = "게시글 생성, 수정, 삭제, 조회 및 게시글 좋아요")
+@Tag(name = "유저 게시판", description = "게시글 생성, 수정, 삭제, 조회 및 게시글 좋아요")
 public interface SwaggerBoardApi {
 
     @Operation(summary = "게시글 작성", description = "게시글을 작성하는 API")

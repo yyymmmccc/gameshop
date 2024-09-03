@@ -1,13 +1,12 @@
 package com.project.game.service.Impl;
 
-import com.project.game.common.ResponseCode;
-import com.project.game.dto.request.user.UserDeleteRequestDto;
-import com.project.game.dto.request.user.UserPasswordRequestDto;
-import com.project.game.dto.request.user.UserUpdateRequestDto;
+import com.project.game.global.common.ResponseCode;
+import com.project.game.dto.request.member.user.UserPasswordRequestDto;
+import com.project.game.dto.request.member.user.UserUpdateRequestDto;
 import com.project.game.dto.response.ResponseDto;
-import com.project.game.dto.response.user.UserResponseDto;
+import com.project.game.dto.response.member.user.UserResponseDto;
 import com.project.game.entity.UserEntity;
-import com.project.game.handler.CustomException;
+import com.project.game.global.handler.CustomException;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -116,9 +113,9 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        List<Integer> recentViewList = redisService.getRecentViewGame(userEntity.getEmail());
+        List<Integer> recentViewList = redisService.getRecentProductView(userEntity.getEmail());
 
-        return ResponseDto.success(userRepository.recentProductList(recentViewList));
+        return ResponseDto.success(userRepository.findMyPageRecentProductViewList(recentViewList));
     }
 
 }

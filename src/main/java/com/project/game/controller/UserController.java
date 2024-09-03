@@ -1,10 +1,9 @@
 package com.project.game.controller;
 
 import com.project.game.controller.swagger.SwaggerUserApi;
-import com.project.game.dto.request.user.UserPasswordRequestDto;
-import com.project.game.dto.request.user.UserUpdateRequestDto;
+import com.project.game.dto.request.member.user.UserPasswordRequestDto;
+import com.project.game.dto.request.member.user.UserUpdateRequestDto;
 import com.project.game.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-@Tag(name = "사용자", description = "회원정보 수정, 비밀번호 변경, 회원 탈퇴 API")
 public class UserController implements SwaggerUserApi {
 
     private final UserService userService;

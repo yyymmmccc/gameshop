@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "주문", description = "결제 및 주문내역 생성, 조회, 삭제")
 public class OrdersController implements SwaggerOrderApi {
 
     private final OrdersService ordersService;

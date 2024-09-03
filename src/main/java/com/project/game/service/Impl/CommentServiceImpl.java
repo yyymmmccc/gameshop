@@ -1,13 +1,13 @@
 package com.project.game.service.Impl;
 
-import com.project.game.common.ResponseCode;
+import com.project.game.global.common.ResponseCode;
 import com.project.game.dto.request.comment.CommentRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.comment.CommentResponseDto;
 import com.project.game.entity.BoardEntity;
 import com.project.game.entity.CommentEntity;
 import com.project.game.entity.UserEntity;
-import com.project.game.handler.CustomException;
+import com.project.game.global.handler.CustomException;
 import com.project.game.repository.BoardRepository;
 import com.project.game.repository.CommentRepository;
 import com.project.game.repository.UserRepository;

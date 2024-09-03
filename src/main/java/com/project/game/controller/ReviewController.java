@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/review")
 @RequiredArgsConstructor
-@Tag(name = "게임후기", description = "구매한 게임 평가 API")
 public class ReviewController implements SwaggerReviewApi {
 
     private final ReviewService reviewService;

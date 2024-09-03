@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "게시판 댓글", description = "게시판 댓글 생성, 수정, 삭제, 조회 API")
+@Tag(name = "유저 게시판 댓글", description = "게시판 댓글 생성, 수정, 삭제, 조회 API")
 public interface SwaggerCommentApi {
 
     @Operation(summary = "댓글 생성", description = "게시판 글에 댓글을 추가하는 API")

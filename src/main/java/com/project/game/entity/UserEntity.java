@@ -1,7 +1,8 @@
 package com.project.game.entity;
 
-import com.project.game.dto.request.auth.OAuthJoinRequestDto;
-import com.project.game.dto.request.user.UserUpdateRequestDto;
+import com.project.game.dto.request.auth.user.OAuthJoinRequestDto;
+import com.project.game.dto.request.member.admin.AdminPatchUserRequestDto;
+import com.project.game.dto.request.member.user.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -68,6 +69,10 @@ public class UserEntity {
     public void update(UserUpdateRequestDto dto){
         this.nickname = dto.getNickname();
         this.tel = dto.getTel();
+    }
+
+    public void update(AdminPatchUserRequestDto dto) {
+        this.role = dto.getRole();
     }
 
     public void passwordUpdate(String newPassword){

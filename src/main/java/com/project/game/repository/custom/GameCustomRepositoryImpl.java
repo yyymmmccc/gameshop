@@ -1,13 +1,9 @@
 package com.project.game.repository.custom;
 
-import com.project.game.dto.response.game.GameListResponseDto;
-import com.project.game.dto.response.game.QGameListResponseDto;
-import com.project.game.dto.response.order.OrderFormGameListResponseDto;
-import com.project.game.dto.response.order.QOrderFormGameListResponseDto;
+import com.project.game.dto.response.game.user.UserGameListResponseDto;
+import com.project.game.dto.response.game.user.QUserGameListResponseDto;
 import com.project.game.entity.GameCategoryEntity;
 import com.project.game.entity.GameEntity;
-import com.project.game.entity.GameImageEntity;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.JPQLQuery;
@@ -22,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.project.game.entity.QGameEntity.gameEntity;
 import static com.project.game.entity.QGameImageEntity.gameImageEntity;
@@ -36,9 +31,9 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<GameListResponseDto> findAllLeftFetchJoin(Pageable pageable, GameCategoryEntity gameCategoryEntity, String searchKeyword) {
-        JPQLQuery<GameListResponseDto> query =
-                jpaQueryFactory.select(new QGameListResponseDto(
+    public Page<UserGameListResponseDto> findAllLeftFetchJoin(Pageable pageable, GameCategoryEntity gameCategoryEntity, String searchKeyword) {
+        JPQLQuery<UserGameListResponseDto> query =
+                jpaQueryFactory.select(new QUserGameListResponseDto(
                         gameEntity.gameId,
                         gameEntity.gameName,
                         gameEntity.price,
@@ -77,7 +72,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                     .or(gameEntity.gameDc.contains(searchKeyword)));
         }
 
-        List<GameListResponseDto> result = query.fetch();
+        List<UserGameListResponseDto> result = query.fetch();
         long count = queryCount.fetchCount();
 
         return new PageImpl<>(result, pageable, count);

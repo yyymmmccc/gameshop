@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
-@Tag(name = "장바구니", description = "게임 상품 장바구니에 생성, 조회, 삭제 API")
 public class CartController implements SwaggerCartApi {
 
     private final CartService cartService;

@@ -1,12 +1,12 @@
 package com.project.game.service.Impl;
 
-import com.project.game.common.ResponseCode;
+import com.project.game.global.common.ResponseCode;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.order.*;
 import com.project.game.entity.OrdersEntity;
 import com.project.game.entity.UserEntity;
-import com.project.game.handler.CustomException;
+import com.project.game.global.handler.CustomException;
 import com.project.game.repository.CartRepository;
 import com.project.game.repository.OrderDetailRepository;
 import com.project.game.repository.OrdersRepository;

@@ -1,8 +1,9 @@
 package com.project.game.controller.swagger;
 
-import com.project.game.dto.request.auth.*;
+import com.project.game.dto.request.auth.user.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Tag(name = "유저 인증", description = "유저 회원가입, 로그인, 로그아웃 등")
 public interface SwaggerAuthApi {
 
     @Operation(summary = "이메일 인증", description = "회원가입 이메일 중복체크 후 인증번호 발송")
@@ -69,7 +71,7 @@ public interface SwaggerAuthApi {
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "401", description = "이메일 또는 비밀번호 오류")
     @PostMapping("/login")
-    ResponseEntity login(@RequestBody @Valid LoginRequestDto dto);
+    ResponseEntity login(@RequestBody @Valid UserLoginRequestDto dto);
 
     @Operation(summary = "로그아웃", description = "사용자가 로그아웃 하는 API")
     @ApiResponse(responseCode = "200", description = "로그아웃 성공")

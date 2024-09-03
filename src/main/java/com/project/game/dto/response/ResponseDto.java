@@ -1,7 +1,6 @@
 package com.project.game.dto.response;
 
-import com.project.game.common.ResponseCode;
-import lombok.Builder;
+import com.project.game.global.common.ResponseCode;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 

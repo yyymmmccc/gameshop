@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/library")
 @RequiredArgsConstructor
-@Tag(name = "구매 게임목록", description = "구매 상품 조회, 삭제 및 실행 API")
+@Tag(name = "유저 게임상품 구매목록", description = "구매 상품 조회, 삭제 및 실행 API")
 public class LibraryController implements SwaggerLibraryApi {
 
     private final LibraryService libraryService;

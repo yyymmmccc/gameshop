@@ -1,6 +1,6 @@
 package com.project.game.entity;
 
-import com.project.game.dto.request.game.GameRequestDto;
+import com.project.game.dto.request.game.AdminPostGameRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,7 +66,7 @@ public class GameEntity {
     @OneToMany(mappedBy = "gameEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> ReviewEntityList = new ArrayList<>();
 
-    public void update(GameRequestDto dto, GameCategoryEntity gameCategoryEntity) {
+    public void update(AdminPostGameRequestDto dto, GameCategoryEntity gameCategoryEntity) {
         this.gameCategoryEntity = gameCategoryEntity;
         this.gameName = dto.getGameName();
         this.gameDc = dto.getGameDc();

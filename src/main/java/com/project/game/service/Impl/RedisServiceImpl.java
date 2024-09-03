@@ -52,7 +52,7 @@ public class RedisServiceImpl implements RedisService {
         redisTemplate.opsForZSet().add("recent_view_" + email, String.valueOf(gameId), score);
     }
 
-    public List<Integer> getRecentViewGame(String email){
+    public List<Integer> getRecentProductView(String email){
 
         Set<Object> recentViewSet = redisTemplate.opsForZSet().reverseRange("recent_view_" + email, 0, -1);
 

@@ -1,8 +1,7 @@
 package com.project.game.service;
 
-import com.project.game.dto.request.user.UserDeleteRequestDto;
-import com.project.game.dto.request.user.UserPasswordRequestDto;
-import com.project.game.dto.request.user.UserUpdateRequestDto;
+import com.project.game.dto.request.member.user.UserPasswordRequestDto;
+import com.project.game.dto.request.member.user.UserUpdateRequestDto;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {

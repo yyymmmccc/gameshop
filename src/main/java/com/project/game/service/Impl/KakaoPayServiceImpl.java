@@ -1,12 +1,12 @@
 package com.project.game.service.Impl;
 
-import com.project.game.common.ResponseCode;
+import com.project.game.global.common.ResponseCode;
 import com.project.game.dto.request.order.KakaoPayReadyRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.order.KakaoPayApproveResponseDto;
 import com.project.game.dto.response.order.KakaoPayReadyResponseDto;
 import com.project.game.entity.*;
-import com.project.game.handler.CustomException;
+import com.project.game.global.handler.CustomException;
 import com.project.game.repository.*;
 import com.project.game.service.KakaoPayService;
 import lombok.RequiredArgsConstructor;

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
-@Tag(name = "게시판", description = "게시글 생성, 수정, 삭제, 조회 및 게시글 좋아요")
 @Slf4j
 public class BoardController implements SwaggerBoardApi {
 

@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "게임후기", description = "구매한 게임 평가 API")
+@Tag(name = "유저 구매한 게임상품 후기", description = "구매한 게임 평가 API")
 @RequestMapping("/api/review")
 public interface SwaggerReviewApi {
 

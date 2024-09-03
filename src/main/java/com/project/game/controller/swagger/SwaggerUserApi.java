@@ -1,7 +1,7 @@
 package com.project.game.controller.swagger;
 
-import com.project.game.dto.request.user.UserPasswordRequestDto;
-import com.project.game.dto.request.user.UserUpdateRequestDto;
+import com.project.game.dto.request.member.user.UserPasswordRequestDto;
+import com.project.game.dto.request.member.user.UserUpdateRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "사용자", description = "회원정보 수정, 비밀번호 변경, 회원 탈퇴 API")
+@Tag(name = "유저 마이페이지", description = "회원정보 수정, 비밀번호 변경, 회원 탈퇴 API")
 @RequestMapping("/api/user")
 public interface SwaggerUserApi {
 

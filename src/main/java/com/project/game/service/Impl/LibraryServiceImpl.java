@@ -1,11 +1,10 @@
 package com.project.game.service.Impl;
 
-import com.project.game.common.ResponseCode;
+import com.project.game.global.common.ResponseCode;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.library.LibraryListResponseDto;
-import com.project.game.entity.LibraryEntity;
 import com.project.game.entity.UserEntity;
-import com.project.game.handler.CustomException;
+import com.project.game.global.handler.CustomException;
 import com.project.game.repository.LibraryRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.LibraryService;

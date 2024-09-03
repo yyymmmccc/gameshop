@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "장바구니", description = "게임 상품 장바구니에 생성, 조회, 삭제 API")
+@Tag(name = "유저 장바구니", description = "게임 상품 장바구니에 생성, 조회, 삭제 API")
 public interface SwaggerCartApi {
 
     @Operation(summary = "장바구니에 게임 추가", description = "선택한 게임을 장바구니에 추가하는 API")

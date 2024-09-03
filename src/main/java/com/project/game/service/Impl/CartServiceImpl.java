@@ -1,13 +1,13 @@
 package com.project.game.service.Impl;
 
-import com.project.game.common.ResponseCode;
+import com.project.game.global.common.ResponseCode;
 import com.project.game.dto.request.cart.CartDeleteRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.cart.CartListResponseDto;
 import com.project.game.entity.CartEntity;
 import com.project.game.entity.GameEntity;
 import com.project.game.entity.UserEntity;
-import com.project.game.handler.CustomException;
+import com.project.game.global.handler.CustomException;
 import com.project.game.repository.CartRepository;
 import com.project.game.repository.GameRepository;
 import com.project.game.repository.LibraryRepository;
@@ -15,7 +15,6 @@ import com.project.game.repository.UserRepository;
 import com.project.game.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

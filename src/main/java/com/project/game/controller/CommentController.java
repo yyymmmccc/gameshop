@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/comment")
 @RequiredArgsConstructor
-@Tag(name = "게시판 댓글", description = "게시판 댓글 생성, 수정, 삭제, 조회")
 public class CommentController implements SwaggerCommentApi {
 
     private final CommentService commentService;

@@ -11,7 +11,7 @@ import java.util.List;
 public class PaginatedResponseDto<T> {
 
 
-    private int totalElements;
+    private long totalElements;
     private int totalPages;
     private int number;
     private int size;
@@ -19,7 +19,7 @@ public class PaginatedResponseDto<T> {
 
     public static PaginatedResponseDto of(Page page){
         return PaginatedResponseDto.builder()
-                .totalElements(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
                 .number(page.getNumber())
                 .size(page.getSize())

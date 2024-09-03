@@ -48,7 +48,6 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                         .where(boardEntity.categoryId.eq(boardCategoryId))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        //.orderBy(boardEntity.createdDate.desc())
                         .orderBy(orderSpecifier(pageable), boardEntity.createdDate.desc());
 
         if(!searchKeyword.isEmpty()){
