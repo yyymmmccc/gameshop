@@ -35,10 +35,15 @@ public class OrdersServiceImpl implements OrdersService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity getOrderFormGames(OrderFormRequestDto dto, String email) {
+    public ResponseEntity getOrderFormProduct(OrderFormRequestDto dto, String email) {
 
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
+
+        // 나의 카트에 해당 카트번호가 없을경우
+        long cartCount = cartRepository.countByCartIdIn(dto.getCartIdList());
+        if(dto.getCartIdList().size() != cartCount)
+            throw new CustomException(ResponseCode.CART_NOT_FOUND);
 
         List<OrderFormGameListResponseDto> orderFormGameListResponseDto =
                 cartRepository.findByCartId(dto.getCartIdList());
@@ -46,7 +51,7 @@ public class OrdersServiceImpl implements OrdersService {
         int totalPrice = 0;
 
         for(OrderFormGameListResponseDto product : orderFormGameListResponseDto){
-            totalPrice += product.getPrice();
+            totalPrice += product.getDiscountPrice();
         }
 
         return ResponseDto.success(OrderFormResponseDto.of(orderFormGameListResponseDto, userEntity, totalPrice));

@@ -5,8 +5,10 @@ import com.project.game.entity.GameEntity;
 import com.project.game.entity.GameImageEntity;
 import com.project.game.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,9 +37,13 @@ public class AdminPostGameRequestDto {
     @NotBlank(message = "배급사를 입력해주세요.")
     private String publisher;
 
-    @Schema(example = "가격을 입력해주세요")
+    @Schema(example = "가격을 입력해주세요.")
     @NotNull(message = "가격을 입력해주세요.")
-    private int price;
+    private int originalPrice;
+
+    @Schema(example = "할인율을 입력해주세요.")
+    @NotNull(message = "할인율을 입력해주세요.")
+    private int discountPercentage;
 
     @Schema(example = "출시일을 입력해주세요")
     @NotBlank(message = "출시일을 입력해주세요.")
@@ -53,10 +59,16 @@ public class AdminPostGameRequestDto {
                 .gameName(gameName)
                 .gameDc(gameDc)
                 .publisher(publisher)
-                .price(price)
+                .originalPrice(originalPrice)
+                .discountPrice(discountPriceCalc(originalPrice, discountPercentage))  // 수정된 부분
+                .discountPercentage(discountPercentage)
                 .releaseDate(releaseDate)
                 .userEntity(userEntity)
                 .build();
+    }
+
+    public int discountPriceCalc(int originalPrice, int discountPercentage){
+        return (int) (originalPrice * (1 - (double)discountPercentage / 100));
     }
 
     public GameImageEntity toEntity(String imageUrl, GameEntity gameEntity, boolean isThumbnail){

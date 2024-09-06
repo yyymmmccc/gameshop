@@ -51,21 +51,27 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/admin/**").permitAll()
-                        .requestMatchers("/api/admin/game").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/auth/login").permitAll()
+                        .requestMatchers
+                                ("/api/admin/auth/logout",
+                                        "/api/admin/game/**",
+                                        "/api/admin/user/**").hasRole("ADMIN")
 
-                        .requestMatchers( "/api/user/auth/join", "/api/user/auth/login",
-                                "/api/auth/user/refresh-token", "/api/auth/user/check-certification", "/api/user/auth/**"
-                                , "/oauth2/**", "/api/comment/**", "/file/**", "/api/auth/find-email"
-                                , "/api/order/pay/approve", "/api/order/pay/cancel").permitAll()
+                        .requestMatchers("/api/user/auth/**"
+                                , "/oauth2/**"
+                                , "/file/**"
+                                , "/api/user/order/pay/approve"
+                                , "/api/user/order/pay/cancel").permitAll()
 
                         .requestMatchers(swaggerPath).permitAll()
 
-                        // 모든 사용자는 해당 url 접근을 허용시킨다는 말
-                        .requestMatchers(HttpMethod.GET, "/api/board/**", "/api/game/**", "/api/review/**", "/api/cart/**").permitAll()
-                        // 모든사용자는 해당 url GET방식은 허용
+                        .requestMatchers(HttpMethod.GET, "/api/user/board/**"
+                                , "/api/user/game/**"
+                                , "/api/user/review/**"
+                                ,"/api/user/comment/**").permitAll()
+
                         .anyRequest().authenticated()
-                )       // 그 외의 요청은 인증을 필요로 한다는 말 (로그인 한 사용자만 가능)
+                )       // 그 외의 요청은 인증을 필요
 
                 .oauth2Login(oauth2 -> oauth2
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
@@ -78,7 +84,7 @@ public class WebSecurityConfig {
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
                         .accessDeniedHandler(new FailedAccessDeniedHandler())
                         // Security 컨택스트에 사용자의 정보가 없으면 인증 실패로 간주
-                )       // 인증 실패 시 예외 처리 로직을 정의 -> new FailedAuthentication
+                )       // hasRole 권한이 다를 경우 실패 핸들러
 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
                     // jwtAuthenticationFilter -> 요청 header에 토큰을 검사

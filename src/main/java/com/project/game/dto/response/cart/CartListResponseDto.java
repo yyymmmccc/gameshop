@@ -9,15 +9,17 @@ public class CartListResponseDto {
     private int cartId;
     private int gameId;
     private String gameName;
-    private int price;
+    private int originalPrice;
+    private int discountPrice;
     private String gameImageUrl;
 
     @QueryProjection
-    public CartListResponseDto(int cartId, int gameId, String gameName, int price, String gameImageUrl){
+    public CartListResponseDto(int cartId, int gameId, String gameName, int originalPrice, int discountPrice, String gameImageUrl){
         this.cartId = cartId;
         this.gameId = gameId;
         this.gameName = gameName;
-        this.price = price;
+        this.originalPrice = originalPrice;
+        this.discountPrice = discountPrice;
         this.gameImageUrl = gameImageUrl;
     }
 }

@@ -18,7 +18,9 @@ public class UserGameDetailResponseDto {
     private String gameName;
     private String gameDc;
     private String publisher;
-    private int price;
+    private int originalPrice;
+    private int discountPrice;
+    private int discountPercentage;
     private int reviewCount;
     private int purchaseCount;
     private String releaseDate;
@@ -34,7 +36,9 @@ public class UserGameDetailResponseDto {
                 .gameName(gameEntity.getGameName())
                 .gameDc(gameEntity.getGameDc())
                 .publisher(gameEntity.getPublisher())
-                .price(gameEntity.getPrice())
+                .originalPrice(gameEntity.getOriginalPrice())
+                .discountPrice(gameEntity.getDiscountPrice())
+                .discountPercentage(gameEntity.getDiscountPercentage())
                 .reviewCount(gameEntity.getReviewCount())
                 .purchaseCount(gameEntity.getPurchaseCount())
                 .releaseDate(gameEntity.getReleaseDate())

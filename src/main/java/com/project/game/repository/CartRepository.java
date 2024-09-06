@@ -22,4 +22,6 @@ public interface CartRepository extends JpaRepository<CartEntity, Integer>, Cart
     List<CartEntity> findByCartIdIn(List<Integer> cartIdList);
 
     void deleteByUserEntityAndGameEntityIn(UserEntity userEntity, List<GameEntity> list);
+
+    long countByCartIdIn(List<Integer> cartIdList);
 }

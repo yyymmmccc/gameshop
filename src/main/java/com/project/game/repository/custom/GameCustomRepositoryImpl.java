@@ -38,7 +38,9 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                 jpaQueryFactory.select(new QUserGameListResponseDto(
                         gameEntity.gameId,
                         gameEntity.gameName,
-                        gameEntity.price,
+                        gameEntity.originalPrice,
+                        gameEntity.discountPrice,
+                        gameEntity.discountPercentage,
                         gameEntity.reviewCount,
                         gameEntity.purchaseCount,
                         gameEntity.regDate,
@@ -55,7 +57,9 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         .groupBy(
                                 gameEntity.gameId,
                                 gameEntity.gameName,
-                                gameEntity.price,
+                                gameEntity.originalPrice,
+                                gameEntity.discountPrice,
+                                gameEntity.discountPercentage,
                                 gameEntity.reviewCount,
                                 gameImageEntity.gameImageUrl
                         )
@@ -87,7 +91,8 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         gameEntity.gameId,
                         gameImageEntity.gameImageUrl,
                         gameEntity.gameName,
-                        gameEntity.price,
+                        gameEntity.originalPrice,
+                        gameEntity.discountPrice,
                         gameEntity.purchaseCount
                 ))
                         .from(gameEntity)

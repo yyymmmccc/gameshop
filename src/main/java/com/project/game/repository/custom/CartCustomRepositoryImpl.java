@@ -30,7 +30,8 @@ public class CartCustomRepositoryImpl implements CartCustomRepository{
                         cartEntity.cartId,
                         cartEntity.gameEntity.gameId,
                         cartEntity.gameEntity.gameName,
-                        cartEntity.gameEntity.price,
+                        cartEntity.gameEntity.originalPrice,
+                        cartEntity.gameEntity.discountPrice,
                         gameImageEntity.gameImageUrl
                         ))
                         .from(cartEntity)
@@ -53,7 +54,8 @@ public class CartCustomRepositoryImpl implements CartCustomRepository{
                                         gameEntity.gameId,
                                         gameImageEntity.gameImageUrl,
                                         gameEntity.gameName,
-                                        gameEntity.price
+                                        gameEntity.originalPrice,
+                                        gameEntity.discountPrice
                                 ))
                         .from(cartEntity)
                         .join(gameEntity)

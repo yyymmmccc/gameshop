@@ -17,8 +17,12 @@ public class KakaoPayReadyRequestDto {
 
     @Schema(example = "장바구니 번호 하나 이상을 입력")
     private List<Integer> cartIdList;
-    @Schema(example = "해당 가격들을 입력(쿠폰 적용으로 할인될 수 있으니)")
+
+    @Schema(example = "각 상품의 가격")
     private List<Integer> priceList;
+
+    @Schema(example = "총 가격")
+    private int totalPrice;
 
     public static OrdersEntity toOrderEntity(String orderId, String tid, UserEntity userEntity) {
         return com.project.game.entity.OrdersEntity.builder()

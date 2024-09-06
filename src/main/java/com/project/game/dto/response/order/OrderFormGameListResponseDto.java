@@ -14,15 +14,17 @@ public class OrderFormGameListResponseDto {
     private int gameId;
     private String gameImageUrl;
     private String gameName;
-    private int price;
+    private int originalPrice;
+    private int discountPrice;
 
     @QueryProjection
-    public OrderFormGameListResponseDto(int cartId, int gameId, String gameImageUrl, String gameName, int price) {
+    public OrderFormGameListResponseDto(int cartId, int gameId, String gameImageUrl, String gameName, int originalPrice, int discountPrice) {
         this.cartId = cartId;
         this.gameId = gameId;
         this.gameImageUrl = gameImageUrl;
         this.gameName = gameName;
-        this.price = price;
+        this.originalPrice = originalPrice;
+        this.discountPrice = discountPrice;
     }
 
 }

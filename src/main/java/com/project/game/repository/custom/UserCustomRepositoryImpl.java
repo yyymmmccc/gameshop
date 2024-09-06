@@ -34,7 +34,8 @@ public class UserCustomRepositoryImpl implements UserCustomRepository{
                         new QRecentViewListResponseDto(
                                 gameEntity.gameId,
                                 gameEntity.gameName,
-                                gameEntity.price,
+                                gameEntity.originalPrice,
+                                gameEntity.discountPrice,
                                 gameImageEntity.gameImageUrl
                         ))
                 .from(gameEntity)

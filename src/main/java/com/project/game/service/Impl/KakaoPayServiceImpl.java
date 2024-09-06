@@ -50,11 +50,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         List<CartEntity> cartEntityList = cartRepository.findByCartIdIn(dto.getCartIdList());
         // 카트 상품들을 가져옴
 
-        int totalPrice = 0;
-        for(int price : dto.getPriceList()){
-            totalPrice += price;
-        }
-
+        int totalPrice = dto.getTotalPrice();
         String orderId = this.generateOrderNumber();       // 주문번호 생성
         int productCount = cartEntityList.size()-1;        // 주문상품의 갯수체크
 
@@ -70,10 +66,10 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         parameters.put("quantity", "1");                                        // 상품 수량
         parameters.put("total_amount", String.valueOf(totalPrice));             // 상품 총액
         parameters.put("tax_free_amount", "0");                                 // 상품 비과세 금액
-        parameters.put("approval_url", "http://" + baseUrl + "/api/order/pay/approve?partner_order_id=" + orderId); // 결제 성공 시 URL
-        parameters.put("cancel_url", "http://" + baseUrl + "/api/order/pay/cancel?partner_order_id=" + orderId);
+        parameters.put("approval_url", "http://" + baseUrl + "/api/user/order/pay/approve?partner_order_id=" + orderId); // 결제 성공 시 URL
+        parameters.put("cancel_url", "http://" + baseUrl + "/api/user/order/pay/cancel?partner_order_id=" + orderId);
         // 결제 취소 시 URL (qr 코드에서 결제 안하고 창 닫기)
-        parameters.put("fail_url", "http://" + baseUrl + "/api/order/pay/fail");
+        parameters.put("fail_url", "http://" + baseUrl + "/api/user/order/pay/fail");
         // 결제 실패 시 URL (잔액부족 등)
 
         // HttpEntity : HTTP 요청 또는 응답에 해당하는 Http Header와 Http Body를 포함하는 클래스

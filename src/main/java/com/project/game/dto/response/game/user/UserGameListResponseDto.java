@@ -13,7 +13,9 @@ import lombok.Setter;
 public class UserGameListResponseDto {
     private int gameId;
     private String gameName;
-    private int price;
+    private int originalPrice;
+    private int discountPrice;
+    private int discountPercentage;
     private int reviewCount;
     private int purchaseCount;
     private String regDate;
@@ -21,10 +23,14 @@ public class UserGameListResponseDto {
     private String gameImageUrl;
 
     @QueryProjection
-    public UserGameListResponseDto(int gameId, String gameName, int price, int reviewCount, int purchaseCount, String regDate, double rating, String gameImageUrl){
+    public UserGameListResponseDto(int gameId, String gameName, int originalPrice, int discountPrice,
+                                   int discountPercentage, int reviewCount, int purchaseCount,
+                                   String regDate, double rating, String gameImageUrl){
         this.gameId = gameId;
         this.gameName = gameName;
-        this.price = price;
+        this.originalPrice = originalPrice;
+        this.discountPrice = discountPrice;
+        this.discountPercentage = discountPercentage;
         this.reviewCount = reviewCount;
         this.purchaseCount = purchaseCount;
         this.regDate = regDate;

@@ -27,7 +27,7 @@ public class OrdersController implements SwaggerOrderApi {
     public ResponseEntity getOrderFormGames(@RequestBody @Valid OrderFormRequestDto dto,
                                             @AuthenticationPrincipal String email){
 
-        return ordersService.getOrderFormGames(dto, email);
+        return ordersService.getOrderFormProduct(dto, email);
     }
 
 

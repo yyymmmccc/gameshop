@@ -37,7 +37,14 @@ public class GameEntity {
 
     private String publisher;
 
-    private int price;
+    @Column(name = "original_price")
+    private int originalPrice;
+
+    @Column(name = "discount_price")
+    private int discountPrice;
+
+    @Column(name = "discount_percentage")
+    private int discountPercentage;
 
     @Column(name = "review_count")
     private int reviewCount;
@@ -71,7 +78,9 @@ public class GameEntity {
         this.gameName = dto.getGameName();
         this.gameDc = dto.getGameDc();
         this.publisher = dto.getPublisher();
-        this.price = dto.getPrice();
+        this.originalPrice = dto.getOriginalPrice();
+        this.discountPrice = dto.getOriginalPrice() * (1 - dto.getDiscountPercentage() / 100);
+        this.discountPercentage = dto.getDiscountPercentage();
         this.releaseDate = dto.getReleaseDate();
     }
 

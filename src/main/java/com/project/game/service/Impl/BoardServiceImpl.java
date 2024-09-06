@@ -42,6 +42,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ResponseEntity<?> postBoard(BoardRequestDto dto, String email) {
 
+        // 2번은 공지사항 카테고리 -> 일반 유저는 권한없음
         if(dto.getCategoryId() == 2)
             throw new CustomException(ResponseCode.NO_PERMISSION);
 
@@ -114,7 +115,8 @@ public class BoardServiceImpl implements BoardService {
 
         // 이메일이 없는 경우 조회수 증가 x
         UserEntity userEntity = userRepository.findById(email).orElse(null);
-        if(userEntity != null) { // 로그인은 했지만 아무게시물도 방문 안한경우
+        // 로그인 안한 회원 및, 내 게시물은 조회수 증가 x
+        if(userEntity != null && !boardEntity.getUserEntity().getEmail().equals(email)) {
             if(redisService.getValues(userEntity.getEmail() + "_" + boardEntity.getBoardId()).equals("false")){
                 redisService.setValues(userEntity.getEmail() + "_" + boardEntity.getBoardId(),"ok", Duration.ofDays(1));
                 boardEntity.incViewCount();
