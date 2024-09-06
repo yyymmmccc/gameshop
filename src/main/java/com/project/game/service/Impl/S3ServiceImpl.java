@@ -43,7 +43,7 @@ public class S3ServiceImpl implements S3Service {
             throw new CustomException(ResponseCode.FILE_REQUEST_FAIL);
 
         String uuid = UUID.randomUUID().toString();
-        String fileUrl = "images/" + uuid + "_";
+        String fileUrl = "images/" + uuid;
 
         // 파일의 Content-Type 설정
         ObjectMetadata metadata = new ObjectMetadata();
@@ -60,13 +60,17 @@ public class S3ServiceImpl implements S3Service {
         return ResponseDto.success(url);
     }
 
-    public ResponseEntity<?> deleteFile(List<String> imageUrlList){
+    public boolean deleteFile(String imageUrl){
 
-        for(String imageUrl : imageUrlList){
+        try{
             String fileKey = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+            log.info("이미지 url : " + imageUrl);
+            log.info("파일경로 url : " + fileKey);
             amazonS3Client.deleteObject(bucket, "images/" + fileKey);
-        }
 
-        return ResponseDto.success(null);
+            return true;
+        } catch (Exception e){
+            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }

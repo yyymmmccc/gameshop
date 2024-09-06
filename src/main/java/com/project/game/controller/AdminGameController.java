@@ -29,17 +29,15 @@ public class AdminGameController {
 
     @PatchMapping("/{gameId}")
     public ResponseEntity<?> patchGame(@PathVariable("gameId") int gameId,
-                                    @RequestBody @Valid AdminPostGameRequestDto dto,
-                                    @AuthenticationPrincipal String email){
+                                    @RequestBody @Valid AdminPostGameRequestDto dto){
 
-        return adminGameService.patchGame(gameId, dto, email);
+        return adminGameService.patchGame(gameId, dto);
     }
 
     @DeleteMapping("/{gameId}")
-    public ResponseEntity<?> deleteGame(@PathVariable("gameId") int gameId,
-                                     @AuthenticationPrincipal String email){
+    public ResponseEntity<?> deleteGame(@PathVariable("gameId") int gameId){
 
-        return adminGameService.deleteGame(gameId, email);
+        return adminGameService.deleteGame(gameId);
     }
 
     @GetMapping("/list")

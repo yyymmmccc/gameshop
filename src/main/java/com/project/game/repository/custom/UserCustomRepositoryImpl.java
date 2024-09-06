@@ -1,6 +1,5 @@
 package com.project.game.repository.custom;
 
-import com.project.game.dto.response.member.admin.AdminUserListResponseDto;
 import com.project.game.dto.response.member.user.QRecentViewListResponseDto;
 import com.project.game.dto.response.member.user.RecentViewListResponseDto;
 import com.project.game.entity.QUserEntity;

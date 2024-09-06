@@ -1,15 +1,12 @@
 package com.project.game.service.Impl;
 
+import com.project.game.entity.*;
 import com.project.game.global.common.ResponseCode;
 import com.project.game.dto.request.board.BoardRequestDto;
 import com.project.game.dto.response.PaginatedResponseDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.board.BoardListResponseDto;
 import com.project.game.dto.response.board.BoardResponseDto;
-import com.project.game.entity.BoardEntity;
-import com.project.game.entity.BoardImageEntity;
-import com.project.game.entity.FavoriteEntity;
-import com.project.game.entity.UserEntity;
 import com.project.game.global.handler.CustomException;
 import com.project.game.repository.BoardImageRepository;
 import com.project.game.repository.BoardRepository;
@@ -30,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +40,11 @@ public class BoardServiceImpl implements BoardService {
     private final RedisService redisService;
     @Transactional
     @Override
-    public ResponseEntity postBoard(BoardRequestDto dto, String email) {
+    public ResponseEntity<?> postBoard(BoardRequestDto dto, String email) {
+
+        if(dto.getCategoryId() == 2)
+            throw new CustomException(ResponseCode.NO_PERMISSION);
+
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
@@ -57,7 +57,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public ResponseEntity patchBoard(BoardRequestDto dto, int boardId, String email) {
+    public ResponseEntity<?> patchBoard(BoardRequestDto dto, int boardId, String email) {
         BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
                 -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
 
@@ -66,23 +66,21 @@ public class BoardServiceImpl implements BoardService {
 
         boardEntity.update(dto);
 
-        List<BoardImageEntity> deleteImageList = new ArrayList<>();
-        List<BoardImageEntity> oldBoardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
+        List<BoardImageEntity> currentBoardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
 
-        for(BoardImageEntity boardImageEntity : oldBoardImageEntityList){
+        List<BoardImageEntity> deleteImageEntityList = new ArrayList<>();
+
+        for(BoardImageEntity boardImageEntity : currentBoardImageEntityList){
             if(!dto.getImageList().contains(boardImageEntity.getImageUrl())){
-                deleteImageList.add(boardImageEntity);
+                deleteImageEntityList.add(boardImageEntity);
             }
         }
 
-        List<String> deleteImageUrlList = deleteImageList.stream()
-                .map(BoardImageEntity::getImageUrl)
-                .collect(Collectors.toList());
+        for(BoardImageEntity boardImageEntity : deleteImageEntityList){
+            s3Service.deleteFile(boardImageEntity.getImageUrl());
+        }
 
-        s3Service.deleteFile(deleteImageUrlList); // DB 사용하지 않는 이미지 찾아서 S3 버킷에서 삭제
-
-        boardImageRepository.deleteAll(deleteImageList);
-
+        boardImageRepository.deleteAll(currentBoardImageEntityList);
         boardImageRepository.saveAll(dto.convertToEntityList(dto.getImageList(), boardEntity));
 
         return ResponseDto.success(boardEntity.getBoardId());
@@ -90,21 +88,27 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public ResponseEntity deleteBoard(int boardId, String email) {
+    public ResponseEntity<?> deleteBoard(int boardId, String email) {
         BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
                 -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
 
         if(!boardEntity.getUserEntity().getEmail().equals(email))
             throw new CustomException(ResponseCode.NO_PERMISSION);
 
-        boardRepository.deleteById(boardId);
+        List <BoardImageEntity> boardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
+
+        for(BoardImageEntity boardImageEntity : boardImageEntityList){
+            s3Service.deleteFile(boardImageEntity.getImageUrl());
+        }
+
+        boardRepository.deleteById(boardId);  // CASCADE 이므로 boardImageEntity 자동삭제
 
         return ResponseDto.success(ResponseCode.SUCCESS);
     }
 
     @Transactional
     @Override
-    public ResponseEntity getBoard(int boardId, String email) {
+    public ResponseEntity<?> getBoard(int boardId, String email) {
         BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
                 -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
 
@@ -124,7 +128,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public ResponseEntity getBoards(int page, String orderBy, int categoryId, String searchType, String searchKeyword) {
+    public ResponseEntity<?> getBoards(int page, String orderBy, int categoryId, String searchType, String searchKeyword) {
 
         Page <BoardListResponseDto> boardListViews =
                 boardRepository.findAllSearch(pageOf(page, orderBy), categoryId, searchType, searchKeyword);
@@ -134,7 +138,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public ResponseEntity putFavorite(int boardId, String email) {
+    public ResponseEntity<?> putFavorite(int boardId, String email) {
 
         BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
                 -> new CustomException(ResponseCode.BOARD_NOT_FOUND));

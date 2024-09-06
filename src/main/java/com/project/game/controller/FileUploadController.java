@@ -1,6 +1,8 @@
 package com.project.game.controller;
 
 import com.project.game.controller.swagger.SwaggerFileUploadApi;
+import com.project.game.dto.response.ResponseDto;
+import com.project.game.global.handler.CustomException;
 import com.project.game.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,5 +24,11 @@ public class FileUploadController implements SwaggerFileUploadApi {
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 
         return s3Service.uploadFile(file);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteFile(String imageUrl){
+
+        return ResponseDto.success(s3Service.deleteFile(imageUrl));
     }
 }
