@@ -28,10 +28,9 @@ public class AdminUserController {
     }
 
     @PatchMapping("")
-    public ResponseEntity patchUser(@RequestParam("email") String userEmail,
-                                    @RequestBody @Valid AdminPatchUserRequestDto dto){
+    public ResponseEntity patchUser(@RequestBody @Valid AdminPatchUserRequestDto dto){
 
-        return adminUserService.patchUser(userEmail, dto);
+        return adminUserService.patchUser(dto);
     }
 
 

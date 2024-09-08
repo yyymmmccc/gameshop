@@ -12,5 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AdminPatchUserRequestDto {
 
+    private String email;
     private String role;
 }

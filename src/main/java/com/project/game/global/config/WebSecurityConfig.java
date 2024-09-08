@@ -94,18 +94,18 @@ public class WebSecurityConfig {
 
     @Bean
     protected UrlBasedCorsConfigurationSource corsConfigurationSource(){
-        // 다른 도메인, 리액트 허용하기 위함
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*"); // 모든 도메인 요청 허용
-        configuration.addAllowedMethod("*"); // 모든 Http 메서드 허용
-        configuration.addExposedHeader("*"); // 모든 헤더 허용
-        // 모든 도메인, 모든 메서드, 모든 헤더를 허용하도록 설정합니다.
+        configuration.addAllowedOrigin("http://localhost:3000"); // 정확한 출처 설정
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true); // 쿠키 및 인증 정보를 허용
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        // 설정한 것을 모든 URL 적용
 
         return source;
     }
+
 
     // 401 에러 즉, 사용자 인증 실패하면 실행 후 commence() 메서드 실행
 

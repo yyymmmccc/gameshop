@@ -8,7 +8,7 @@ public interface AdminUserService {
 
     ResponseEntity getUserList(int page, String searchType, String searchKeyword);
 
-    ResponseEntity patchUser(String userEmail, @Valid AdminPatchUserRequestDto dto);
+    ResponseEntity patchUser(@Valid AdminPatchUserRequestDto dto);
 
     ResponseEntity deleteUser(String userEmail);
 }

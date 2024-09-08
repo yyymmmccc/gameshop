@@ -36,8 +36,8 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Transactional
     @Override
-    public ResponseEntity patchUser(String userEmail, AdminPatchUserRequestDto dto) {
-        UserEntity userEntity = userRepository.findByEmail(userEmail).orElseThrow(()
+    public ResponseEntity patchUser(AdminPatchUserRequestDto dto) {
+        UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         userEntity.update(dto);
