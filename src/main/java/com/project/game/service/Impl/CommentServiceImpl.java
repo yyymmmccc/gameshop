@@ -1,6 +1,6 @@
 package com.project.game.service.Impl;
 
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.comment.CommentRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.comment.CommentResponseDto;

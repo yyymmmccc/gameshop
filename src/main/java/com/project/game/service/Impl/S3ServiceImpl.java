@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.project.game.dto.response.ResponseDto;
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.global.handler.CustomException;
 import com.project.game.service.S3Service;
 import lombok.RequiredArgsConstructor;

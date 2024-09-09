@@ -1,6 +1,6 @@
 package com.project.game.global.handler;
 
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.response.ResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;

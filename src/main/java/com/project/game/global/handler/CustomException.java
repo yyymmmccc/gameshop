@@ -1,6 +1,6 @@
 package com.project.game.global.handler;
 
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

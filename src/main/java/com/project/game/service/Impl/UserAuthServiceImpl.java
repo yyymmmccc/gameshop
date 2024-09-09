@@ -1,6 +1,8 @@
 package com.project.game.service.Impl;
 
-import com.project.game.global.common.ResponseCode;
+import com.project.game.entity.CouponEntity;
+import com.project.game.entity.UserCouponEntity;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.auth.user.*;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.auth.*;
@@ -8,6 +10,8 @@ import com.project.game.entity.UserEntity;
 import com.project.game.global.handler.CustomException;
 import com.project.game.global.provider.EmailProvider;
 import com.project.game.global.provider.JwtProvider;
+import com.project.game.repository.CouponRepository;
+import com.project.game.repository.UserCouponRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.UserAuthService;
 import jakarta.servlet.http.HttpSession;
@@ -20,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,10 +37,13 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final EmailProvider emailProvider;
     private final JwtProvider jwtProvider;
     private final RedisServiceImpl redisService;
-    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final CouponRepository couponRepository;
+    private final UserCouponRepository userCouponRepository;
+
     @Transactional
     @Override
-    public ResponseEntity sendEmailAuthentication(SendEmailAuthenticationRequestDto dto) {
+    public ResponseEntity<?> sendEmailAuthentication(SendEmailAuthenticationRequestDto dto) {
 
         if (userRepository.existsByEmail(dto.getEmail()))
             throw new CustomException(ResponseCode.DUPLICATE_EMAIL);
@@ -52,7 +61,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ResponseEntity checkAuthentication(HttpSession session, CheckAuthenticationRequestDto dto) {
+    public ResponseEntity<?> checkAuthentication(HttpSession session, CheckAuthenticationRequestDto dto) {
         if (!validateAuthCode(dto.getEmail(), dto.getAuthenticationCode()))
             throw new CustomException(ResponseCode.AUTHENTICATION_FAIL);
 
@@ -62,7 +71,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ResponseEntity checkPassword(CheckPasswordRequestDto dto) {
+    public ResponseEntity<?> checkPassword(CheckPasswordRequestDto dto) {
         if(!dto.getPassword().equals(dto.getCheckPassword()))
             throw new CustomException(ResponseCode.PASSWORD_CHECK_FAIL);
 
@@ -70,7 +79,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ResponseEntity checkNickname(String nickname) {
+    public ResponseEntity<?> checkNickname(String nickname) {
        if(userRepository.existsByNickname(nickname))
            throw new CustomException(ResponseCode.DUPLICATE_NICKNAME);
 
@@ -78,7 +87,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ResponseEntity checkTel(String tel) {
+    public ResponseEntity<?> checkTel(String tel) {
         if(userRepository.existsByTel(tel))
             throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
@@ -87,7 +96,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Transactional
     @Override
-    public ResponseEntity join(HttpSession session, JoinRequestDto dto) {
+    public ResponseEntity<?> join(HttpSession session, JoinRequestDto dto) {
         if (userRepository.existsByEmail(dto.getEmail()))
             throw new CustomException(ResponseCode.DUPLICATE_EMAIL);
 
@@ -103,14 +112,25 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (userRepository.existsByTel(dto.getTel()))
             throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
-        userRepository.save(dto.toEntity(passwordEncoder));
+        UserEntity userEntity = userRepository.save(dto.toEntity(passwordEncoder));
+
+        CouponEntity couponEntity = couponRepository.findById(1).orElseThrow(()
+                -> new CustomException(ResponseCode.COUPON_NOT_FOUND));
+
+        userCouponRepository.save(UserCouponEntity.builder()
+                .userEntity(userEntity)
+                .couponEntity(couponEntity)
+                .issued_at(String.valueOf(LocalDateTime.now()))    // 현재 시간
+                .expires_at(String.valueOf(LocalDateTime.now().plusMonths(1)))  // 한 달 뒤 만료일
+                .state("active")
+                .build());
 
         return ResponseDto.success(null);
     }
 
     @Transactional
     @Override
-    public ResponseEntity oauthJoin(OAuthJoinRequestDto dto) {
+    public ResponseEntity<?> oauthJoin(OAuthJoinRequestDto dto) {
 
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -135,7 +155,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Transactional
     @Override
-    public ResponseEntity login(UserLoginRequestDto dto) {
+    public ResponseEntity<?> login(UserLoginRequestDto dto) {
 
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.LOGIN_FAIL));
@@ -153,7 +173,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Transactional
     @Override
-    public ResponseEntity logout(String refreshToken) {
+    public ResponseEntity<?> logout(String refreshToken) {
 
         redisService.deleteValues(refreshToken);
 
@@ -161,7 +181,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ResponseEntity findEmail(FindEmailRequestDto dto) {
+    public ResponseEntity<?> findEmail(FindEmailRequestDto dto) {
         UserEntity userEntity = userRepository.findByNameAndTel(dto.getName(), dto.getTel()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
@@ -170,7 +190,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Transactional
     @Override
-    public ResponseEntity findPassword(FindPasswordRequestDto dto) {
+    public ResponseEntity<?> findPassword(FindPasswordRequestDto dto) {
 
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -186,7 +206,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Transactional
     @Override
-    public ResponseEntity postNewPassword(NewPasswordRequestDto dto) {
+    public ResponseEntity<?> postNewPassword(NewPasswordRequestDto dto) {
 
         String userEmail = redisService.getValues(dto.getResetToken());
         if(userEmail.equals("false"))
@@ -207,9 +227,9 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         return ResponseDto.success(null);
     }
-
+    @Transactional
     @Override
-    public ResponseEntity refreshToken(String refreshToken) {
+    public ResponseEntity<?> refreshToken(String refreshToken) {
 
         String userEmail = redisService.getValues(refreshToken);
         // 레디스 저장소에 해당 refreshToken 이 만료되거나 해서 존재하지않을경우
@@ -234,18 +254,16 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     public boolean validateAuthCode(String email, String code) {
         String redisAuthCode = redisService.getValues(email);
-        if(!redisAuthCode.equals(code) || redisAuthCode.equals("false")) return false;
-
-        return true;
+        return redisAuthCode.equals(code) && !redisAuthCode.equals("false");
     }
 
     public String getAuthenticationCode(){
 
-        String AuthenticationNumber = "";
+        StringBuilder AuthenticationNumber = new StringBuilder();
 
         for(int count = 0; count < 4; count++){
-            AuthenticationNumber += (int)(Math.random() * 10); // 1부터 9까지 랜덤하게 추출
+            AuthenticationNumber.append((int) (Math.random() * 10)); // 1부터 9까지 랜덤하게 추출
         }
-        return AuthenticationNumber;
+        return AuthenticationNumber.toString();
     }
 }

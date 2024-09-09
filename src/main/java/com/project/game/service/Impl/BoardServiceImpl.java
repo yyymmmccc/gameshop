@@ -1,7 +1,7 @@
 package com.project.game.service.Impl;
 
 import com.project.game.entity.*;
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.board.BoardRequestDto;
 import com.project.game.dto.response.PaginatedResponseDto;
 import com.project.game.dto.response.ResponseDto;

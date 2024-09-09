@@ -2,7 +2,7 @@ package com.project.game.service.Impl;
 
 import com.project.game.dto.response.PaginatedResponseDto;
 import com.project.game.dto.response.game.admin.AdminGameListResponseDto;
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.game.AdminPostGameRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.entity.GameCategoryEntity;

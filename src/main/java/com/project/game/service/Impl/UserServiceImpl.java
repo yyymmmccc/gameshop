@@ -1,6 +1,6 @@
 package com.project.game.service.Impl;
 
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.member.user.UserPasswordRequestDto;
 import com.project.game.dto.request.member.user.UserUpdateRequestDto;
 import com.project.game.dto.response.ResponseDto;

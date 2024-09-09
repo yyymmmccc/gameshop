@@ -1,4 +1,4 @@
-package com.project.game.global.common;
+package com.project.game.global.code;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +38,7 @@ public enum ResponseCode {
     /*
      * 404 NOT_FOUND: 리소스를 찾을 수 없음
      */
+    COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "없는 쿠폰이거나 만료된 쿠폰입니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
     NO_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "리프레시 토큰을 찾을 수 없습니다."),
     NO_PASSWORD_RESET_TOKEN(HttpStatus.NOT_FOUND, "비밀번호 리셋 토큰을 찾을 수 없습니다."),

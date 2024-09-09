@@ -1,6 +1,6 @@
 package com.project.game.service.Impl;
 
-import com.project.game.global.common.ResponseCode;
+import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.order.*;
@@ -35,7 +35,7 @@ public class OrdersServiceImpl implements OrdersService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity getOrderFormProduct(OrderFormRequestDto dto, String email) {
+    public ResponseEntity<?> getOrderFormProduct(OrderFormRequestDto dto, String email) {
 
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -59,7 +59,7 @@ public class OrdersServiceImpl implements OrdersService {
 
 
     @Override
-    public ResponseEntity getOrderList(String email) {
+    public ResponseEntity<?> getOrderList(String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
@@ -75,8 +75,8 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public ResponseEntity getOrderDetailList(String email, String orderId) {
-        //주문날짜, 주문번호, 주문자명, 전화번호,  || 주문상품n개, 게임상품이미지, 게임이름, 주문디테일.게임가격, 주문내역.결제가격
+    public ResponseEntity<?> getOrderDetailList(String email, String orderId) {
+        //주문날짜, 주문번호, 주문자명, 전화번호,  || 주문상품 n개, 게임상품이미지, 게임이름, 주문디테일.게임가격, 주문내역.결제가격
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 

@@ -25,7 +25,7 @@ public class KakaoPayReadyRequestDto {
     private int totalPrice;
 
     public static OrdersEntity toOrderEntity(String orderId, String tid, UserEntity userEntity) {
-        return com.project.game.entity.OrdersEntity.builder()
+        return OrdersEntity.builder()
                 .orderId(orderId)
                 .tid(tid)
                 .userEntity(userEntity)
