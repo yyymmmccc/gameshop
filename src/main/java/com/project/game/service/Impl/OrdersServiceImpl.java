@@ -36,6 +36,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public ResponseEntity<?> getOrderFormProduct(OrderFormRequestDto dto, String email) {
+        // 상품주문 페이지에 상품들 불러오기
 
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -56,7 +57,6 @@ public class OrdersServiceImpl implements OrdersService {
 
         return ResponseDto.success(OrderFormResponseDto.of(orderFormGameListResponseDto, userEntity, totalPrice));
     }
-
 
     @Override
     public ResponseEntity<?> getOrderList(String email) {

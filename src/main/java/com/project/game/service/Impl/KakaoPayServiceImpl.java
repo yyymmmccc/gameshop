@@ -42,7 +42,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 
     @Transactional
     @Override
-    public ResponseEntity payReady(KakaoPayReadyRequestDto dto, String email) {
+    public ResponseEntity<?> payReady(KakaoPayReadyRequestDto dto, String email) {
 
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -59,9 +59,9 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         parameters.put("partner_order_id", orderId);                       // 주문번호
         parameters.put("partner_user_id", userEntity.getEmail());                           // 회원 아이디
         if(productCount == 0)
-            parameters.put("item_name", cartEntityList.get(0).getGameEntity().getGameName());      // 상품 이름
+            parameters.put("item_name", cartEntityList.getFirst().getGameEntity().getGameName());      // 상품 이름
         else
-            parameters.put("item_name", cartEntityList.get(0).getGameEntity().getGameName() + " 외 " + productCount + "개");                                      // 상품명
+            parameters.put("item_name", cartEntityList.getFirst().getGameEntity().getGameName() + " 외 " + productCount + "개");                                      // 상품명
 
         parameters.put("quantity", "1");                                        // 상품 수량
         parameters.put("total_amount", String.valueOf(totalPrice));             // 상품 총액
@@ -101,7 +101,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 
     @Transactional
     @Override
-    public ResponseEntity payApprove(String orderId, String pgToken) {
+    public ResponseEntity<?> payApprove(String orderId, String pgToken) {
 
         OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
                 -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
@@ -144,7 +144,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 
     @Transactional
     @Override
-    public ResponseEntity payCancel(String orderId) {
+    public ResponseEntity<?> payCancel(String orderId) {
         // orderId 해당하는 state를 주문취소 상태로 바꿔주자
 
         OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
@@ -164,17 +164,21 @@ public class KakaoPayServiceImpl implements KakaoPayService {
     }
 
     public String generateOrderNumber() {
+
+        StringBuffer sb = new StringBuffer();
         // 날짜 포맷 정의
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         Date now = new Date();
         String dateStr = dateFormat.format(now);
+        sb.append(dateStr);
 
         // 랜덤 4자리 숫자 생성
         int randomNumber = new Random().nextInt(10000); // 0부터 9999까지의 숫자
         String randomStr = String.format("%04d", randomNumber); // 4자리로 포맷팅
+        sb.append(randomStr);
 
         // 주문번호 생성
-        String orderNumber = dateStr + randomStr;
+        String orderNumber = sb.toString();
 
         return orderNumber;
     }
