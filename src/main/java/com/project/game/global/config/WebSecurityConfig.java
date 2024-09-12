@@ -60,15 +60,17 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/user/auth/**"
                                 , "/oauth2/**"
                                 , "/file/**"
-                                , "/api/user/order/pay/approve"
-                                , "/api/user/order/pay/cancel").permitAll()
+                                //, "/api/user/order/pay/approve"
+                                //, "/api/user/order/pay/cancel"
+                                , "/api/user/payment/**"
+                                , "/api/user/order/**").permitAll()
 
                         .requestMatchers(swaggerPath).permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/user/board/**"
                                 , "/api/user/game/**"
                                 , "/api/user/review/**"
-                                ,"/api/user/comment/**").permitAll()
+                                , "/api/user/comment/**").permitAll()
 
                         .anyRequest().authenticated()
                 )       // 그 외의 요청은 인증을 필요

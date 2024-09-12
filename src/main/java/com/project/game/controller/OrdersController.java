@@ -3,6 +3,8 @@ package com.project.game.controller;
 import com.project.game.controller.swagger.SwaggerOrderApi;
 import com.project.game.dto.request.order.KakaoPayReadyRequestDto;
 import com.project.game.dto.request.order.OrderFormRequestDto;
+import com.project.game.dto.request.order.OrderRequestDto;
+import com.project.game.dto.response.ResponseDto;
 import com.project.game.service.KakaoPayService;
 import com.project.game.service.OrdersService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/user/order")
@@ -30,6 +34,21 @@ public class OrdersController implements SwaggerOrderApi {
         return ordersService.getOrderFormProduct(dto, email);
     }
 
+    @PostMapping("/create")
+    public ResponseEntity<?> createOrder(@RequestBody @Valid OrderRequestDto dto){
+
+        log.info("이메일 : " + dto.getBuyer_email());
+        log.info("전화번호 : " + dto.getBuyer_tel());
+        log.info("가격 : " + dto.getAmount());
+        log.info("카트번호" + dto.getCart_id());
+        log.info("이름 : " + dto.getBuyer_name());
+        log.info("상품이름 : " + dto.getProduct_name());
+
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("merchant_uid", "34859345");
+        return ResponseEntity.ok(hashMap);
+    }
+
 
     @GetMapping("/list")
     public ResponseEntity getOrderList(@AuthenticationPrincipal String email){
@@ -46,7 +65,6 @@ public class OrdersController implements SwaggerOrderApi {
     }
 
     // 카카오페이 부분
-
     @PostMapping("/pay/ready")
     public ResponseEntity payReady(@RequestBody KakaoPayReadyRequestDto dto,
                                    @AuthenticationPrincipal String email) {
