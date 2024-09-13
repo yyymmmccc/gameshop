@@ -21,6 +21,7 @@ public enum ResponseCode {
     LOGIN_FAIL(HttpStatus.BAD_REQUEST, "이메일 또는 비밀번호가 잘못되었습니다."),
     VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "입력값이 형식에 맞지 않습니다."),
     FILE_REQUEST_FAIL(HttpStatus.BAD_REQUEST, "jpg, jpeg, png 이미지 파일만 가능합니다."),
+    PAYMENT_FAIL(HttpStatus.BAD_REQUEST, "주문 금액과 결제 금액이 다릅니다."),
 
     // 409 Conflict : 중복된 자원
     DUPLICATE_ORDER(HttpStatus.CONFLICT, "이미 구매한 게임입니다."),
@@ -46,7 +47,7 @@ public enum ResponseCode {
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
     GAME_NOT_FOUND(HttpStatus.NOT_FOUND, "게임을 찾을 수 없습니다."),
-    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니 정보를 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
 

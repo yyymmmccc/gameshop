@@ -29,8 +29,7 @@ public class OrderDetailCustomRepositoryImpl implements OrderDetailCustomReposit
                         orderDetailEntity.gameEntity.gameId,
                         gameImageEntity.gameImageUrl,
                         orderDetailEntity.gameEntity.gameName,
-                        orderDetailEntity.price,
-                        orderDetailEntity.state
+                        orderDetailEntity.price
                 ))
                         .from(orderDetailEntity)
                         .leftJoin(gameImageEntity)

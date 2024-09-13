@@ -1,6 +1,5 @@
 package com.project.game.controller.swagger;
 
-import com.project.game.dto.request.order.KakaoPayReadyRequestDto;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +33,7 @@ public interface SwaggerOrderApi {
     ResponseEntity getOrderDetailList(@AuthenticationPrincipal String email,
                                       @PathVariable("orderId") String orderId);
 
+    /*
     @Operation(summary = "카카오페이 결제 준비", description = "카카오페이를 이용한 결제 준비를 수행합니다.")
     @ApiResponse(responseCode = "200", description = "결제 준비 성공")
     @ApiResponse(responseCode = "500", description = "결제 준비 실패")
@@ -53,4 +53,6 @@ public interface SwaggerOrderApi {
     @ApiResponse(responseCode = "500", description = "결제 취소 실패")
     @GetMapping("/pay/cancel")
     ResponseEntity payCancel(@RequestParam("partner_order_id") String orderId);
+    */
+
 }

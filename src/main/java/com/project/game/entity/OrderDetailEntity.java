@@ -17,7 +17,7 @@ public class OrderDetailEntity {
     @Id
     @Column(name = "order_detail_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderId;
+    private int orderDetailId;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -28,6 +28,8 @@ public class OrderDetailEntity {
     private GameEntity gameEntity;
 
     private int price;
-    private String state;
+
+    @Column(name = "order_review")
+    private boolean order_review;
 
 }

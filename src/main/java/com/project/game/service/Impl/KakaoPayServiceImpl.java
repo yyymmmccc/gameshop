@@ -1,5 +1,5 @@
 package com.project.game.service.Impl;
-
+/*
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.order.KakaoPayReadyRequestDto;
 import com.project.game.dto.response.ResponseDto;
@@ -183,3 +183,6 @@ public class KakaoPayServiceImpl implements KakaoPayService {
         return orderNumber;
     }
 }
+
+
+ */

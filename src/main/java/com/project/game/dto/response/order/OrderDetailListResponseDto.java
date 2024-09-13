@@ -14,15 +14,13 @@ public class OrderDetailListResponseDto {
     private String gameImage;
     private String gameName;
     private int price;
-    private String state;
 
     @QueryProjection
-    public OrderDetailListResponseDto(int gameId, String gameImage, String gameName, int price, String state) {
+    public OrderDetailListResponseDto(int gameId, String gameImage, String gameName, int price) {
         this.gameId = gameId;
         this.gameImage = gameImage;
         this.gameName = gameName;
         this.price = price;
-        this.state = state;
     }
 
 

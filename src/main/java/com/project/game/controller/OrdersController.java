@@ -1,11 +1,9 @@
 package com.project.game.controller;
 
 import com.project.game.controller.swagger.SwaggerOrderApi;
-import com.project.game.dto.request.order.KakaoPayReadyRequestDto;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.dto.request.order.OrderRequestDto;
 import com.project.game.dto.response.ResponseDto;
-import com.project.game.service.KakaoPayService;
 import com.project.game.service.OrdersService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,7 +22,7 @@ import java.util.HashMap;
 public class OrdersController implements SwaggerOrderApi {
 
     private final OrdersService ordersService;
-    private final KakaoPayService kakaoPayService;
+//    private final KakaoPayService kakaoPayService;
 
     // 장바구니 -> 주문페이지 넘어갈 때, 주문 페이지에서 보여줄 정보
     @PostMapping("/form")
@@ -37,6 +35,7 @@ public class OrdersController implements SwaggerOrderApi {
     @PostMapping("/create")
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderRequestDto dto){
 
+        /*
         log.info("이메일 : " + dto.getBuyer_email());
         log.info("전화번호 : " + dto.getBuyer_tel());
         log.info("가격 : " + dto.getAmount());
@@ -44,9 +43,13 @@ public class OrdersController implements SwaggerOrderApi {
         log.info("이름 : " + dto.getBuyer_name());
         log.info("상품이름 : " + dto.getProduct_name());
 
+         */
+
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("merchant_uid", "34859345");
-        return ResponseEntity.ok(hashMap);
+        hashMap.put("merchant_uid", "34859345");  // 주문번호
+        //return ResponseEntity.ok(hashMap);
+
+        return ordersService.createOrder(dto);
     }
 
 
@@ -64,6 +67,7 @@ public class OrdersController implements SwaggerOrderApi {
 
     }
 
+    /*
     // 카카오페이 부분
     @PostMapping("/pay/ready")
     public ResponseEntity payReady(@RequestBody KakaoPayReadyRequestDto dto,
@@ -88,4 +92,5 @@ public class OrdersController implements SwaggerOrderApi {
 
         return kakaoPayService.payCancel(orderId);
     }
+    */
 }

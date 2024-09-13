@@ -22,13 +22,12 @@ public class OrdersEntity {
     @Column(name = "order_id")
     private String orderId;
 
-    private String tid;
-
     @ManyToOne
     @JoinColumn(name = "user_email")
     private UserEntity userEntity;
 
-    private String state;
+    @Column(name = "total_amount")
+    private int totalAmount;
 
     @CreationTimestamp
     @Column(name = "order_date")
@@ -36,9 +35,5 @@ public class OrdersEntity {
 
     @OneToMany(mappedBy = "ordersEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-
-    public void update(String state){
-        this.state = state;
-    }
 
 }

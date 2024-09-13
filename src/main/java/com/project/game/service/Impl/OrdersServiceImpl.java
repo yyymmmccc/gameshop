@@ -1,27 +1,25 @@
 package com.project.game.service.Impl;
 
+import com.project.game.dto.request.order.OrderRequestDto;
+import com.project.game.entity.*;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.order.*;
-import com.project.game.entity.OrdersEntity;
-import com.project.game.entity.UserEntity;
 import com.project.game.global.handler.CustomException;
-import com.project.game.repository.CartRepository;
-import com.project.game.repository.OrderDetailRepository;
-import com.project.game.repository.OrdersRepository;
-import com.project.game.repository.UserRepository;
+import com.project.game.repository.*;
 import com.project.game.service.OrdersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,10 +27,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrdersServiceImpl implements OrdersService {
 
+    private final PaymentRepository paymentRepository;
     private final OrdersRepository ordersRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final GameRepository gameRepository;
 
     @Override
     public ResponseEntity<?> getOrderFormProduct(OrderFormRequestDto dto, String email) {
@@ -90,6 +90,51 @@ public class OrdersServiceImpl implements OrdersService {
                 .sum();
 
         return ResponseDto.success(OrderDetailResponseDto.of(ordersEntity, userEntity, ordersDetailEntityList, totalPrice));
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity createOrder(OrderRequestDto dto) {
+
+        UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
+                -> new CustomException(ResponseCode.USER_NOT_FOUND));
+
+        // 요청 장바구니 id 갯수와 실제 데이터베이스에 있는 cartId 갯수가 일치하는지 검사
+        long countByCartId = cartRepository.countByCartIdIn(dto.getCartIdList());
+        if(countByCartId != dto.getCartIdList().size())
+            throw new CustomException(ResponseCode.CART_NOT_FOUND);
+
+        List<CartEntity> cartEntityList = cartRepository.findByCartIdIn(dto.getCartIdList());
+
+        String orderId = generateOrderNumber(); // 주문번호 생성
+
+        OrdersEntity ordersEntity = ordersRepository.save(dto.toEntity(userEntity, orderId));
+
+        List <OrderDetailEntity> orderDetailEntityList = OrderRequestDto.convertToEntityList(ordersEntity, cartEntityList, dto.getGamePriceList());
+
+        orderDetailRepository.saveAll(orderDetailEntityList);
+
+        return ResponseDto.success(orderId);
+    }
+
+    public String generateOrderNumber() {
+
+        StringBuffer sb = new StringBuffer();
+        // 날짜 포맷 정의
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date now = new Date();
+        String dateStr = dateFormat.format(now);
+        sb.append(dateStr);
+
+        // 랜덤 4자리 숫자 생성
+        int randomNumber = new Random().nextInt(10000); // 0부터 9999까지의 숫자
+        String randomStr = String.format("%04d", randomNumber); // 4자리로 포맷팅
+        sb.append(randomStr);
+
+        // 주문번호 생성
+        String orderNumber = sb.toString();
+
+        return orderNumber;
     }
 
 
