@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class EmailProvider{
 
     private final JavaMailSender javaMailSender;
-    private final String JOIN_SUBJECT = "[GameForge] 회원가입 인증메일 안내";
+    private final String JOIN_SUBJECT = "[GameForge] 회원가입 인증번호 안내";
     private final String FIND_SUBJECT = "[GameForge] 비밀번호 재설정 안내";
     public boolean sendAuthenticationMail(String email, String authenticationCode){
 

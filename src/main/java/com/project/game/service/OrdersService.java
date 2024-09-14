@@ -10,4 +10,6 @@ public interface OrdersService {
     ResponseEntity getOrderDetailList(String email, String orderId);
 
     ResponseEntity createOrder(OrderRequestDto dto);
+
+    ResponseEntity cancelOrder(String orderId);
 }

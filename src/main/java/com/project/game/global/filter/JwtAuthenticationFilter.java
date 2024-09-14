@@ -40,8 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Claims claims = jwtProvider.accessValidate(accessToken); // 토큰 유효성 검사 및 이메일 추출
+        if(claims == null){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String role = claims.get("role", String.class);
         String email = claims.get("email", String.class);
+
         if (role == null || email == null) { // 둘 중 하나의 값만 없어도 return
             filterChain.doFilter(request, response); // 토큰이 유효하지 않으면 다음 필터로 이동
             return;

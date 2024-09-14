@@ -35,5 +35,4 @@ public class OrdersEntity {
 
     @OneToMany(mappedBy = "ordersEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-
 }

@@ -32,7 +32,6 @@ public class OrdersServiceImpl implements OrdersService {
     private final OrderDetailRepository orderDetailRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
-    private final GameRepository gameRepository;
 
     @Override
     public ResponseEntity<?> getOrderFormProduct(OrderFormRequestDto dto, String email) {
@@ -85,11 +84,10 @@ public class OrdersServiceImpl implements OrdersService {
 
         List <OrderDetailListResponseDto> ordersDetailEntityList = orderDetailRepository.findAllByOrderEntityAndUserEntity(ordersEntity, userEntity);
 
-        int totalPrice = ordersDetailEntityList.stream()
-                .mapToInt(OrderDetailListResponseDto::getPrice)
-                .sum();
+        PaymentEntity paymentEntity = paymentRepository.findByOrdersEntity(ordersEntity).orElseThrow(()
+                -> new CustomException(ResponseCode.PAYMENT_NOT_FOUND));
 
-        return ResponseDto.success(OrderDetailResponseDto.of(ordersEntity, userEntity, ordersDetailEntityList, totalPrice));
+        return ResponseDto.success(OrderDetailResponseDto.of(ordersEntity, userEntity, ordersDetailEntityList, paymentEntity));
     }
 
     @Transactional
@@ -115,6 +113,19 @@ public class OrdersServiceImpl implements OrdersService {
         orderDetailRepository.saveAll(orderDetailEntityList);
 
         return ResponseDto.success(orderId);
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity cancelOrder(String orderId) {
+
+        // 주문번호를 삭제하면됨
+        OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
+                -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
+
+        ordersRepository.delete(ordersEntity);
+
+        return ResponseDto.success(null);
     }
 
     public String generateOrderNumber() {

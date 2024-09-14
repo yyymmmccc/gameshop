@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "유저 - 주문", description = "결제 및 주문내역 생성, 조회, 삭제 API")
+@Tag(name = "유저 - 주문", description = "주문내역 생성, 조회 API")
 @RequestMapping("/api/order")
-public interface SwaggerOrderApi {
+public interface SwaggerOrdersApi {
 
     @Operation(summary = "주문 페이지 정보 조회", description = "장바구니에서 주문 페이지로 넘어갈 때 보여줄 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")

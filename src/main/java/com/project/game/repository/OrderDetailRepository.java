@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetailEntity, Integer>, OrderDetailCustomRepository {
 
-    List<OrderDetailEntity> findByOrdersEntity(OrdersEntity ordersEntity);
 
+    void deleteAllByOrdersEntity(OrdersEntity ordersEntity);
 }
