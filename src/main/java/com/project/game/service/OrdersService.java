@@ -12,4 +12,6 @@ public interface OrdersService {
     ResponseEntity createOrder(OrderRequestDto dto);
 
     ResponseEntity cancelOrder(String orderId);
+
+    ResponseEntity userCancelOrder(String orderId, String email);
 }

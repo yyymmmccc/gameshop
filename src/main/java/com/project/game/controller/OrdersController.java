@@ -37,8 +37,14 @@ public class OrdersController implements SwaggerOrdersApi {
     @DeleteMapping("/cancel/{orderId}")
     public ResponseEntity<?> cancelOrder(@PathVariable("orderId") String orderId){
 
-
         return ordersService.cancelOrder(orderId);
+    }
+
+    @PostMapping("/user-cancel/{orderId}")
+    public ResponseEntity<?> userCancelOrder(@PathVariable("orderId") String orderId,
+                                             @AuthenticationPrincipal String email){
+
+        return ordersService.userCancelOrder(orderId, email);
     }
 
 

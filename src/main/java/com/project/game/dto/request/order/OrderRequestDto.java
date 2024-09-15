@@ -32,6 +32,7 @@ public class OrderRequestDto {
         return OrderDetailEntity.builder()
                 .ordersEntity(ordersEntity)
                 .gameEntity(cartEntity.getGameEntity())
+                .orderReview(true)
                 .price(price)
                 .build();
     }

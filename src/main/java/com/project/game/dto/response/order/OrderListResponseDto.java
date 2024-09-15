@@ -11,16 +11,16 @@ import java.util.List;
 public class OrderListResponseDto {
 
     private String orderId;
-    private String status;
+    private String orderStatus;
     private String orderDate;
-    private List<OrderProductListResponseDto> list;
+    private List<OrderProductListResponseDto> items;
 
     @QueryProjection
-    public OrderListResponseDto(String orderId, String status, String orderDate, List<OrderProductListResponseDto> list) {
+    public OrderListResponseDto(String orderId, String orderStatus, String orderDate, List<OrderProductListResponseDto> items) {
         this.orderId = orderId;
-        this.status = status;
+        this.orderStatus = orderStatus;
         this.orderDate = orderDate;
-        this.list = list;
+        this.items = items;
     }
 
 

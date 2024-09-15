@@ -2,6 +2,7 @@ package com.project.game.service.Impl;
 
 import com.project.game.dto.request.order.OrderRequestDto;
 import com.project.game.entity.*;
+import com.project.game.global.code.OrderType;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.dto.response.ResponseDto;
@@ -63,25 +64,6 @@ public class OrdersServiceImpl implements OrdersService {
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         List<OrderListResponseDto> orderListResponseDto = ordersRepository.findAllByUserEntity(userEntity);
-        // List<OrdersEntity> ordersEntityList = ordersRepository.findAllByUserEntityOrderByOrderDateDesc(userEntity);
-
-        /*
-        List<OrdersResponseDto> list = new ArrayList<>();
-
-        for(OrdersEntity ordersEntity : ordersEntityList){
-            list.add(OrdersResponseDto.of(ordersEntity));
-        }
-
-         */
-
-        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        /*
-        Map<LocalDateTime, List<OrderListResponseDto>> groupOrders = orderListResponseDto.stream()
-                .collect(Collectors.groupingBy(order -> LocalDateTime.parse(order.getOrderDate(), formatter)
-                        .truncatedTo(ChronoUnit.MINUTES)));
-
-         */
 
         return ResponseDto.success(orderListResponseDto);
     }
@@ -141,6 +123,22 @@ public class OrdersServiceImpl implements OrdersService {
         return ResponseDto.success(null);
     }
 
+    @Transactional
+    @Override
+    public ResponseEntity<?> userCancelOrder(String orderId, String email) {
+
+        OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
+                -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
+
+        String userEmail = ordersEntity.getUserEntity().getEmail();
+        if(!email.equals(userEmail))
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        ordersEntity.update(OrderType.CANCEL_REQUESTED);
+
+        return ResponseDto.success(null);
+    }
+
     public String generateOrderNumber() {
 
         StringBuffer sb = new StringBuffer();
@@ -157,6 +155,4 @@ public class OrdersServiceImpl implements OrdersService {
 
         return sb.toString();
     }
-
-
 }
