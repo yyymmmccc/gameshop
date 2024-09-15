@@ -4,6 +4,7 @@ import com.project.game.dto.response.ResponseDto;
 import com.project.game.entity.OrderDetailEntity;
 import com.project.game.entity.OrdersEntity;
 import com.project.game.entity.PaymentEntity;
+import com.project.game.global.code.OrderType;
 import com.project.game.global.code.PaymentType;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.global.handler.CustomException;
@@ -34,7 +35,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrdersRepository ordersRepository;
-    private final OrderDetailRepository orderDetailRepository;
     private final IamportClient iamportClient;
 
     @Transactional
@@ -60,6 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
         for(OrderDetailEntity orderDetailEntity : orderDetailEntityList){
             orderDetailEntity.getGameEntity().incPurchaseCount();
         }
+        ordersEntity.update(OrderType.ORDER_COMPLETED);
 
         // 결제가 성공하면 -> 결제 테이블에 실제 결제내역을 기록
         paymentRepository.save(PaymentEntity.builder()
@@ -69,9 +70,12 @@ public class PaymentServiceImpl implements PaymentService {
                 .impUid(payment.getImpUid())
                 .build());
 
+
+
     return ResponseDto.success(ordersEntity.getOrderId());
     }
 
+    // 결제 후 취소 하는 api
     @Transactional
     @Override
     public ResponseEntity<?> cancelPayment(String orderId) throws IamportResponseException, IOException {
@@ -83,9 +87,10 @@ public class PaymentServiceImpl implements PaymentService {
                 -> new CustomException(ResponseCode.PAYMENT_NOT_FOUND));
 
         String impUid = paymentEntity.getImpUid();
-        iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true, BigDecimal.valueOf(5)));
+        iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
 
         paymentEntity.update();
+        ordersEntity.update(OrderType.CANCEL_COMPLETED);
 
         return ResponseDto.success(null);
     }

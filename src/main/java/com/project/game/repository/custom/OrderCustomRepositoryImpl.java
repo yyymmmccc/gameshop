@@ -1,10 +1,9 @@
 package com.project.game.repository.custom;
 
-import com.project.game.dto.response.order.OrderDetailListResponseDto;
-import com.project.game.dto.response.order.OrderListResponseDto;
-import com.project.game.dto.response.order.QOrderListResponseDto;
-import com.project.game.entity.OrdersEntity;
+import com.project.game.dto.response.order.*;
 import com.project.game.entity.UserEntity;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +24,19 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository{
     @Override
     public List<OrderListResponseDto> findAllByUserEntity(UserEntity userEntity) {
         JPQLQuery<OrderListResponseDto> query =
-                jpaQueryFactory.select(new QOrderListResponseDto(
+        jpaQueryFactory.select(Projections.bean(OrderListResponseDto.class,
                         ordersEntity.orderId,
-                        orderDetailEntity.gameEntity.gameId,
-                        gameImageEntity.gameImageUrl,
-                        orderDetailEntity.gameEntity.gameName,
-                        orderDetailEntity.price,
-                        ordersEntity.orderDate
+                        ordersEntity.orderStatus,
+                        ordersEntity.orderDate,
+                        Projections.list(
+                                Projections.bean(OrderProductListResponseDto.class,
+                                        orderDetailEntity.gameEntity.gameId.as("gameId"),
+                                        gameImageEntity.gameImageUrl.as("gameImage"),
+                                        orderDetailEntity.gameEntity.gameName.as("gameName"),
+                                        orderDetailEntity.price.as("price"),
+                                        orderDetailEntity.orderReview.as("reviewStatus")
+                                ).as("list")
+                        )
                 ))
                         .from(ordersEntity)
                         .join(orderDetailEntity)

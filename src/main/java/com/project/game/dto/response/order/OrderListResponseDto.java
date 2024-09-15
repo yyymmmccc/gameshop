@@ -3,26 +3,24 @@ package com.project.game.dto.response.order;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class OrderListResponseDto {
 
     private String orderId;
-    private int gameId;
-    private String gameImage;
-    private String gameName;
-    private int price;
+    private String status;
     private String orderDate;
+    private List<OrderProductListResponseDto> list;
 
     @QueryProjection
-    public OrderListResponseDto(String orderId, int gameId, String gameImage, String gameName, int price, String orderDate) {
+    public OrderListResponseDto(String orderId, String status, String orderDate, List<OrderProductListResponseDto> list) {
         this.orderId = orderId;
-        this.gameId = gameId;
-        this.gameImage = gameImage;
-        this.gameName = gameName;
-        this.price = price;
+        this.status = status;
         this.orderDate = orderDate;
+        this.list = list;
     }
 
 

@@ -1,6 +1,7 @@
 package com.project.game.dto.request.order;
 
 import com.project.game.entity.*;
+import com.project.game.global.code.OrderType;
 import lombok.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class OrderRequestDto {
                 .orderId(orderId)
                 .userEntity(userEntity)
                 .totalAmount(totalAmount)
+                .orderStatus(String.valueOf(OrderType.ORDERING))
                 .build();
     }
 

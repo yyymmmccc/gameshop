@@ -63,14 +63,27 @@ public class OrdersServiceImpl implements OrdersService {
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         List<OrderListResponseDto> orderListResponseDto = ordersRepository.findAllByUserEntity(userEntity);
+        // List<OrdersEntity> ordersEntityList = ordersRepository.findAllByUserEntityOrderByOrderDateDesc(userEntity);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        /*
+        List<OrdersResponseDto> list = new ArrayList<>();
 
+        for(OrdersEntity ordersEntity : ordersEntityList){
+            list.add(OrdersResponseDto.of(ordersEntity));
+        }
+
+         */
+
+        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        /*
         Map<LocalDateTime, List<OrderListResponseDto>> groupOrders = orderListResponseDto.stream()
                 .collect(Collectors.groupingBy(order -> LocalDateTime.parse(order.getOrderDate(), formatter)
                         .truncatedTo(ChronoUnit.MINUTES)));
 
-        return ResponseDto.success(groupOrders);
+         */
+
+        return ResponseDto.success(orderListResponseDto);
     }
 
     @Override
@@ -92,7 +105,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional
     @Override
-    public ResponseEntity createOrder(OrderRequestDto dto) {
+    public ResponseEntity<?> createOrder(OrderRequestDto dto) {
 
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -117,8 +130,8 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional
     @Override
-    public ResponseEntity cancelOrder(String orderId) {
-
+    public ResponseEntity<?> cancelOrder(String orderId) {
+        // 결제창에서 결제창을 닫은 경우 -> 주문취소
         // 주문번호를 삭제하면됨
         OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
                 -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
@@ -142,10 +155,7 @@ public class OrdersServiceImpl implements OrdersService {
         String randomStr = String.format("%04d", randomNumber); // 4자리로 포맷팅
         sb.append(randomStr);
 
-        // 주문번호 생성
-        String orderNumber = sb.toString();
-
-        return orderNumber;
+        return sb.toString();
     }
 
 

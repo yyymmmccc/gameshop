@@ -1,5 +1,6 @@
 package com.project.game.entity;
 
+import com.project.game.global.code.OrderType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,10 +30,17 @@ public class OrdersEntity {
     @Column(name = "total_amount")
     private int totalAmount;
 
+    @Column(name = "order_status")
+    private String orderStatus;
+
     @CreationTimestamp
     @Column(name = "order_date")
     private String orderDate;
 
     @OneToMany(mappedBy = "ordersEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
+
+    public void update(OrderType orderCompleted) {
+        orderStatus = String.valueOf(orderCompleted);
+    }
 }

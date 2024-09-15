@@ -30,6 +30,6 @@ public class OrderDetailEntity {
     private int price;
 
     @Column(name = "order_review")
-    private boolean order_review;
+    private boolean orderReview;
 
 }
