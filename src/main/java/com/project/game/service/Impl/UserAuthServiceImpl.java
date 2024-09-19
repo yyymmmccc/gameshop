@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,12 +40,19 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
+    @Override
+    public ResponseEntity<?> emailDuplicateCheck(String email) {
+
+        if(userRepository.existsByEmail(email)){
+            throw new CustomException(ResponseCode.DUPLICATE_EMAIL);
+        }
+
+        return ResponseDto.success(null);
+    }
+
     @Transactional
     @Override
     public ResponseEntity<?> sendEmailAuthentication(SendEmailAuthenticationRequestDto dto) {
-
-        if (userRepository.existsByEmail(dto.getEmail()))
-            throw new CustomException(ResponseCode.DUPLICATE_EMAIL);
 
         String code = getAuthenticationCode(); // 4자리 인증번호 생성
 
@@ -209,7 +215,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public ResponseEntity<?> postNewPassword(NewPasswordRequestDto dto) {
 
         String userEmail = redisService.getValues(dto.getResetToken());
-        if(userEmail.equals("false"))
+        if (userEmail.equals("false"))
             throw new CustomException(ResponseCode.NO_PASSWORD_RESET_TOKEN);
 
         if (!dto.getPassword().equals(dto.getCheckPassword())) // 변경할 비밀번호와 변경비밀번호 확인이 다른경우
@@ -218,7 +224,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         UserEntity userEntity = userRepository.findByEmail(userEmail).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        if(passwordEncoder.matches(dto.getPassword(), userEntity.getPassword())) // 기존 비밀번호와, 변경할 이메일이 같은경우
+        if (passwordEncoder.matches(dto.getPassword(), userEntity.getPassword())) // 기존 비밀번호와, 변경할 이메일이 같은경우
             throw new CustomException(ResponseCode.PASSWORD_UPDATE_FAIL);
 
         redisService.deleteValues(dto.getResetToken());
@@ -227,6 +233,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         return ResponseDto.success(null);
     }
+
     @Transactional
     @Override
     public ResponseEntity<?> refreshToken(String refreshToken) {

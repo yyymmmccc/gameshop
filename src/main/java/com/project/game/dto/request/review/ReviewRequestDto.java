@@ -22,6 +22,9 @@ public class ReviewRequestDto {
     @NotNull
     private int rating;
 
+    @NotNull
+    private int orderDetailId;
+
     public ReviewEntity toEntity(GameEntity gameEntity, UserEntity userEntity) {
         return ReviewEntity.builder()
                 .userEntity(userEntity)

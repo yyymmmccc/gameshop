@@ -1,5 +1,6 @@
 package com.project.game.controller;
 
+import com.project.game.controller.swagger.SwaggerAdminUserApi;
 import com.project.game.dto.request.member.admin.AdminPatchUserRequestDto;
 import com.project.game.service.AdminUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,13 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/admin/user")
 @RequiredArgsConstructor
-@Tag(name = "관리자 - 유저관리", description = "관리자 유저 조회, 권한 수정, 삭제")
 @Slf4j
-public class AdminUserController {
+public class AdminUserController implements SwaggerAdminUserApi {
 
     private final AdminUserService adminUserService;
 
@@ -39,8 +38,4 @@ public class AdminUserController {
 
         return adminUserService.deleteUser(userEmail);
     }
-
-
-
-
 }

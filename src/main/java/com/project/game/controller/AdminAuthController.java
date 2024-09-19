@@ -1,5 +1,7 @@
 package com.project.game.controller;
 
+import com.project.game.controller.swagger.SwaggerAdminAuthApi;
+import com.project.game.controller.swagger.SwaggerAdminGameApi;
 import com.project.game.dto.request.auth.admin.AdminLoginRequestDto;
 import com.project.game.global.provider.JwtProvider;
 import com.project.game.service.AdminAuthService;
@@ -14,9 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/auth")
 @RequiredArgsConstructor
-@Tag(name = "관리자 - 인증", description = "관리자 로그인, 로그아웃")
 @Slf4j
-public class AdminAuthController {
+public class AdminAuthController implements SwaggerAdminAuthApi {
 
     private final AdminAuthService adminAuthService;
     private final JwtProvider jwtProvider;

@@ -4,7 +4,7 @@ import com.project.game.dto.request.review.ReviewRequestDto;
 import org.springframework.http.ResponseEntity;
 
 public interface ReviewService {
-    ResponseEntity postReview(int gameId, ReviewRequestDto dto, String email);
+    ResponseEntity postReview(ReviewRequestDto dto, String email);
     ResponseEntity patchReview(int reviewId, ReviewRequestDto dto, String email);
     ResponseEntity deleteReview(int reviewId, String email);
 

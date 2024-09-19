@@ -21,6 +21,12 @@ public class UserAuthController implements SwaggerAuthApi {
     private final UserAuthService userAuthService;
     private final JwtProvider jwtProvider;
 
+    @GetMapping("/email-check")
+    public ResponseEntity<?> emailDuplicateCheck(@RequestParam(name = "email") String email){
+
+        return userAuthService.emailDuplicateCheck(email);
+    }
+
     @PostMapping("/email-authentication")
     public ResponseEntity sendEmailAuthentication(@RequestBody @Valid SendEmailAuthenticationRequestDto dto) {
 

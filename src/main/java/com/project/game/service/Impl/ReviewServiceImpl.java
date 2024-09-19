@@ -1,5 +1,6 @@
 package com.project.game.service.Impl;
 
+import com.project.game.entity.OrderDetailEntity;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.review.ReviewRequestDto;
 import com.project.game.dto.response.ResponseDto;
@@ -9,6 +10,7 @@ import com.project.game.entity.ReviewEntity;
 import com.project.game.entity.UserEntity;
 import com.project.game.global.handler.CustomException;
 import com.project.game.repository.GameRepository;
+import com.project.game.repository.OrderDetailRepository;
 import com.project.game.repository.ReviewRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.ReviewService;
@@ -26,19 +28,30 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
     @Transactional
     @Override
-    public ResponseEntity postReview(int gameId, ReviewRequestDto dto, String email) {
-
-        GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
-                -> new CustomException(ResponseCode.GAME_NOT_FOUND));
+    public ResponseEntity postReview(ReviewRequestDto dto, String email) {
 
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
+        OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(dto.getOrderDetailId()).orElseThrow(()
+                -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
+
+        if(!orderDetailEntity.isOrderReview())
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        if(!orderDetailEntity.getOrdersEntity().getUserEntity().equals(userEntity))
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        GameEntity gameEntity = orderDetailEntity.getGameEntity();
         gameEntity.incReviewCount();
+
         reviewRepository.save(dto.toEntity(gameEntity, userEntity));
+
+        orderDetailEntity.reviewStatusUpdate(false);
 
         return ResponseDto.success(gameEntity.getGameId());
     }

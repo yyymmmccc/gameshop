@@ -19,4 +19,6 @@ public interface UserAuthService {
     ResponseEntity findEmail(FindEmailRequestDto dto);
     ResponseEntity findPassword(FindPasswordRequestDto dto);
     ResponseEntity postNewPassword(NewPasswordRequestDto dto);
+
+    ResponseEntity<?> emailDuplicateCheck(String dto);
 }

@@ -22,10 +22,4 @@ public class PaymentController {
 
         return paymentService.validatePayment(impUid);
     }
-
-    @PatchMapping("/cancel/{orderId}")
-    public ResponseEntity<?> cancelPayment(@PathVariable("orderId") String orderId) throws IamportResponseException, IOException {
-
-        return paymentService.cancelPayment(orderId);
-    }
 }

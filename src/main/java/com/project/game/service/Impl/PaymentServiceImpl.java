@@ -70,28 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .impUid(payment.getImpUid())
                 .build());
 
-
-
     return ResponseDto.success(ordersEntity.getOrderId());
     }
 
-    // 결제 후 취소 하는 api
-    @Transactional
-    @Override
-    public ResponseEntity<?> cancelPayment(String orderId) throws IamportResponseException, IOException {
-
-        OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
-                -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
-
-        PaymentEntity paymentEntity = paymentRepository.findByOrdersEntity(ordersEntity).orElseThrow(()
-                -> new CustomException(ResponseCode.PAYMENT_NOT_FOUND));
-
-        String impUid = paymentEntity.getImpUid();
-        iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
-
-        paymentEntity.update();
-        ordersEntity.update(OrderType.CANCEL_COMPLETED);
-
-        return ResponseDto.success(null);
-    }
 }

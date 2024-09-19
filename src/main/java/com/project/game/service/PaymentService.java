@@ -9,5 +9,4 @@ public interface PaymentService {
 
     ResponseEntity<?> validatePayment(String impUid) throws IamportResponseException, IOException;
 
-    ResponseEntity<?> cancelPayment(String orderId) throws IamportResponseException, IOException;
 }

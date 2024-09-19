@@ -16,9 +16,8 @@ public interface SwaggerReviewApi {
     @Operation(summary = "게임 후기 작성", description = "특정 게임에 대한 후기를 작성합니다.")
     @ApiResponse(responseCode = "200", description = "후기 작성 성공")
     @ApiResponse(responseCode = "404", description = "게임 또는 사용자 찾을 수 없음")
-    @PostMapping("/{gameId}")
-    ResponseEntity postReview(@PathVariable("gameId") int gameId,
-                              @RequestBody @Valid ReviewRequestDto dto,
+    @PostMapping("")
+    ResponseEntity postReview(@RequestBody @Valid ReviewRequestDto dto,
                               @AuthenticationPrincipal String email);
 
     @Operation(summary = "게임 후기 수정", description = "작성한 게임 후기를 수정합니다.")

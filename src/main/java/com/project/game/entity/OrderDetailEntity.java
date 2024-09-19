@@ -32,4 +32,7 @@ public class OrderDetailEntity {
     @Column(name = "order_review")
     private boolean orderReview;
 
+    public void reviewStatusUpdate(boolean bool) {
+        this.orderReview = bool;
+    }
 }

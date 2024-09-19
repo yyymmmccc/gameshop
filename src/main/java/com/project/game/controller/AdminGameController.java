@@ -1,5 +1,6 @@
 package com.project.game.controller;
 
+import com.project.game.controller.swagger.SwaggerAdminGameApi;
 import com.project.game.dto.request.game.AdminPostGameRequestDto;
 import com.project.game.service.AdminGameService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,9 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/game")
 @RequiredArgsConstructor
-@Tag(name = "관리자 - 게임상품", description = "관리자 게임 조화, 등록, 수정, 삭제")
 @Slf4j
-public class AdminGameController {
+public class AdminGameController implements SwaggerAdminGameApi {
 
     private final AdminGameService adminGameService;
 

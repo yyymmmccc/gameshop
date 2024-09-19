@@ -17,12 +17,11 @@ public class ReviewController implements SwaggerReviewApi {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/{gameId}")
-    public ResponseEntity postReview(@PathVariable("gameId") int gameId,
-                                     @RequestBody @Valid ReviewRequestDto dto,
+    @PostMapping("")
+    public ResponseEntity postReview(@RequestBody @Valid ReviewRequestDto dto,
                                      @AuthenticationPrincipal String email){
 
-        return reviewService.postReview(gameId, dto, email);
+        return reviewService.postReview(dto, email);
     }
 
     @PatchMapping("/{reviewId}")
