@@ -31,7 +31,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (oAuth2User.getRole().equals("ROLE_GUEST")) {
             String accessToken = jwtProvider.createAccessToken(oAuth2User.getEmail(), oAuth2User.getRole());
 
-            response.sendRedirect("http://localhost:3000/auth/oauth-join/" + accessToken); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
+            response.sendRedirect("http://localhost:3000/auth/user/oauth-join/" + accessToken); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
         }
 
         else {

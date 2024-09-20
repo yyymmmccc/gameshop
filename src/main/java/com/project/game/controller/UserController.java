@@ -4,7 +4,6 @@ import com.project.game.controller.swagger.SwaggerUserApi;
 import com.project.game.dto.request.member.user.UserPasswordRequestDto;
 import com.project.game.dto.request.member.user.UserUpdateRequestDto;
 import com.project.game.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,33 +18,33 @@ public class UserController implements SwaggerUserApi {
     private final UserService userService;
 
     @GetMapping("")
-    public ResponseEntity getUser(@AuthenticationPrincipal String email){
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal String email){
 
         return userService.getUser(email);
     }
 
     @PatchMapping("")
-    public ResponseEntity patchUser(@RequestBody @Valid UserUpdateRequestDto dto,
+    public ResponseEntity<?> patchUser(@RequestBody @Valid UserUpdateRequestDto dto,
                                     @AuthenticationPrincipal String email){
 
         return userService.patchUser(dto, email);
     }
 
     @PatchMapping("/password")
-    public ResponseEntity patchUserPassword(@RequestBody @Valid UserPasswordRequestDto dto,
+    public ResponseEntity<?> patchUserPassword(@RequestBody @Valid UserPasswordRequestDto dto,
                                     @AuthenticationPrincipal String email){
 
         return userService.patchUserPassword(dto, email);
     }
     @DeleteMapping("")
-    public ResponseEntity deleteUser(//@RequestBody @Valid UserDeleteRequestDto dto,
-                                     @AuthenticationPrincipal String email){
+    public ResponseEntity<?> deleteUser(//@RequestBody @Valid UserDeleteRequestDto dto,
+                                                  @AuthenticationPrincipal String email){
 
         return userService.deleteUser(email);
     }
 
     @GetMapping("/recent-list")
-    public ResponseEntity getRecentProductList(@AuthenticationPrincipal String email){
+    public ResponseEntity<?> getRecentProductList(@AuthenticationPrincipal String email){
 
         return userService.getRecentProductList(email);
     }

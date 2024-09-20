@@ -63,7 +63,8 @@ public class WebSecurityConfig {
                                 //, "/api/user/order/pay/approve"
                                 //, "/api/user/order/pay/cancel"
                                 , "/api/user/payment/**"
-                                , "/api/user/order/**").permitAll()
+                                , "/api/user/order/**"
+                                , "/**").permitAll()
 
                         .requestMatchers(swaggerPath).permitAll()
 
@@ -97,7 +98,7 @@ public class WebSecurityConfig {
     @Bean
     protected UrlBasedCorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // 정확한 출처 설정
+        configuration.addAllowedOrigin("https://genu99.github.io"); // 정확한 출처 설정
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true); // 쿠키 및 인증 정보를 허용

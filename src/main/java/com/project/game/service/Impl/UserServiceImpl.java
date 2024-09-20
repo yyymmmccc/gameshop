@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public ResponseEntity getUser(String email) {
+    public ResponseEntity<?> getUser(String email) {
 
         UserEntity userEntity = userRepository.findById(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public ResponseEntity patchUser(UserUpdateRequestDto dto, String email) {
+    public ResponseEntity<?> patchUser(UserUpdateRequestDto dto, String email) {
 
         UserEntity userEntity = userRepository.findById(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public ResponseEntity patchUserPassword(UserPasswordRequestDto dto, String email) {
+    public ResponseEntity<?> patchUserPassword(UserPasswordRequestDto dto, String email) {
         UserEntity userEntity = userRepository.findById(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
         // 현재 비밀번호를 확인할 때
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public ResponseEntity deleteUser(String email) {
+    public ResponseEntity<?> deleteUser(String email) {
 
         UserEntity userEntity = userRepository.findById(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity getRecentProductList(String email) {
+    public ResponseEntity<?> getRecentProductList(String email) {
 
         UserEntity userEntity = userRepository.findById(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));

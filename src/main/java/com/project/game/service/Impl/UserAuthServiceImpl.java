@@ -2,6 +2,7 @@ package com.project.game.service.Impl;
 
 import com.project.game.entity.CouponEntity;
 import com.project.game.entity.UserCouponEntity;
+import com.project.game.global.code.CouponType;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.auth.user.*;
 import com.project.game.dto.response.ResponseDto;
@@ -59,18 +60,18 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (!emailProvider.sendAuthenticationMail(dto.getEmail(), code)) // 입력된 이메일에 인증코드 전송
             throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
 
-        redisService.setValues(dto.getEmail(), code, Duration.ofMinutes(3));
-        // 이메일 인증코드 DB에 저장 -> DB에 있는 인증코드를 가지고 인증코드 확인
-        // *** DB에 굳이 저장할 필요 없어보임 why ? 쓸데 없는 데이터가 증가하고 5분의 만료기간 후 삭제해야하는데 번거로움
-        // 자동으로 시간 후 삭제해주고 속도가 빠른 redis 채택
+        redisService.setValues("verificationEmail_" + dto.getEmail(), code, Duration.ofMinutes(3));
+
         return ResponseDto.success(null);
     }
 
     @Override
     public ResponseEntity<?> checkAuthentication(HttpSession session, CheckAuthenticationRequestDto dto) {
+
         if (!validateAuthCode(dto.getEmail(), dto.getAuthenticationCode()))
             throw new CustomException(ResponseCode.AUTHENTICATION_FAIL);
 
+        // ex. emailVerified_7201_jimindong9814@gmail.com 세션에 저장
         session.setAttribute("emailVerified_" + dto.getAuthenticationCode() + "_" + dto.getEmail(), true);
 
         return ResponseDto.success(null);
@@ -128,7 +129,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .couponEntity(couponEntity)
                 .issued_at(String.valueOf(LocalDateTime.now()))    // 현재 시간
                 .expires_at(String.valueOf(LocalDateTime.now().plusMonths(1)))  // 한 달 뒤 만료일
-                .state("active")
+                .state(CouponType.ACTIVE.toString())
                 .build());
 
         return ResponseDto.success(null);
@@ -188,6 +189,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public ResponseEntity<?> findEmail(FindEmailRequestDto dto) {
+
         UserEntity userEntity = userRepository.findByNameAndTel(dto.getName(), dto.getTel()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
@@ -200,6 +202,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
+
         String resetToken = UUID.randomUUID().toString().replaceAll("\\-", "");
 
         if(!emailProvider.sendPasswordResetMail(dto.getEmail(), resetToken))
@@ -215,6 +218,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public ResponseEntity<?> postNewPassword(NewPasswordRequestDto dto) {
 
         String userEmail = redisService.getValues(dto.getResetToken());
+
         if (userEmail.equals("false"))
             throw new CustomException(ResponseCode.NO_PASSWORD_RESET_TOKEN);
 
@@ -251,7 +255,6 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getRole()); // 새로 발급받은 토큰
         String newRefreshToken = jwtProvider.createRefreshToken();
-        // accessToken 재발급 할 때 refreshToken도 재 발급하여 보안 관리
 
         redisService.deleteValues(refreshToken);
         redisService.setValues(newRefreshToken, userEmail, Duration.ofDays(14));
@@ -260,7 +263,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     public boolean validateAuthCode(String email, String code) {
-        String redisAuthCode = redisService.getValues(email);
+        String redisAuthCode = redisService.getValues("verificationEmail_" + email);
         return redisAuthCode.equals(code) && !redisAuthCode.equals("false");
     }
 
