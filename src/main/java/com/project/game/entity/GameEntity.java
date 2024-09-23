@@ -67,10 +67,10 @@ public class GameEntity {
     @JoinColumn(name = "user_email")
     private UserEntity userEntity;
 
-    @OneToMany(mappedBy = "gameEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "gameEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameImageEntity> gameImageEntityList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "gameEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "gameEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> ReviewEntityList = new ArrayList<>();
 
     public void update(AdminPostGameRequestDto dto, GameCategoryEntity gameCategoryEntity) {

@@ -24,7 +24,7 @@ public class CartEntity {
     @JoinColumn(name = "user_email")
     private UserEntity userEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private GameEntity gameEntity;
 

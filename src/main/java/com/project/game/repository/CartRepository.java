@@ -2,7 +2,6 @@ package com.project.game.repository;
 
 import com.project.game.entity.CartEntity;
 import com.project.game.entity.GameEntity;
-import com.project.game.entity.OrderDetailEntity;
 import com.project.game.entity.UserEntity;
 import com.project.game.repository.custom.CartCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,8 +19,6 @@ public interface CartRepository extends JpaRepository<CartEntity, Integer>, Cart
     boolean existsByCartIdIn(List<Integer> cartIdList);
 
     List<CartEntity> findByCartIdIn(List<Integer> cartIdList);
-
-    void deleteByUserEntityAndGameEntityIn(UserEntity userEntity, List<GameEntity> list);
-
-    long countByCartIdIn(List<Integer> cartIdList);
+    long countByUserEntityAndCartIdIn(UserEntity userEntity, List<Integer> cartIdList);
+    void deleteAllByCartIdIn(List<Object> cartIdList);
 }

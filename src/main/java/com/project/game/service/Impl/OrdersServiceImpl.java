@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -33,6 +34,7 @@ public class OrdersServiceImpl implements OrdersService {
     private final OrderDetailRepository orderDetailRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final RedisServiceImpl redisService;
 
     @Override
     public ResponseEntity<?> getOrderFormProduct(OrderFormRequestDto dto, String email) {
@@ -42,7 +44,7 @@ public class OrdersServiceImpl implements OrdersService {
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         // 나의 카트에 해당 카트번호가 없을경우
-        long cartCount = cartRepository.countByCartIdIn(dto.getCartIdList());
+        long cartCount = cartRepository.countByUserEntityAndCartIdIn(userEntity, dto.getCartIdList());
         if(dto.getCartIdList().size() != cartCount)
             throw new CustomException(ResponseCode.CART_NOT_FOUND);
 
@@ -93,7 +95,7 @@ public class OrdersServiceImpl implements OrdersService {
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         // 요청 장바구니 id 갯수와 실제 데이터베이스에 있는 cartId 갯수가 일치하는지 검사
-        long countByCartId = cartRepository.countByCartIdIn(dto.getCartIdList());
+        long countByCartId = cartRepository.countByUserEntityAndCartIdIn(userEntity, dto.getCartIdList());
         if(countByCartId != dto.getCartIdList().size())
             throw new CustomException(ResponseCode.CART_NOT_FOUND);
 
@@ -106,6 +108,7 @@ public class OrdersServiceImpl implements OrdersService {
         List <OrderDetailEntity> orderDetailEntityList = OrderRequestDto.convertToEntityList(ordersEntity, cartEntityList, dto.getGamePriceList());
 
         orderDetailRepository.saveAll(orderDetailEntityList);
+        redisService.setValues(orderId, dto.getCartIdList());
 
         return ResponseDto.success(orderId);
     }
@@ -119,6 +122,7 @@ public class OrdersServiceImpl implements OrdersService {
                 -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
 
         ordersRepository.delete(ordersEntity);
+        redisService.deleteValues(orderId);
 
         return ResponseDto.success(null);
     }

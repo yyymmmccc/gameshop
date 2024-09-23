@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrdersController implements SwaggerOrdersApi {
 
     private final OrdersService ordersService;
-//    private final KakaoPayService kakaoPayService;
+    //private final KakaoPayService kakaoPayService;
 
     // 장바구니 -> 주문페이지 넘어갈 때, 주문 페이지에서 보여줄 정보
     @PostMapping("/form")
@@ -28,25 +28,26 @@ public class OrdersController implements SwaggerOrdersApi {
         return ordersService.getOrderFormProduct(dto, email);
     }
 
+    // 결제 버튼 눌렀을 때
     @PostMapping("/create")
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderRequestDto dto){
 
         return ordersService.createOrder(dto);
     }
 
+    // 결제 Api 닫기 버튼 눌렀을 때 -> 자동 주문취소
     @DeleteMapping("/cancel/{orderId}")
     public ResponseEntity<?> cancelOrder(@PathVariable("orderId") String orderId){
 
         return ordersService.cancelOrder(orderId);
     }
 
-    @PostMapping("/user-cancel/{orderId}")
+    @PatchMapping("/user-cancel/{orderId}")
     public ResponseEntity<?> userCancelOrder(@PathVariable("orderId") String orderId,
                                              @AuthenticationPrincipal String email){
 
         return ordersService.userCancelOrder(orderId, email);
     }
-
 
     @GetMapping("/list")
     public ResponseEntity getOrderList(@AuthenticationPrincipal String email){

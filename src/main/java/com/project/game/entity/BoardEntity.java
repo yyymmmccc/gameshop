@@ -47,13 +47,13 @@ public class BoardEntity {
     private UserEntity userEntity;
 
     // cascade
-    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "boardEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardImageEntity> boardImageEntityList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "boardEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> commentEntityList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "boardEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavoriteEntity> favoriteEntitieList = new ArrayList<>();
 
     public void update(BoardRequestDto dto){

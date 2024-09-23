@@ -23,7 +23,7 @@ public class OrderDetailEntity {
     @JoinColumn(name = "order_id")
     private OrdersEntity ordersEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private GameEntity gameEntity;
 

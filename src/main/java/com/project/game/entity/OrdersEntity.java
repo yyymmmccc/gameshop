@@ -37,7 +37,7 @@ public class OrdersEntity {
     @Column(name = "order_date")
     private String orderDate;
 
-    @OneToMany(mappedBy = "ordersEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ordersEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
 
     public void update(OrderType orderCompleted) {

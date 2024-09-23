@@ -18,11 +18,11 @@ public class LibraryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int libraryId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_email")
     private UserEntity userEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private GameEntity gameEntity;
 

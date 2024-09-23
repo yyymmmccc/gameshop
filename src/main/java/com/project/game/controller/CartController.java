@@ -6,6 +6,7 @@ import com.project.game.service.CartService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/user/cart")
 @RequiredArgsConstructor
+@Slf4j
 public class CartController implements SwaggerCartApi {
 
     private final CartService cartService;
@@ -26,6 +28,8 @@ public class CartController implements SwaggerCartApi {
 
     @GetMapping("/list")
     public ResponseEntity getCarts(@AuthenticationPrincipal String email){
+
+        log.info("이메일 체크 : " + email);
 
         return cartService.getCarts(email);
     }

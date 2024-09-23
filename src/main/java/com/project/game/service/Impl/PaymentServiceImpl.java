@@ -8,6 +8,7 @@ import com.project.game.global.code.OrderType;
 import com.project.game.global.code.PaymentType;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.global.handler.CustomException;
+import com.project.game.repository.CartRepository;
 import com.project.game.repository.OrderDetailRepository;
 import com.project.game.repository.OrdersRepository;
 import com.project.game.repository.PaymentRepository;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,7 +37,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrdersRepository ordersRepository;
+    private final CartRepository cartRepository;
     private final IamportClient iamportClient;
+    private final RedisServiceImpl redisService;
 
     @Transactional
     @Override
@@ -61,6 +65,12 @@ public class PaymentServiceImpl implements PaymentService {
             orderDetailEntity.getGameEntity().incPurchaseCount();
         }
         ordersEntity.update(OrderType.ORDER_COMPLETED);
+
+        List<Object> cartIdList = redisService.getValueList(ordersEntity.getOrderId());
+
+        cartRepository.deleteAllByCartIdIn(cartIdList.stream()
+                .map(item -> Integer.parseInt(item.toString()))
+                .collect(Collectors.toList()));
 
         // 결제가 성공하면 -> 결제 테이블에 실제 결제내역을 기록
         paymentRepository.save(PaymentEntity.builder()
