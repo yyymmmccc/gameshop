@@ -28,7 +28,7 @@ public interface SwaggerAuthApi {
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "401", description = "인증번호 실패")
     @PostMapping("/check-authentication")
-    ResponseEntity checkAuthentication(HttpSession session, @RequestBody @Valid CheckAuthenticationRequestDto dto);
+    ResponseEntity checkAuthentication(@RequestBody @Valid CheckAuthenticationRequestDto dto);
 
     @Operation(summary = "비밀번호 체크", description = "회원가입 비밀번호, 비밀번호 확인 두 개가 일치하는지 체크")
     @ApiResponse(responseCode = "200", description = "비밀번호 체크 성공")
@@ -56,7 +56,7 @@ public interface SwaggerAuthApi {
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "409", description = "중복된 이메일, 닉네임, 전화번호")
     @PostMapping("/join")
-    ResponseEntity join(HttpSession session, @RequestBody @Valid JoinRequestDto dto);
+    ResponseEntity join(@RequestBody @Valid JoinRequestDto dto);
 
     @Operation(summary = "OAuth 회원가입", description = "OAuth 로그인 후 회원가입에 필요한 추가 정보를 저장하는 API")
     @ApiResponse(responseCode = "200", description = "OAuth 회원가입 성공")

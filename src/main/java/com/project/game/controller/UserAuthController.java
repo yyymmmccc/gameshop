@@ -33,9 +33,9 @@ public class UserAuthController implements SwaggerAuthApi {
         return userAuthService.sendEmailAuthentication(dto);
     }
     @PostMapping("/check-authentication")
-    public ResponseEntity checkAuthentication(HttpSession session, @RequestBody @Valid CheckAuthenticationRequestDto dto) {
+    public ResponseEntity checkAuthentication(@RequestBody @Valid CheckAuthenticationRequestDto dto) {
 
-        return userAuthService.checkAuthentication(session, dto);
+        return userAuthService.checkAuthentication(dto);
     }
     @PostMapping("/check-password")
     public ResponseEntity checkPassword(@RequestBody @Valid CheckPasswordRequestDto dto) {
@@ -53,9 +53,9 @@ public class UserAuthController implements SwaggerAuthApi {
         return userAuthService.checkTel(tel);
     }
     @PostMapping("/join")
-    public ResponseEntity join(HttpSession session, @RequestBody @Valid JoinRequestDto dto) {
+    public ResponseEntity join(@RequestBody @Valid JoinRequestDto dto) {
 
-        return userAuthService.join(session, dto);
+        return userAuthService.join(dto);
     }
     @PostMapping("/oauth-join")
     public ResponseEntity oauthJoin(@RequestBody @Valid OAuthJoinRequestDto dto) {

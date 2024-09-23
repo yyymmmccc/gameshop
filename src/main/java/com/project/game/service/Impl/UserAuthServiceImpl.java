@@ -66,13 +66,13 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ResponseEntity<?> checkAuthentication(HttpSession session, CheckAuthenticationRequestDto dto) {
+    public ResponseEntity<?> checkAuthentication(CheckAuthenticationRequestDto dto) {
 
         if (!validateAuthCode(dto.getEmail(), dto.getAuthenticationCode()))
             throw new CustomException(ResponseCode.AUTHENTICATION_FAIL);
 
-        // ex. emailVerified_7201_jimindong9814@gmail.com 세션에 저장
-        session.setAttribute("emailVerified_" + dto.getAuthenticationCode() + "_" + dto.getEmail(), true);
+        // ex. emailVerified_7201_jimindong9814@gmail.com 레디스 저장
+        redisService.setValues("emailVerified_" + dto.getAuthenticationCode() + "_" + dto.getEmail(), "ok", Duration.ofMinutes(60));
 
         return ResponseDto.success(null);
     }
@@ -103,11 +103,11 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Transactional
     @Override
-    public ResponseEntity<?> join(HttpSession session, JoinRequestDto dto) {
+    public ResponseEntity<?> join(JoinRequestDto dto) {
         if (userRepository.existsByEmail(dto.getEmail()))
             throw new CustomException(ResponseCode.DUPLICATE_EMAIL);
 
-        if(session.getAttribute("emailVerified_" + dto.getAuthenticationCode() + "_" + dto.getEmail()) == null)
+        if(redisService.getValues("emailVerified_" + dto.getAuthenticationCode() + "_" + dto.getEmail()).equals("false"))
             throw new CustomException(ResponseCode.AUTHENTICATION_FAIL);
 
         if (!dto.getPassword().equals(dto.getCheckPassword()))
