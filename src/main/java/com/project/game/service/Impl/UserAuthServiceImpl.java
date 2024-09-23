@@ -42,9 +42,9 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final UserCouponRepository userCouponRepository;
 
     @Override
-    public ResponseEntity<?> emailDuplicateCheck(String email) {
+    public ResponseEntity<?> emailDuplicateCheck(CheckEmailRequestDto dto) {
 
-        if(userRepository.existsByEmail(email)){
+        if(userRepository.existsByEmail(dto.getEmail())){
             throw new CustomException(ResponseCode.DUPLICATE_EMAIL);
         }
 
@@ -86,16 +86,16 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ResponseEntity<?> checkNickname(String nickname) {
-       if(userRepository.existsByNickname(nickname))
+    public ResponseEntity<?> checkNickname(CheckNicknameRequestDto dto) {
+       if(userRepository.existsByNickname(dto.getNickname()))
            throw new CustomException(ResponseCode.DUPLICATE_NICKNAME);
 
         return ResponseDto.success(null);
     }
 
     @Override
-    public ResponseEntity<?> checkTel(String tel) {
-        if(userRepository.existsByTel(tel))
+    public ResponseEntity<?> checkTel(CheckTelRequestDto dto) {
+        if(userRepository.existsByTel(dto.getTel()))
             throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
         return ResponseDto.success(null);

@@ -15,10 +15,11 @@ public class CheckAuthenticationRequestDto {
 
     @Schema(example = "이메일을 입력")
     @NotBlank (message = "이메일을 입력해주세요.")
-    @Pattern(regexp="^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])+[.][a-zA-Z]{2,3}$", message="이메일 주소 양식을 확인해주세요.")
+    @Pattern(regexp= "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])+[.][a-zA-Z]{2,3}$", message= "이메일 주소 양식을 확인해주세요.")
     private String email;
 
     @Schema(example = "메일 발송 인증번호 4자리")
-    @NotBlank
+    @NotBlank(message = "인증번호를 입력해주세요.")
+    @Pattern(regexp = "^[0-9]{4}$", message = "숫자 4자리를 입력해주세요.")
     private String authenticationCode;
 }

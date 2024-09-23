@@ -42,14 +42,14 @@ public interface SwaggerAuthApi {
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "409", description = "중복된 닉네임")
     @GetMapping("/check-nickname")
-    ResponseEntity checkNickname(@RequestParam(name = "nickname") String nickname);
+    ResponseEntity checkNickname(@RequestBody @Valid CheckNicknameRequestDto dto);
 
     @Operation(summary = "전화번호 체크", description = "회원가입 전화번호 중복되는지 체크")
     @ApiResponse(responseCode = "200", description = "전화번호 체크 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "409", description = "중복된 전화번호")
     @GetMapping("/check-tel")
-    ResponseEntity checkTel(@RequestParam(name = "tel") String tel);
+    ResponseEntity checkTel(@RequestBody @Valid CheckTelRequestDto dto);
 
     @Operation(summary = "회원가입", description = "회원가입에 필요한 모든 정보를 입력 후 체크하고 저장하는 API")
     @ApiResponse(responseCode = "200", description = "회원가입 성공")

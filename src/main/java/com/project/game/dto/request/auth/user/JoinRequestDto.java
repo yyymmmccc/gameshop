@@ -15,10 +15,12 @@ public class JoinRequestDto {
 
     @Schema(example = "이메일을 입력")
     @NotBlank (message = "이메일을 입력해주세요.")
+    @Pattern(regexp= "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])+[.][a-zA-Z]{2,3}$", message= "이메일 주소 양식을 확인해주세요.")
     private String email;
 
-    @Schema(example = "메일 인증코드 4자리")
-    @NotBlank (message = "인증코드를 입력해주세요.")
+    @Schema(example = "메일 발송 인증번호 4자리")
+    @NotBlank(message = "인증번호를 입력해주세요.")
+    @Pattern(regexp = "^[0-9]{4}$", message = "숫자 4자리를 입력해주세요.")
     private String authenticationCode;
 
     @Schema(example = "비밀번호는 특수문자를 포함한 8~16자리수여야 합니다.")
@@ -36,7 +38,7 @@ public class JoinRequestDto {
 
     @Schema(example = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
     @NotBlank(message = "닉네임을 입력해주세요.")
-    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,8}$", message = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
+    @Pattern(regexp = "^(?:[가-힣]{2,8}|[a-zA-Z0-9]{4,16})$", message = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
     private String nickname;
 
     @Schema(example = "-없이 숫자만 입력해주세요.")

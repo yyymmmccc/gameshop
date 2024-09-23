@@ -21,10 +21,10 @@ public class UserAuthController implements SwaggerAuthApi {
     private final UserAuthService userAuthService;
     private final JwtProvider jwtProvider;
 
-    @GetMapping("/email-check")
-    public ResponseEntity<?> emailDuplicateCheck(@RequestParam(name = "email") String email){
+    @PostMapping("/email-check")
+    public ResponseEntity<?> emailDuplicateCheck(@RequestBody @Valid CheckEmailRequestDto dto){
 
-        return userAuthService.emailDuplicateCheck(email);
+        return userAuthService.emailDuplicateCheck(dto);
     }
 
     @PostMapping("/email-authentication")
@@ -42,15 +42,15 @@ public class UserAuthController implements SwaggerAuthApi {
 
         return userAuthService.checkPassword(dto);
     }
-    @GetMapping("/check-nickname")
-    public ResponseEntity checkNickname(@RequestParam(name = "nickname") String nickname) {
+    @PostMapping("/check-nickname")
+    public ResponseEntity checkNickname(@RequestBody @Valid CheckNicknameRequestDto dto) {
 
-        return userAuthService.checkNickname(nickname);
+        return userAuthService.checkNickname(dto);
     }
-    @GetMapping("/check-tel")
-    public ResponseEntity checkTel(@RequestParam(name = "tel") String tel) {
+    @PostMapping("/check-tel")
+    public ResponseEntity checkTel(@RequestBody @Valid CheckTelRequestDto dto) {
 
-        return userAuthService.checkTel(tel);
+        return userAuthService.checkTel(dto);
     }
     @PostMapping("/join")
     public ResponseEntity join(@RequestBody @Valid JoinRequestDto dto) {
