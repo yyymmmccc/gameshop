@@ -119,8 +119,10 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (userRepository.existsByTel(dto.getTel()))
             throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
-        UserEntity userEntity = userRepository.save(dto.toEntity(passwordEncoder));
+        userRepository.save(dto.toEntity(passwordEncoder));
+        //UserEntity userEntity = userRepository.save(dto.toEntity(passwordEncoder));
 
+        /*
         CouponEntity couponEntity = couponRepository.findById(1).orElseThrow(()
                 -> new CustomException(ResponseCode.COUPON_NOT_FOUND));
 
@@ -131,7 +133,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .expires_at(String.valueOf(LocalDateTime.now().plusMonths(1)))  // 한 달 뒤 만료일
                 .state(CouponType.ACTIVE.toString())
                 .build());
-
+         */
         return ResponseDto.success(null);
     }
 
