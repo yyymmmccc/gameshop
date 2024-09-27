@@ -12,6 +12,7 @@ public class UserResponseDto {
 
     private String email;
     private String name;
+    private String profileImage;
     private String nickname;
     private String tel;
     private String birthDate;
@@ -21,6 +22,7 @@ public class UserResponseDto {
         return UserResponseDto.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
+                .profileImage(userEntity.getProfileImage())
                 .nickname(userEntity.getNickname())
                 .tel(userEntity.getTel())
                 .birthDate(userEntity.getBirthDate())

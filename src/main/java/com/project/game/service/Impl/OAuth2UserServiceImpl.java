@@ -30,8 +30,11 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(request); // 로그인한 유저정보를 oAuth2User에 저장
 
+
+        // OAuth2 로그인 시 키(PK)가 되는 값
+        // 카카오 : id, 네이버 : response
         String userNameAttributeName = request.getClientRegistration()
-                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(); // OAuth2 로그인 시 키(PK)가 되는 값
+                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         String provider = request.getClientRegistration().getRegistrationId(); // provider : kakao, naver, google 등
 
@@ -46,6 +49,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
                 attributes,
                 extractAttributes.getNameAttributeKey(),
                 userEntity.getEmail(),
+                userEntity.getNickname(),
                 userEntity.getRole()
         );
     }

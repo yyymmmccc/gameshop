@@ -41,7 +41,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) {
 
-        String accessToken = jwtProvider.createAccessToken(oAuth2User.getEmail(), oAuth2User.getRole());
+        String accessToken = jwtProvider.createAccessToken(oAuth2User.getEmail(), oAuth2User.getNickname(), oAuth2User.getRole());
         String refreshToken = jwtProvider.createRefreshToken();
 
         redisService.setValues(refreshToken, oAuth2User.getEmail(), Duration.ofDays(14));

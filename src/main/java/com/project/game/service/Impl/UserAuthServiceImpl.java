@@ -1,8 +1,5 @@
 package com.project.game.service.Impl;
 
-import com.project.game.entity.CouponEntity;
-import com.project.game.entity.UserCouponEntity;
-import com.project.game.global.code.CouponType;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.auth.user.*;
 import com.project.game.dto.response.ResponseDto;
@@ -15,7 +12,6 @@ import com.project.game.repository.CouponRepository;
 import com.project.game.repository.UserCouponRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.UserAuthService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -172,7 +167,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (!passwordEncoder.matches(dto.getPassword(), userEntity.getPassword()))
             throw new CustomException(ResponseCode.LOGIN_FAIL);
 
-        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getRole());
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), userEntity.getRole());
         String refreshToken = jwtProvider.createRefreshToken();
 
         redisService.setValues(refreshToken, userEntity.getEmail(), Duration.ofDays(14));
@@ -255,7 +250,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         boolean isValid = jwtProvider.refreshValidate(refreshToken);
         if (!isValid) throw new CustomException(ResponseCode.AUTHORIZATION_FAIL);
 
-        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getRole()); // 새로 발급받은 토큰
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getRole(), userEntity.getRole()); // 새로 발급받은 토큰
         String newRefreshToken = jwtProvider.createRefreshToken();
 
         redisService.deleteValues(refreshToken);

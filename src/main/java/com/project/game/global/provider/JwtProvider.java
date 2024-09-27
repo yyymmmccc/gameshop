@@ -1,7 +1,5 @@
 package com.project.game.global.provider;
 
-import com.project.game.global.code.ResponseCode;
-import com.project.game.global.handler.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,7 +25,7 @@ public class JwtProvider {
     private final Date ACCESS_TOKEN_TIME = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
     private final Date REFRESH_TOKEN_TIME = Date.from(Instant.now().plus(14, ChronoUnit.DAYS));
 
-    // 사용자에게 줄 토큰을 만들어주는 메서드
+
     public String createAccessToken(String email, String role){
 
         String jwt = Jwts.builder() // builder는 jwt를 만들기 위한 객체를 생성함
@@ -36,6 +34,21 @@ public class JwtProvider {
                 .setIssuedAt(new Date())    // setIssuedAt은 토큰 발행일
                 .setExpiration(ACCESS_TOKEN_TIME) // 만료일 설정
                 .claim("email", email) // 이메일 클레임 추가
+                .claim("role", role)
+                .compact();
+
+        return jwt;
+    }
+    // 사용자에게 줄 토큰을 만들어주는 메서드
+    public String createAccessToken(String email, String nickname, String role){
+
+        String jwt = Jwts.builder() // builder는 jwt를 만들기 위한 객체를 생성함
+                .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
+                .setSubject("AccessToken") // Subject를 AccessToken으로 지정
+                .setIssuedAt(new Date())    // setIssuedAt은 토큰 발행일
+                .setExpiration(ACCESS_TOKEN_TIME) // 만료일 설정
+                .claim("email", email) // 이메일 클레임 추가
+                .claim("nickname", nickname)
                 .claim("role", role)
                 .compact();
 
