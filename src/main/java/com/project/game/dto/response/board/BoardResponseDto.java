@@ -25,6 +25,7 @@ public class BoardResponseDto {
     private int categoryId;
     private int commentCount;
     private int favoriteCount;
+    private String profileImage;
     private String nickname;
     private List<String> imageUrlList;
 
@@ -39,6 +40,7 @@ public class BoardResponseDto {
                 .commentCount(boardEntity.getCommentCount())
                 .favoriteCount(boardEntity.getFavoriteCount())
                 .categoryId(boardEntity.getCategoryId())
+                .profileImage(boardEntity.getUserEntity().getProfileImage())
                 .nickname(boardEntity.getUserEntity().getNickname())
                 .imageUrlList(convertToDtoList(boardImageEntityList))
                 .build();

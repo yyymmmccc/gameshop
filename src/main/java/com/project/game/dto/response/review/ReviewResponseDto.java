@@ -14,20 +14,24 @@ import java.util.stream.Collectors;
 public class ReviewResponseDto {
 
     private int reviewId;
-    private String nickname;
     private int gameId;
-    private int rating;
+    private String profileImage;
+    private String nickname;
     private String content;
+    private int rating;
+    private String createdDate;
     private String updatedDate;
 
     public static ReviewResponseDto of(ReviewEntity reviewEntity) {
         return ReviewResponseDto.builder()
                 .reviewId(reviewEntity.getReviewId())
-                .nickname(reviewEntity.getUserEntity().getNickname())
-                .rating(reviewEntity.getRating())
-                .content(reviewEntity.getContent())
-                .updatedDate(reviewEntity.getUpdatedDate())
                 .gameId(reviewEntity.getGameEntity().getGameId())
+                .profileImage(reviewEntity.getUserEntity().getProfileImage())
+                .nickname(reviewEntity.getUserEntity().getNickname())
+                .content(reviewEntity.getContent())
+                .rating(reviewEntity.getRating())
+                .createdDate(reviewEntity.getCreatedDate())
+                .updatedDate(reviewEntity.getUpdatedDate())
                 .build();
     }
 

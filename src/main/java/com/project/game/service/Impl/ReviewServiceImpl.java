@@ -51,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         reviewRepository.save(dto.toEntity(gameEntity, userEntity));
 
-        orderDetailEntity.reviewStatusUpdate(false);
+        orderDetailEntity.reviewStatusUpdate(false);  // 주문상세보기에서 해당 상품리뷰 안되게
 
         return ResponseDto.success(gameEntity.getGameId());
     }

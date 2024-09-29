@@ -17,6 +17,7 @@ public class CommentResponseDto {
     private String content;
     private String updatedDate;
     private int boardId;
+    private String profileImage;
     private String nickname;
 
 
@@ -26,6 +27,7 @@ public class CommentResponseDto {
                 .content(commentEntity.getContent())
                 .updatedDate(commentEntity.getUpdatedDate())
                 .boardId(commentEntity.getBoardEntity().getBoardId())
+                .profileImage(commentEntity.getUserEntity().getProfileImage())
                 .nickname(commentEntity.getUserEntity().getNickname())
                 .build();
     }
