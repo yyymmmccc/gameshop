@@ -149,12 +149,14 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (userRepository.existsByTel(dto.getTel()))
             throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
+        userEntity.update(dto);
+
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), "ROLE_USER");
         String refreshToken = jwtProvider.createRefreshToken();
 
         redisService.setValues(refreshToken, userEntity.getEmail(), Duration.ofDays(14));
-        userEntity.update(dto);
 
-        return ResponseDto.success(null);
+        return ResponseDto.success(new TokenResponseDto(accessToken, refreshToken, 3600));
     }
 
     @Transactional

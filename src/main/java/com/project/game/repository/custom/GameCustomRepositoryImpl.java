@@ -24,6 +24,7 @@ import java.util.List;
 import static com.project.game.entity.QGameEntity.gameEntity;
 import static com.project.game.entity.QGameImageEntity.gameImageEntity;
 import static com.project.game.entity.QReviewEntity.reviewEntity;
+import static com.project.game.entity.QGameCategoryEntity.gameCategoryEntity;
 
 @Repository
 @AllArgsConstructor
@@ -89,10 +90,12 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         JPQLQuery<AdminGameListResponseDto> query =
                 jpaQueryFactory.select(new QAdminGameListResponseDto(
                         gameEntity.gameId,
-                        gameImageEntity.gameImageUrl,
+                        gameEntity.gameCategoryEntity.categoryName,
                         gameEntity.gameName,
                         gameEntity.originalPrice,
                         gameEntity.discountPrice,
+                        gameEntity.regDate,
+                        gameEntity.updatedDate,
                         gameEntity.purchaseCount
                 ))
                         .from(gameEntity)
@@ -105,16 +108,30 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
         long count;
 
-        if(categoryId != 0){
+        if(categoryId != 0){ // 0번 카테고리가 아니면서
             query.where(gameEntity.gameCategoryEntity.categoryId.eq(categoryId));
-            count = jpaQueryFactory.selectFrom(gameEntity)
-                    .where(gameEntity.gameCategoryEntity.categoryId.eq(categoryId))
-                    .fetchCount();
+            if(!searchKeyword.isEmpty()){ // 검색어가 있을경우
+                query.where(gameEntity.gameName.contains(searchKeyword));
+                count = jpaQueryFactory.selectFrom(gameEntity)
+                        .where(gameEntity.gameName.contains(searchKeyword)
+                                .and(gameEntity.gameCategoryEntity.categoryId.eq(categoryId)))
+                        .fetchCount();
+            }
+            else { // 검색어가 없을경우 -> 해당 categoryId 에 해당하는 데이터 갯수
+                count = jpaQueryFactory.selectFrom(gameEntity)
+                        .where(gameEntity.gameCategoryEntity.categoryId.eq(categoryId))
+                        .fetchCount();
+            }
         }
-        else count = query.fetchCount();
 
-        if(!searchKeyword.isEmpty()){
-            query.where(gameEntity.gameName.contains(searchKeyword));
+        else { // 0번 카테고리 (전체)
+            if(!searchKeyword.isEmpty()){
+                query.where(gameEntity.gameName.contains(searchKeyword));
+                count = jpaQueryFactory.selectFrom(gameEntity)
+                        .where(gameEntity.gameName.contains(searchKeyword))
+                        .fetchCount();
+            }
+            else count = query.fetchCount();
         }
 
         List<AdminGameListResponseDto> result = query.fetch();

@@ -31,7 +31,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (oAuth2User.getRole().equals("ROLE_GUEST")) {
             String accessToken = jwtProvider.createAccessToken(oAuth2User.getEmail(), oAuth2User.getRole());
 
-            response.sendRedirect("https://genu99.github.io/Graduation-work/more_information.html/" + accessToken); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
+            response.sendRedirect("https://genu99.github.io/Graduation-work/more_information.html?access=" + accessToken); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
+            //response.sendRedirect("https://genu99.github.io/Graduation-work/more_information.html"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
         }
 
         else {
@@ -39,15 +40,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
     }
 
-    private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) {
+    private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
 
         String accessToken = jwtProvider.createAccessToken(oAuth2User.getEmail(), oAuth2User.getNickname(), oAuth2User.getRole());
         String refreshToken = jwtProvider.createRefreshToken();
 
         redisService.setValues(refreshToken, oAuth2User.getEmail(), Duration.ofDays(14));
 
-        response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addHeader("Authorization-Refresh", "Bearer " + refreshToken);
-
+        response.sendRedirect("https://genu99.github.io/Graduation-work/main.html?access=" + accessToken + "&refresh=" + refreshToken); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
     }
 }

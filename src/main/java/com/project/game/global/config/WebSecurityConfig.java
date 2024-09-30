@@ -52,10 +52,16 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/admin/auth/login").permitAll()
+                        /*
                         .requestMatchers
                                 ("/api/admin/auth/logout",
                                         "/api/admin/game/**",
                                         "/api/admin/user/**").hasRole("ADMIN")
+                        */
+                        .requestMatchers
+                                ("/api/admin/auth/logout",
+                                        "/api/admin/game/**",
+                                        "/api/admin/user/**").permitAll()
 
                         .requestMatchers("/api/user/auth/**"
                                 , "/oauth2/**"
@@ -98,8 +104,8 @@ public class WebSecurityConfig {
     @Bean
     protected UrlBasedCorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://genu99.github.io"); // 정확한 출처 설정
-        //configuration.addAllowedOrigin("http://localhost:3000"); // 정확한 출처 설정
+        //configuration.addAllowedOrigin("https://genu99.github.io"); // 정확한 출처 설정
+        configuration.addAllowedOrigin("http://localhost:8000"); // HTTP 프로토콜을 사용하는 출처
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true); // 쿠키 및 인증 정보를 허용
