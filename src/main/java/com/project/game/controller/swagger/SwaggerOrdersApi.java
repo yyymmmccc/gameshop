@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.security.Principal;
+
 @Tag(name = "유저 - 주문", description = "주문내역 생성, 조회 API")
 @RequestMapping("/api/order")
 public interface SwaggerOrdersApi {
@@ -18,19 +20,19 @@ public interface SwaggerOrdersApi {
     @ApiResponse(responseCode = "404", description = "사용자 또는 장바구니 찾을 수 없음")
     @PostMapping("/form")
     ResponseEntity getOrderFormGames(@RequestBody @Valid OrderFormRequestDto dto,
-                                     @AuthenticationPrincipal String email);
+                                     Principal principal);
 
     @Operation(summary = "주문 목록 조회", description = "사용자의 주문 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @ApiResponse(responseCode = "404", description = "사용자 찾을 수 없음")
     @GetMapping("/list")
-    ResponseEntity getOrderList(@AuthenticationPrincipal String email);
+    ResponseEntity getOrderList(Principal principal);
 
     @Operation(summary = "주문 상세 조회", description = "특정 주문의 상세 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @ApiResponse(responseCode = "404", description = "사용자 또는 주문 찾을 수 없음")
     @GetMapping("/order-detail/{orderId}")
-    ResponseEntity getOrderDetailList(@AuthenticationPrincipal String email,
+    ResponseEntity getOrderDetailList(Principal principal,
                                       @PathVariable("orderId") String orderId);
 
     /*

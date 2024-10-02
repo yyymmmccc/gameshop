@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @Slf4j
 @RequestMapping("/api/user/game")
@@ -18,9 +20,9 @@ public class GameController implements SwaggerGameApi {
 
     @GetMapping("/{gameId}")
     public ResponseEntity getGame(@PathVariable("gameId") int gameId,
-                                  @AuthenticationPrincipal String email){
+                                  Principal principal){
 
-        return gameService.getGame(gameId, email);
+        return gameService.getGame(gameId, principal.getName());
     }
 
     @GetMapping("/{categoryId}/list")

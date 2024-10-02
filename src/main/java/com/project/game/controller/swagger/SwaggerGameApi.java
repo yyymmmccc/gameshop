@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.security.Principal;
+
 @Tag(name = "유저 - 게임상품", description = "유저 게임상품 조회 API")
 public interface SwaggerGameApi {
 
@@ -16,7 +18,7 @@ public interface SwaggerGameApi {
     @ApiResponse(responseCode = "404", description = "게임 찾을 수 없음")
     @GetMapping("/{gameId}")
     ResponseEntity getGame(@PathVariable("gameId") int gameId,
-                           @AuthenticationPrincipal String email);
+                           Principal principal);
 
     @Operation(summary = "게임 리스트 조회", description = "카테고리별 게임상품 목록을 조회")
     @ApiResponse(responseCode = "200", description = "게임 리스트 조회 성공")

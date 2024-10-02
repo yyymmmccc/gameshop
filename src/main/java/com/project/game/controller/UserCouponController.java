@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/coupon")
 @RequiredArgsConstructor
@@ -18,16 +20,16 @@ public class UserCouponController {
     private final UserCouponService userCouponService;
 
     @GetMapping("/my")
-    public ResponseEntity<?> getUserCoupon(@AuthenticationPrincipal String email){
+    public ResponseEntity<?> getUserCoupon(Principal principal){
 
-        return userCouponService.getUserCoupon(email);
+        return userCouponService.getUserCoupon(principal.getName());
     }
 
     @PostMapping("/apply-coupon")
     public ResponseEntity<?> userOrderFormApplyCoupon(@RequestBody @Valid UserApplyCouponRequestDto dto,
-                                                      @AuthenticationPrincipal String email){
+                                                      Principal principal){
 
-        return userCouponService.userOrderFormApplyCoupon(dto, email);
+        return userCouponService.userOrderFormApplyCoupon(dto, principal.getName());
     }
 
 }

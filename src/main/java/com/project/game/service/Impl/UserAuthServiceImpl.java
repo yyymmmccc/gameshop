@@ -151,7 +151,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         userEntity.update(dto);
 
-        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), "ROLE_USER");
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), userEntity.getRole());
         String refreshToken = jwtProvider.createRefreshToken();
 
         redisService.setValues(refreshToken, userEntity.getEmail(), Duration.ofDays(14));

@@ -61,6 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+        log.info("1번" + authenticationToken.getDetails());
+        log.info("2번" + authenticationToken.getPrincipal());
+        log.info("3번" + authenticationToken.getName());
+        log.info("4번" + authenticationToken.getAuthorities());
+
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(authenticationToken);
         // 시큐리티 컨텍스트에 사용자의 인증 정보를 저장

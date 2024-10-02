@@ -6,7 +6,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 
 @Tag(name = "관리자 - 게임상품", description = "관리자 게임 조회, 등록, 수정, 삭제 API")
@@ -18,7 +22,7 @@ public interface SwaggerAdminGameApi {
     @ApiResponse(responseCode = "500", description = "서버 오류")
     @PostMapping("")
     ResponseEntity<?> postGame(@RequestBody @Valid AdminPostGameRequestDto dto,
-                               @RequestParam String email);
+                               Principal principal);
 
     @Operation(summary = "게임 수정", description = "기존 게임 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "게임 수정 성공")

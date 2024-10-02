@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.security.Principal;
+
 @Tag(name = "유저 - 내 게임", description = "구매 상품 조회, 삭제 및 실행 API")
 @RequestMapping("/api/library")
 public interface SwaggerLibraryApi {
@@ -16,5 +18,5 @@ public interface SwaggerLibraryApi {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @ApiResponse(responseCode = "404", description = "사용자 찾을 수 없음")
     @GetMapping("/list")
-    ResponseEntity getLibraryList(@AuthenticationPrincipal String email);
+    ResponseEntity getLibraryList(Principal principal);
 }

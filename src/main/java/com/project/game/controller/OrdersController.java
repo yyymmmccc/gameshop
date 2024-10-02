@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/order")
 @RequiredArgsConstructor
@@ -23,9 +25,9 @@ public class OrdersController implements SwaggerOrdersApi {
     // 장바구니 -> 주문페이지 넘어갈 때, 주문 페이지에서 보여줄 정보
     @PostMapping("/form")
     public ResponseEntity getOrderFormGames(@RequestBody @Valid OrderFormRequestDto dto,
-                                            @AuthenticationPrincipal String email){
+                                            Principal principal){
 
-        return ordersService.getOrderFormProduct(dto, email);
+        return ordersService.getOrderFormProduct(dto, principal.getName());
     }
 
     // 결제 버튼 눌렀을 때
@@ -44,22 +46,22 @@ public class OrdersController implements SwaggerOrdersApi {
 
     @PatchMapping("/user-cancel/{orderId}")
     public ResponseEntity<?> userCancelOrder(@PathVariable("orderId") String orderId,
-                                             @AuthenticationPrincipal String email){
+                                             Principal principal){
 
-        return ordersService.userCancelOrder(orderId, email);
+        return ordersService.userCancelOrder(orderId, principal.getName());
     }
 
     @GetMapping("/list")
-    public ResponseEntity getOrderList(@AuthenticationPrincipal String email){
+    public ResponseEntity getOrderList(Principal principal){
 
-        return ordersService.getOrderList(email);
+        return ordersService.getOrderList(principal.getName());
     }
 
     @GetMapping("/order-detail/{orderId}")
-    public ResponseEntity getOrderDetailList(@AuthenticationPrincipal String email,
+    public ResponseEntity getOrderDetailList(Principal principal,
                                              @PathVariable("orderId") String orderId){
 
-        return ordersService.getOrderDetailList(email, orderId);
+        return ordersService.getOrderDetailList(principal.getName(), orderId);
 
     }
 

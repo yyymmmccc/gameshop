@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/review")
 @RequiredArgsConstructor
@@ -19,24 +21,24 @@ public class ReviewController implements SwaggerReviewApi {
 
     @PostMapping("")
     public ResponseEntity postReview(@RequestBody @Valid ReviewRequestDto dto,
-                                     @AuthenticationPrincipal String email){
+                                     Principal principal){
 
-        return reviewService.postReview(dto, email);
+        return reviewService.postReview(dto, principal.getName());
     }
 
     @PatchMapping("/{reviewId}")
     public ResponseEntity patchReview(@PathVariable("reviewId") int reviewId,
                                      @RequestBody @Valid ReviewRequestDto dto,
-                                     @AuthenticationPrincipal String email) {
+                                      Principal principal) {
 
-        return reviewService.patchReview(reviewId, dto, email);
+        return reviewService.patchReview(reviewId, dto, principal.getName());
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable("reviewId") int reviewId,
-                                      @AuthenticationPrincipal String email) {
+                                       Principal principal) {
 
-        return reviewService.deleteReview(reviewId, email);
+        return reviewService.deleteReview(reviewId, principal.getName());
     }
 
     @GetMapping("/{gameId}")

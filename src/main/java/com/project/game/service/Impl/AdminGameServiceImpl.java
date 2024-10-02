@@ -75,7 +75,6 @@ public class AdminGameServiceImpl implements AdminGameService {
                 deleteImageEntityList.add(gameImageEntity);
         }
 
-
         // 삭제할 객체들의 이미지 url 을 추출하여 s3 버킷에서 삭제
         for(GameImageEntity gameImageEntity : deleteImageEntityList){
             s3Service.deleteFile(gameImageEntity.getGameImageUrl());

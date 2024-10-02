@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/board")
 @RequiredArgsConstructor
@@ -24,33 +26,33 @@ public class BoardController implements SwaggerBoardApi {
     private final BoardService boardService;
     @PostMapping("")
     public ResponseEntity postBoard(@RequestBody @Valid BoardRequestDto dto,
-                                                 @AuthenticationPrincipal String email){
+                                    Principal principal){
 
-        return boardService.postBoard(dto, email);
+        return boardService.postBoard(dto, principal.getName());
     }
 
     @PatchMapping("/{boardId}")
     public ResponseEntity patchBoard(@RequestBody @Valid BoardRequestDto dto,
-                                                  @PathVariable("boardId") int boardId,
-                                                  @AuthenticationPrincipal String email){
+                                     @PathVariable("boardId") int boardId,
+                                     Principal principal){
 
-        return boardService.patchBoard(dto, boardId, email);
+        return boardService.patchBoard(dto, boardId, principal.getName());
 
     }
 
     @DeleteMapping("/{boardId}")
     public ResponseEntity deleteBoard(@PathVariable("boardId") int boardId,
-                                                  @AuthenticationPrincipal String email){
+                                      Principal principal){
 
-        return boardService.deleteBoard(boardId, email);
+        return boardService.deleteBoard(boardId, principal.getName());
 
     }
 
     @GetMapping("/{boardId}")
     public ResponseEntity getBoard(@PathVariable("boardId") int boardId,
-                                   @AuthenticationPrincipal String email){
+                                   Principal principal){
 
-        return boardService.getBoard(boardId, email);
+        return boardService.getBoard(boardId, principal.getName());
     }
 
     @GetMapping("/{categoryId}/list")
@@ -65,9 +67,9 @@ public class BoardController implements SwaggerBoardApi {
 
     @PutMapping("/{boardId}/favorite")
     public ResponseEntity putFavorite(@PathVariable("boardId") int boardId,
-                                      @AuthenticationPrincipal String email){
+                                      Principal principal){
 
-        return boardService.putFavorite(boardId, email);
+        return boardService.putFavorite(boardId, principal.getName());
     }
 
 }

@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/cart")
 @RequiredArgsConstructor
@@ -21,24 +23,22 @@ public class CartController implements SwaggerCartApi {
 
     @PostMapping("/{gameId}")
     public ResponseEntity postCart(@PathVariable("gameId") int gameId,
-                                   @AuthenticationPrincipal String email) {
+                                   Principal principal) {
 
-        return cartService.postCart(gameId, email);
+        return cartService.postCart(gameId, principal.getName());
     }
 
     @GetMapping("/list")
-    public ResponseEntity getCarts(@AuthenticationPrincipal String email){
+    public ResponseEntity getCarts(Principal principal){
 
-        log.info("이메일 체크 : " + email);
-
-        return cartService.getCarts(email);
+        return cartService.getCarts(principal.getName());
     }
 
     @DeleteMapping("")
     public ResponseEntity deleteCart(@RequestBody @Valid CartDeleteRequestDto dto,
-                                     @AuthenticationPrincipal String email){
+                                     Principal principal){
 
-        return cartService.deleteCart(dto, email);
+        return cartService.deleteCart(dto, principal.getName());
     }
 
 }

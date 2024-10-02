@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 
 @RestController
@@ -22,9 +25,9 @@ public class AdminGameController implements SwaggerAdminGameApi {
 
     @PostMapping("")
     public ResponseEntity<?> postGame(@RequestBody @Valid AdminPostGameRequestDto dto,
-                                   @AuthenticationPrincipal String email) {
+                                      Principal principal) {
 
-        return adminGameService.postGame(dto, email);
+        return adminGameService.postGame(dto, principal.getName());
     }
 
     @PatchMapping("/{gameId}")

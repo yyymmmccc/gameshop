@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/comment")
 @RequiredArgsConstructor
@@ -19,25 +21,25 @@ public class CommentController implements SwaggerCommentApi {
 
     @PostMapping("/{boardId}")
     public ResponseEntity postComment(@PathVariable("boardId") int boardId,
-                                                   @AuthenticationPrincipal String email,
-                                                   @RequestBody @Valid CommentRequestDto dto){
+                                      Principal principal,
+                                      @RequestBody @Valid CommentRequestDto dto){
 
-        return commentService.postComment(boardId, email, dto);
+        return commentService.postComment(boardId, principal.getName(), dto);
     }
 
     @PatchMapping("/{commentId}")
     public ResponseEntity patchComment(@PathVariable("commentId") int commentId,
-                                                    @AuthenticationPrincipal String email,
-                                                    @RequestBody CommentRequestDto dto){
+                                       Principal principal,
+                                       @RequestBody CommentRequestDto dto){
 
-        return commentService.patchComment(commentId, email, dto);
+        return commentService.patchComment(commentId, principal.getName(), dto);
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity deleteComment(@PathVariable("commentId") int commentId,
-                                                     @AuthenticationPrincipal String email){
+                                        Principal principal){
 
-        return commentService.deleteComment(commentId, email);
+        return commentService.deleteComment(commentId, principal.getName());
     }
 
     @GetMapping("/{boardId}")

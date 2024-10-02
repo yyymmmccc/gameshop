@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/library")
 @RequiredArgsConstructor
@@ -16,8 +18,8 @@ public class LibraryController implements SwaggerLibraryApi {
     private final LibraryService libraryService;
 
     @GetMapping("/list")
-    public ResponseEntity getLibraryList(@AuthenticationPrincipal String email){
+    public ResponseEntity getLibraryList(Principal principal){
 
-        return libraryService.getLibraryList(email);
+        return libraryService.getLibraryList(principal.getName());
     }
 }

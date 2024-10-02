@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import java.security.Principal;
+
 @Tag(name = "유저 - 게시판 댓글", description = "게시판 댓글 생성, 수정, 삭제, 조회 API")
 public interface SwaggerCommentApi {
 
@@ -18,7 +20,7 @@ public interface SwaggerCommentApi {
     @ApiResponse(responseCode = "404", description = "게시글 또는 사용자 찾을 수 없음")
     @PostMapping("/{boardId}")
     ResponseEntity postComment(@PathVariable("boardId") int boardId,
-                               @AuthenticationPrincipal String email,
+                               Principal principal,
                                @RequestBody @Valid CommentRequestDto dto);
 
     @Operation(summary = "댓글 수정", description = "게시판 댓글을 수정하는 API")
@@ -28,7 +30,7 @@ public interface SwaggerCommentApi {
     @ApiResponse(responseCode = "403", description = "수정 권한 없음")
     @PatchMapping("/{commentId}")
     ResponseEntity patchComment(@PathVariable("commentId") int commentId,
-                                @AuthenticationPrincipal String email,
+                                Principal principal,
                                 @RequestBody CommentRequestDto dto);
 
     @Operation(summary = "댓글 삭제", description = "게시판 댓글을 삭제하는 API")
@@ -38,7 +40,7 @@ public interface SwaggerCommentApi {
     @ApiResponse(responseCode = "403", description = "삭제 권한 없음")
     @DeleteMapping("/{commentId}")
     ResponseEntity deleteComment(@PathVariable("commentId") int commentId,
-                                 @AuthenticationPrincipal String email);
+                                 Principal principal);
 
     @Operation(summary = "댓글 조회", description = "게시판 글에 달린 모든 댓글을 조회하는 API")
     @ApiResponse(responseCode = "200", description = "댓글 조회 성공")
