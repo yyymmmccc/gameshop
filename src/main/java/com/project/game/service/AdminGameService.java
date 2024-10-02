@@ -11,4 +11,6 @@ public interface AdminGameService {
     ResponseEntity<?> deleteGame(int gameId);
 
     ResponseEntity<?> getProductList(int page, int categoryId, String searchKeyword);
+
+    ResponseEntity<?> getProduct(int gameId);
 }

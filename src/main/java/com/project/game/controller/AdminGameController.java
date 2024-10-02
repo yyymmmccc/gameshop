@@ -43,6 +43,12 @@ public class AdminGameController implements SwaggerAdminGameApi {
         return adminGameService.deleteGame(gameId);
     }
 
+    @GetMapping("/{gameId}")
+    public ResponseEntity<?> getProduct(@PathVariable("gameId") int gameId){
+
+        return adminGameService.getProduct(gameId);
+    }
+
     @GetMapping("/list")
     public ResponseEntity<?> getProductList(@RequestParam(defaultValue = "1") int page,
                                             @RequestParam(defaultValue = "0") int categoryId,

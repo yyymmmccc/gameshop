@@ -73,6 +73,9 @@ public class GameEntity {
     @OneToMany(mappedBy = "gameEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> ReviewEntityList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "gameEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartEntity> cartEntityList = new ArrayList<>();
+
     public void update(AdminPostGameRequestDto dto, GameCategoryEntity gameCategoryEntity) {
         this.gameCategoryEntity = gameCategoryEntity;
         this.gameName = dto.getGameName();

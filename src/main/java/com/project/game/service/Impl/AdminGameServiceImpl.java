@@ -2,6 +2,7 @@ package com.project.game.service.Impl;
 
 import com.project.game.dto.response.PaginatedResponseDto;
 import com.project.game.dto.response.game.admin.AdminGameListResponseDto;
+import com.project.game.dto.response.game.admin.AdminGameResponseDto;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.game.AdminPostGameRequestDto;
 import com.project.game.dto.response.ResponseDto;
@@ -101,6 +102,17 @@ public class AdminGameServiceImpl implements AdminGameService {
         gameRepository.deleteById(gameId);
 
         return ResponseDto.success(null);
+    }
+
+    @Override
+    public ResponseEntity<?> getProduct(int gameId) {
+
+        GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
+                -> new CustomException(ResponseCode.GAME_NOT_FOUND));
+
+        List<GameImageEntity> gameImageEntityList = gameImageRepository.findByGameEntity(gameEntity);
+
+        return ResponseDto.success(AdminGameResponseDto.of(gameEntity, gameImageEntityList));
     }
 
     @Override
