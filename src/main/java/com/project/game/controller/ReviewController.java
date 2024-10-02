@@ -21,24 +21,24 @@ public class ReviewController implements SwaggerReviewApi {
 
     @PostMapping("")
     public ResponseEntity postReview(@RequestBody @Valid ReviewRequestDto dto,
-                                     Principal principal){
+                                     @AuthenticationPrincipal String email){
 
-        return reviewService.postReview(dto, principal.getName());
+        return reviewService.postReview(dto, email);
     }
 
     @PatchMapping("/{reviewId}")
     public ResponseEntity patchReview(@PathVariable("reviewId") int reviewId,
                                      @RequestBody @Valid ReviewRequestDto dto,
-                                      Principal principal) {
+                                      @AuthenticationPrincipal String email) {
 
-        return reviewService.patchReview(reviewId, dto, principal.getName());
+        return reviewService.patchReview(reviewId, dto, email);
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity deleteReview(@PathVariable("reviewId") int reviewId,
-                                       Principal principal) {
+                                       @AuthenticationPrincipal String email) {
 
-        return reviewService.deleteReview(reviewId, principal.getName());
+        return reviewService.deleteReview(reviewId, email);
     }
 
     @GetMapping("/{gameId}")

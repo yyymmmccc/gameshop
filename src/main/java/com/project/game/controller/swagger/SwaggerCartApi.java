@@ -21,14 +21,14 @@ public interface SwaggerCartApi {
     @ApiResponse(responseCode = "409", description = "중복된 장바구니 또는 주문")
     @PostMapping("/{gameId}")
     ResponseEntity postCart(@PathVariable("gameId") int gameId,
-                            Principal principal);
+                            @AuthenticationPrincipal String email);
 
     @Operation(summary = "장바구니 목록 조회", description = "사용자의 장바구니 목록을 조회하는 API")
     @ApiResponse(responseCode = "200", description = "장바구니 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     @GetMapping("/list")
-    ResponseEntity getCarts(Principal principal);
+    ResponseEntity getCarts(@AuthenticationPrincipal String email);
 
     @Operation(summary = "장바구니에서 게임 삭제", description = "선택한 게임을 장바구니에서 삭제하는 API")
     @ApiResponse(responseCode = "200", description = "장바구니 삭제 성공")
@@ -36,5 +36,5 @@ public interface SwaggerCartApi {
     @ApiResponse(responseCode = "404", description = "사용자 또는 장바구니 항목을 찾을 수 없음")
     @DeleteMapping("")
     ResponseEntity deleteCart(@RequestBody @Valid CartDeleteRequestDto dto,
-                              Principal principal);
+                              @AuthenticationPrincipal String email);
 }

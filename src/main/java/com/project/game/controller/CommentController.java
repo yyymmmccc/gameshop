@@ -21,25 +21,25 @@ public class CommentController implements SwaggerCommentApi {
 
     @PostMapping("/{boardId}")
     public ResponseEntity postComment(@PathVariable("boardId") int boardId,
-                                      Principal principal,
+                                      @AuthenticationPrincipal String email,
                                       @RequestBody @Valid CommentRequestDto dto){
 
-        return commentService.postComment(boardId, principal.getName(), dto);
+        return commentService.postComment(boardId, email, dto);
     }
 
     @PatchMapping("/{commentId}")
     public ResponseEntity patchComment(@PathVariable("commentId") int commentId,
-                                       Principal principal,
+                                       @AuthenticationPrincipal String email,
                                        @RequestBody CommentRequestDto dto){
 
-        return commentService.patchComment(commentId, principal.getName(), dto);
+        return commentService.patchComment(commentId, email, dto);
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity deleteComment(@PathVariable("commentId") int commentId,
-                                        Principal principal){
+                                        @AuthenticationPrincipal String email){
 
-        return commentService.deleteComment(commentId, principal.getName());
+        return commentService.deleteComment(commentId, email);
     }
 
     @GetMapping("/{boardId}")

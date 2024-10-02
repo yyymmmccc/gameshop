@@ -22,7 +22,7 @@ public interface SwaggerAdminGameApi {
     @ApiResponse(responseCode = "500", description = "서버 오류")
     @PostMapping("")
     ResponseEntity<?> postGame(@RequestBody @Valid AdminPostGameRequestDto dto,
-                               Principal principal);
+                               @AuthenticationPrincipal String email);
 
     @Operation(summary = "게임 수정", description = "기존 게임 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "게임 수정 성공")

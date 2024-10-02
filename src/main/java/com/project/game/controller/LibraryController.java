@@ -18,8 +18,8 @@ public class LibraryController implements SwaggerLibraryApi {
     private final LibraryService libraryService;
 
     @GetMapping("/list")
-    public ResponseEntity getLibraryList(Principal principal){
+    public ResponseEntity getLibraryList(@AuthenticationPrincipal String email){
 
-        return libraryService.getLibraryList(principal.getName());
+        return libraryService.getLibraryList(email);
     }
 }

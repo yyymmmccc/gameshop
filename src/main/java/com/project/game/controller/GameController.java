@@ -20,9 +20,9 @@ public class GameController implements SwaggerGameApi {
 
     @GetMapping("/{gameId}")
     public ResponseEntity getGame(@PathVariable("gameId") int gameId,
-                                  Principal principal){
+                                  @AuthenticationPrincipal String email){
 
-        return gameService.getGame(gameId, principal.getName());
+        return gameService.getGame(gameId, email);
     }
 
     @GetMapping("/{categoryId}/list")

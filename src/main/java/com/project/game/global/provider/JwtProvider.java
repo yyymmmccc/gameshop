@@ -1,8 +1,6 @@
 package com.project.game.global.provider;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,7 +77,21 @@ public class JwtProvider {
                     .getBody();
 
             return claims;
-        } catch (Exception e){
+        } catch (ExpiredJwtException e) {
+            // 만료된 토큰에 대한 예외 처리
+            log.error("Token expired: {}", e.getMessage());
+            return null;
+        } catch (MalformedJwtException e) {
+            // 형식이 잘못된 토큰에 대한 예외 처리
+            log.error("Malformed token: {}", e.getMessage());
+            return null;
+        } catch (SignatureException e) {
+            // 서명이 잘못된 토큰에 대한 예외 처리
+            log.error("Invalid token signature: {}", e.getMessage());
+            return null;
+        } catch (Exception e) {
+            // 그 외의 예외 처리
+            log.error("Invalid token: {}", e.getMessage());
             return null;
         }
     }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/admin/payment")
+@RequestMapping("/api/admin/order")
 @RequiredArgsConstructor
 public class AdminOrdersController implements SwaggerAdminOrdersApi {
 

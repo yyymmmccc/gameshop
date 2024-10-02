@@ -51,36 +51,26 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/admin/auth/login").permitAll()
-                        /*
                         .requestMatchers
-                                ("/api/admin/auth/logout",
-                                        "/api/admin/game/**",
-                                        "/api/admin/user/**").hasRole("ADMIN")
-                        */
-                        .requestMatchers
-                                ("/api/admin/auth/logout",
-                                        "/api/admin/game/**",
-                                        "/api/admin/user/**").permitAll()
+                                ("/api/admin/game/**",
+                                        "/api/admin/user/**",
+                                        "/api/admin/order/**",
+                                        "/api/admin/payment/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/admin/auth/**").permitAll()
 
                         .requestMatchers("/api/user/auth/**"
                                 , "/oauth2/**"
-                                , "/file/**"
-                                //, "/api/user/order/pay/approve"
-                                //, "/api/user/order/pay/cancel"
-                                , "/api/user/payment/**"
-                                , "/api/user/order/**"
-                                , "/**").permitAll()
-
-                        .requestMatchers(swaggerPath).permitAll()
+                                , "/file/**").permitAll() // 로그인 필요x
 
                         .requestMatchers(HttpMethod.GET, "/api/user/board/**"
                                 , "/api/user/game/**"
                                 , "/api/user/review/**"
-                                , "/api/user/comment/**").permitAll()
+                                , "/api/user/comment/**").permitAll() // 로그인 필요 x
 
+                        .requestMatchers(swaggerPath).permitAll()
                         .anyRequest().authenticated()
-                )       // 그 외의 요청은 인증을 필요
+                )
 
                 .oauth2Login(oauth2 -> oauth2
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))

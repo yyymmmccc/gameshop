@@ -1,5 +1,6 @@
 package com.project.game.service.Impl;
 
+import com.project.game.dto.response.auth.TokenResponseDto;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.member.user.UserPasswordRequestDto;
 import com.project.game.dto.request.member.user.UserUpdateRequestDto;
@@ -7,6 +8,7 @@ import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.member.user.UserResponseDto;
 import com.project.game.entity.UserEntity;
 import com.project.game.global.handler.CustomException;
+import com.project.game.global.provider.JwtProvider;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -26,6 +29,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RedisServiceImpl redisService;
+    private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -59,7 +63,12 @@ public class UserServiceImpl implements UserService {
 
         userEntity.update(dto);
 
-        return ResponseDto.success(null);
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), userEntity.getRole());
+        String refreshToken = jwtProvider.createRefreshToken();
+
+        redisService.setValues(refreshToken, userEntity.getEmail(), Duration.ofDays(14));
+
+        return ResponseDto.success(new TokenResponseDto(accessToken, refreshToken, 3600));
     }
 
     @Transactional

@@ -25,9 +25,9 @@ public class AdminGameController implements SwaggerAdminGameApi {
 
     @PostMapping("")
     public ResponseEntity<?> postGame(@RequestBody @Valid AdminPostGameRequestDto dto,
-                                      Principal principal) {
+                                      @AuthenticationPrincipal String email) {
 
-        return adminGameService.postGame(dto, principal.getName());
+        return adminGameService.postGame(dto, email);
     }
 
     @PatchMapping("/{gameId}")

@@ -26,33 +26,33 @@ public class BoardController implements SwaggerBoardApi {
     private final BoardService boardService;
     @PostMapping("")
     public ResponseEntity postBoard(@RequestBody @Valid BoardRequestDto dto,
-                                    Principal principal){
+                                    @AuthenticationPrincipal String email){
 
-        return boardService.postBoard(dto, principal.getName());
+        return boardService.postBoard(dto, email);
     }
 
     @PatchMapping("/{boardId}")
     public ResponseEntity patchBoard(@RequestBody @Valid BoardRequestDto dto,
                                      @PathVariable("boardId") int boardId,
-                                     Principal principal){
+                                     @AuthenticationPrincipal String email){
 
-        return boardService.patchBoard(dto, boardId, principal.getName());
+        return boardService.patchBoard(dto, boardId, email);
 
     }
 
     @DeleteMapping("/{boardId}")
     public ResponseEntity deleteBoard(@PathVariable("boardId") int boardId,
-                                      Principal principal){
+                                      @AuthenticationPrincipal String email){
 
-        return boardService.deleteBoard(boardId, principal.getName());
+        return boardService.deleteBoard(boardId, email);
 
     }
 
     @GetMapping("/{boardId}")
     public ResponseEntity getBoard(@PathVariable("boardId") int boardId,
-                                   Principal principal){
+                                   @AuthenticationPrincipal String email){
 
-        return boardService.getBoard(boardId, principal.getName());
+        return boardService.getBoard(boardId, email);
     }
 
     @GetMapping("/{categoryId}/list")
@@ -67,9 +67,9 @@ public class BoardController implements SwaggerBoardApi {
 
     @PutMapping("/{boardId}/favorite")
     public ResponseEntity putFavorite(@PathVariable("boardId") int boardId,
-                                      Principal principal){
+                                      @AuthenticationPrincipal String email){
 
-        return boardService.putFavorite(boardId, principal.getName());
+        return boardService.putFavorite(boardId, email);
     }
 
 }

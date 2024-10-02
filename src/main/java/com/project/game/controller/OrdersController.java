@@ -25,9 +25,9 @@ public class OrdersController implements SwaggerOrdersApi {
     // 장바구니 -> 주문페이지 넘어갈 때, 주문 페이지에서 보여줄 정보
     @PostMapping("/form")
     public ResponseEntity getOrderFormGames(@RequestBody @Valid OrderFormRequestDto dto,
-                                            Principal principal){
+                                            @AuthenticationPrincipal String email){
 
-        return ordersService.getOrderFormProduct(dto, principal.getName());
+        return ordersService.getOrderFormProduct(dto, email);
     }
 
     // 결제 버튼 눌렀을 때
@@ -46,22 +46,22 @@ public class OrdersController implements SwaggerOrdersApi {
 
     @PatchMapping("/user-cancel/{orderId}")
     public ResponseEntity<?> userCancelOrder(@PathVariable("orderId") String orderId,
-                                             Principal principal){
+                                             @AuthenticationPrincipal String email){
 
-        return ordersService.userCancelOrder(orderId, principal.getName());
+        return ordersService.userCancelOrder(orderId, email);
     }
 
     @GetMapping("/list")
-    public ResponseEntity getOrderList(Principal principal){
+    public ResponseEntity getOrderList(@AuthenticationPrincipal String email){
 
-        return ordersService.getOrderList(principal.getName());
+        return ordersService.getOrderList(email);
     }
 
     @GetMapping("/order-detail/{orderId}")
-    public ResponseEntity getOrderDetailList(Principal principal,
+    public ResponseEntity getOrderDetailList(@AuthenticationPrincipal String email,
                                              @PathVariable("orderId") String orderId){
 
-        return ordersService.getOrderDetailList(principal.getName(), orderId);
+        return ordersService.getOrderDetailList(email, orderId);
 
     }
 

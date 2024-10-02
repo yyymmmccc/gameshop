@@ -20,19 +20,19 @@ public interface SwaggerOrdersApi {
     @ApiResponse(responseCode = "404", description = "사용자 또는 장바구니 찾을 수 없음")
     @PostMapping("/form")
     ResponseEntity getOrderFormGames(@RequestBody @Valid OrderFormRequestDto dto,
-                                     Principal principal);
+                                     @AuthenticationPrincipal String email);
 
     @Operation(summary = "주문 목록 조회", description = "사용자의 주문 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @ApiResponse(responseCode = "404", description = "사용자 찾을 수 없음")
     @GetMapping("/list")
-    ResponseEntity getOrderList(Principal principal);
+    ResponseEntity getOrderList(@AuthenticationPrincipal String email);
 
     @Operation(summary = "주문 상세 조회", description = "특정 주문의 상세 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @ApiResponse(responseCode = "404", description = "사용자 또는 주문 찾을 수 없음")
     @GetMapping("/order-detail/{orderId}")
-    ResponseEntity getOrderDetailList(Principal principal,
+    ResponseEntity getOrderDetailList(@AuthenticationPrincipal String email,
                                       @PathVariable("orderId") String orderId);
 
     /*

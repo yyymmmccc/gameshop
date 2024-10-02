@@ -20,7 +20,7 @@ public interface SwaggerReviewApi {
     @ApiResponse(responseCode = "404", description = "게임 또는 사용자 찾을 수 없음")
     @PostMapping("")
     ResponseEntity postReview(@RequestBody @Valid ReviewRequestDto dto,
-                              Principal principal);
+                              @AuthenticationPrincipal String email);
 
     @Operation(summary = "게임 후기 수정", description = "작성한 게임 후기를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "후기 수정 성공")
@@ -28,14 +28,14 @@ public interface SwaggerReviewApi {
     @PatchMapping("/{reviewId}")
     ResponseEntity patchReview(@PathVariable("reviewId") int reviewId,
                                @RequestBody @Valid ReviewRequestDto dto,
-                               Principal principal);
+                               @AuthenticationPrincipal String email);
 
     @Operation(summary = "게임 후기 삭제", description = "작성한 게임 후기를 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "후기 삭제 성공")
     @ApiResponse(responseCode = "404", description = "후기 또는 사용자 찾을 수 없음")
     @DeleteMapping("/{reviewId}")
     ResponseEntity deleteReview(@PathVariable("reviewId") int reviewId,
-                                Principal principal);
+                                @AuthenticationPrincipal String email);
 
     @Operation(summary = "게임 후기 조회", description = "특정 게임에 대한 모든 후기를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")

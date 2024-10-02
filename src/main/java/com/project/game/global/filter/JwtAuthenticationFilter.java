@@ -32,15 +32,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String accessToken = jwtProvider.extractAccessToken(request); // 사용자에 요청에서 token을 꺼냄
+        String accessToken = jwtProvider.extractAccessToken(request); // 사용자 요청에서 토큰 추출
 
         if (accessToken == null) {
-            filterChain.doFilter(request, response); // 토큰이 없으면 다음 필터로 이동
+            filterChain.doFilter(request, response);
             return;
         }
 
-        Claims claims = jwtProvider.accessValidate(accessToken); // 토큰 유효성 검사 및 이메일 추출
-        if(claims == null){
+        Claims claims = jwtProvider.accessValidate(accessToken); // 토큰 유효성 검사
+        if (claims == null) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -48,8 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String role = claims.get("role", String.class);
         String email = claims.get("email", String.class);
 
-        if (role == null || email == null) { // 둘 중 하나의 값만 없어도 return
-            filterChain.doFilter(request, response); // 토큰이 유효하지 않으면 다음 필터로 이동
+        if (role == null || email == null) {
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -57,18 +57,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         AbstractAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(email, null, authorities);
-        // 인증된 사용자의 정보를 저장
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        log.info("1번" + authenticationToken.getDetails());
-        log.info("2번" + authenticationToken.getPrincipal());
-        log.info("3번" + authenticationToken.getName());
-        log.info("4번" + authenticationToken.getAuthorities());
-
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        securityContext.setAuthentication(authenticationToken);
-        // 시큐리티 컨텍스트에 사용자의 인증 정보를 저장
+        securityContext.setAuthentication(authenticationToken); // 인증된 사용자 정보를 저장
 
         SecurityContextHolder.setContext(securityContext);
 

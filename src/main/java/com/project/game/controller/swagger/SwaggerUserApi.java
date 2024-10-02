@@ -20,7 +20,7 @@ public interface SwaggerUserApi {
     @ApiResponse(responseCode = "200", description = "정보 조회 성공")
     @ApiResponse(responseCode = "404", description = "사용자 찾을 수 없음")
     @GetMapping("")
-    ResponseEntity getUser(Principal principal);
+    ResponseEntity getUser(@AuthenticationPrincipal String email);
 
     @Operation(summary = "마이페이지 정보 수정", description = "마이페이지에서 내 정보 수정하기")
     @ApiResponse(responseCode = "200", description = "정보 수정 성공")
@@ -28,7 +28,7 @@ public interface SwaggerUserApi {
     @ApiResponse(responseCode = "409", description = "닉네임 또는 전화번호 중복")
     @PatchMapping("")
     ResponseEntity patchUser(@RequestBody @Valid UserUpdateRequestDto dto,
-                             Principal principal);
+                             @AuthenticationPrincipal String email);
 
     @Operation(summary = "마이페이지 비밀번호 수정", description = "마이페이지에서 비밀번호 수정하기")
     @ApiResponse(responseCode = "200", description = "비밀번호 수정 성공")
@@ -36,11 +36,11 @@ public interface SwaggerUserApi {
     @ApiResponse(responseCode = "400", description = "비밀번호 확인 실패")
     @PatchMapping("/password")
     ResponseEntity patchUserPassword(@RequestBody @Valid UserPasswordRequestDto dto,
-                                     Principal principal);
+                                     @AuthenticationPrincipal String email);
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴")
     @ApiResponse(responseCode = "200", description = "회원탈퇴 성공")
     @ApiResponse(responseCode = "404", description = "사용자 찾을 수 없음")
     @DeleteMapping("")
-    ResponseEntity deleteUser(Principal principal);
+    ResponseEntity deleteUser(@AuthenticationPrincipal String email);
 }

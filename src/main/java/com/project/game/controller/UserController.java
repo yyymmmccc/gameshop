@@ -20,29 +20,29 @@ public class UserController implements SwaggerUserApi {
     private final UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<?> getUser(Principal principal){
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal String email){
 
-        return userService.getUser(principal.getName());
+        return userService.getUser(email);
     }
 
     @PatchMapping("")
     public ResponseEntity<?> patchUser(@RequestBody @Valid UserUpdateRequestDto dto,
-                                       Principal principal){
+                                       @AuthenticationPrincipal String email){
 
-        return userService.patchUser(dto, principal.getName());
+        return userService.patchUser(dto, email);
     }
 
     @PatchMapping("/password")
     public ResponseEntity<?> patchUserPassword(@RequestBody @Valid UserPasswordRequestDto dto,
-                                               Principal principal){
+                                               @AuthenticationPrincipal String email){
 
-        return userService.patchUserPassword(dto, principal.getName());
+        return userService.patchUserPassword(dto, email);
     }
     @DeleteMapping("")
     public ResponseEntity<?> deleteUser(//@RequestBody @Valid UserDeleteRequestDto dto,
-                                        Principal principal){
+                                        @AuthenticationPrincipal String email){
 
-        return userService.deleteUser(principal.getName());
+        return userService.deleteUser(email);
     }
 
     @GetMapping("/recent-list")

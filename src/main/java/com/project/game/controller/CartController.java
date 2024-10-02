@@ -23,22 +23,22 @@ public class CartController implements SwaggerCartApi {
 
     @PostMapping("/{gameId}")
     public ResponseEntity postCart(@PathVariable("gameId") int gameId,
-                                   Principal principal) {
+                                   @AuthenticationPrincipal String email) {
 
-        return cartService.postCart(gameId, principal.getName());
+        return cartService.postCart(gameId, email);
     }
 
     @GetMapping("/list")
-    public ResponseEntity getCarts(Principal principal){
+    public ResponseEntity getCarts(@AuthenticationPrincipal String email){
 
-        return cartService.getCarts(principal.getName());
+        return cartService.getCarts(email);
     }
 
     @DeleteMapping("")
     public ResponseEntity deleteCart(@RequestBody @Valid CartDeleteRequestDto dto,
-                                     Principal principal){
+                                     @AuthenticationPrincipal String email){
 
-        return cartService.deleteCart(dto, principal.getName());
+        return cartService.deleteCart(dto, email);
     }
 
 }

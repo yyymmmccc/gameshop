@@ -20,16 +20,16 @@ public class UserCouponController {
     private final UserCouponService userCouponService;
 
     @GetMapping("/my")
-    public ResponseEntity<?> getUserCoupon(Principal principal){
+    public ResponseEntity<?> getUserCoupon(@AuthenticationPrincipal String email){
 
-        return userCouponService.getUserCoupon(principal.getName());
+        return userCouponService.getUserCoupon(email);
     }
 
     @PostMapping("/apply-coupon")
     public ResponseEntity<?> userOrderFormApplyCoupon(@RequestBody @Valid UserApplyCouponRequestDto dto,
-                                                      Principal principal){
+                                                      @AuthenticationPrincipal String email){
 
-        return userCouponService.userOrderFormApplyCoupon(dto, principal.getName());
+        return userCouponService.userOrderFormApplyCoupon(dto, email);
     }
 
 }
