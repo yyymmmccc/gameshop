@@ -10,7 +10,6 @@ import java.util.List;
 @Builder
 public class PaginatedResponseDto<T> {
 
-
     private long totalElements;
     private int totalPages;
     private int number;

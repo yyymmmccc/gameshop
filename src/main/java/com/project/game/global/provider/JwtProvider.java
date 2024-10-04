@@ -20,17 +20,13 @@ public class JwtProvider {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String REFRESH_TOKEN_HEADER = "Authorization-Refresh";
 
-    private final Date ISSUED_AT = Date.from(Instant.now());
-    private final Date ACCESS_TOKEN_TIME = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
-    private final Date REFRESH_TOKEN_TIME = Date.from(Instant.now().plus(14, ChronoUnit.DAYS));
-
     public String createAccessToken(String email, String role){
 
         String jwt = Jwts.builder() // builder는 jwt를 만들기 위한 객체를 생성함
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
                 .setSubject("AccessToken") // Subject를 AccessToken으로 지정
-                .setIssuedAt(ISSUED_AT)    // setIssuedAt은 토큰 발행일
-                .setExpiration(ACCESS_TOKEN_TIME) // 만료일 설정
+                .setIssuedAt(Date.from(Instant.now()))    // setIssuedAt은 토큰 발행일
+                .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // 만료일 설정
                 .claim("email", email) // 이메일 클레임 추가
                 .claim("role", role)
                 .compact();
@@ -43,8 +39,8 @@ public class JwtProvider {
         String jwt = Jwts.builder() // builder는 jwt를 만들기 위한 객체를 생성함
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
                 .setSubject("AccessToken") // Subject를 AccessToken으로 지정
-                .setIssuedAt(new Date())    // setIssuedAt은 토큰 발행일
-                .setExpiration(ACCESS_TOKEN_TIME) // 만료일 설정
+                .setIssuedAt(Date.from(Instant.now()))    // setIssuedAt은 토큰 발행일
+                .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // 만료일 설정
                 .claim("email", email) // 이메일 클레임 추가
                 .claim("nickname", nickname)
                 .claim("role", role)
@@ -58,8 +54,8 @@ public class JwtProvider {
         String jwt = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
                 .setSubject("RefreshToken") // Subject를 RefreshToken 으로 지정
-                .setIssuedAt(new Date())    // setIssuedAt은 토큰 발행일
-                .setExpiration(REFRESH_TOKEN_TIME) // 만료일을 설정
+                .setIssuedAt(Date.from(Instant.now()))    // setIssuedAt은 토큰 발행일
+                .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // 만료일을 설정
                 .compact();
 
         return jwt;
@@ -68,31 +64,33 @@ public class JwtProvider {
     // 액세스 토큰을 secretKey로 검증
     public Claims accessValidate(String accessToken){
 
-        Claims claims;
-        claims = Jwts.parser()
-                .setSigningKey(secretKey) //jwt 를 secretKey로 정상적인지 검증
-                .parseClaimsJws(accessToken)
-                .getBody();
+        try {
+            Claims claims;
+            claims = Jwts.parser()
+                    .setSigningKey(secretKey) //jwt 를 secretKey로 정상적인지 검증
+                    .parseClaimsJws(accessToken)
+                    .getBody();
 
-        return claims;
-
-        } /*catch (ExpiredJwtException e) {
+            return claims;
+        } catch (ExpiredJwtException e) {
             // 만료된 토큰에 대한 예외 처리
-            log.error("Token expired: {}", e.getMessage());
+            log.error("만료된 토큰입니다: {}", e.getMessage());
             return null;
         } catch (MalformedJwtException e) {
             // 형식이 잘못된 토큰에 대한 예외 처리
-            log.error("Malformed token: {}", e.getMessage());
+            log.error("형식이 잘못되었습니다: {}", e.getMessage());
             return null;
         } catch (SignatureException e) {
             // 서명이 잘못된 토큰에 대한 예외 처리
-            log.error("Invalid token signature: {}", e.getMessage());
+            log.error("서명이 잘못되었습니다: {}", e.getMessage());
             return null;
         } catch (Exception e) {
             // 그 외의 예외 처리
             log.error("Invalid token: {}", e.getMessage());
             return null;
-        }*/
+        }
+    }
+
 
     // 리프레시 토큰을 secretKey로 검증
     public boolean refreshValidate(String refreshToken){
@@ -106,6 +104,7 @@ public class JwtProvider {
 
             return true;
         } catch (Exception e){
+            log.info("리프레시 토큰에 문제가 생겼습니다.");
             return false;
         }
     }

@@ -4,5 +4,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface AdminOrdersService {
 
-    ResponseEntity getProductCancelRequestList();
+    ResponseEntity getProductCancelRequestList(int page);
 }

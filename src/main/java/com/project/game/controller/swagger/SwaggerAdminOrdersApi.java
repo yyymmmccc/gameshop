@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "관리자 - 결제", description = "관리자 주문 취소 요청 조회 API")
 public interface SwaggerAdminOrdersApi {
@@ -13,5 +14,5 @@ public interface SwaggerAdminOrdersApi {
     @ApiResponse(responseCode = "200", description = "취소 요청 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/cancel-list")
-    ResponseEntity<?> getProductCancelRequestList();
+    ResponseEntity<?> getProductCancelRequestList(@RequestParam(defaultValue = "1") int page);
 }
