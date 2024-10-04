@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -171,6 +174,12 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), userEntity.getRole());
         String refreshToken = jwtProvider.createRefreshToken();
+
+        Date ISSUED_AT = Date.from(Instant.now());
+        Date ACCESS_TOKEN_TIME = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
+
+        log.info("current Time : " + ISSUED_AT);
+        log.info("current Time EXR : " +ACCESS_TOKEN_TIME);
 
         redisService.setValues(refreshToken, userEntity.getEmail(), Duration.ofDays(14));
 

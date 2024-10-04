@@ -57,11 +57,10 @@ public class WebSecurityConfig {
                                         "/api/admin/order/**",
                                         "/api/admin/payment/**").hasRole("ADMIN")
 
-                        .requestMatchers("/api/admin/auth/**").permitAll()
-
-                        .requestMatchers("/api/user/auth/**"
+                        .requestMatchers("/api/admin/auth/**",
+                                "/api/user/auth/**"
                                 , "/oauth2/**"
-                                , "/file/**").permitAll() // 로그인 필요x
+                                , "/file/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/user/board/**"
                                 , "/api/user/game/**"

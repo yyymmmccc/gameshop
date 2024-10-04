@@ -58,6 +58,6 @@ public class GameServiceImpl implements GameService {
     }
 
     public Pageable pageOf(int page, String orderBy){
-        return PageRequest.of(page > 0 ? page - 1 : 0, 10, Sort.by(orderBy).descending());
+        return PageRequest.of(page > 0 ? page - 1 : 0, 8, Sort.by(orderBy).descending());
     }
 }

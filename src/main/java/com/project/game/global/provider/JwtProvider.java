@@ -20,16 +20,16 @@ public class JwtProvider {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String REFRESH_TOKEN_HEADER = "Authorization-Refresh";
 
+    private final Date ISSUED_AT = Date.from(Instant.now());
     private final Date ACCESS_TOKEN_TIME = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
     private final Date REFRESH_TOKEN_TIME = Date.from(Instant.now().plus(14, ChronoUnit.DAYS));
-
 
     public String createAccessToken(String email, String role){
 
         String jwt = Jwts.builder() // builder는 jwt를 만들기 위한 객체를 생성함
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
                 .setSubject("AccessToken") // Subject를 AccessToken으로 지정
-                .setIssuedAt(new Date())    // setIssuedAt은 토큰 발행일
+                .setIssuedAt(ISSUED_AT)    // setIssuedAt은 토큰 발행일
                 .setExpiration(ACCESS_TOKEN_TIME) // 만료일 설정
                 .claim("email", email) // 이메일 클레임 추가
                 .claim("role", role)
@@ -69,15 +69,14 @@ public class JwtProvider {
     public Claims accessValidate(String accessToken){
 
         Claims claims;
+        claims = Jwts.parser()
+                .setSigningKey(secretKey) //jwt 를 secretKey로 정상적인지 검증
+                .parseClaimsJws(accessToken)
+                .getBody();
 
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(secretKey) //jwt 를 secretKey로 정상적인지 검증
-                    .parseClaimsJws(accessToken)
-                    .getBody();
+        return claims;
 
-            return claims;
-        } catch (ExpiredJwtException e) {
+        } /*catch (ExpiredJwtException e) {
             // 만료된 토큰에 대한 예외 처리
             log.error("Token expired: {}", e.getMessage());
             return null;
@@ -93,8 +92,7 @@ public class JwtProvider {
             // 그 외의 예외 처리
             log.error("Invalid token: {}", e.getMessage());
             return null;
-        }
-    }
+        }*/
 
     // 리프레시 토큰을 secretKey로 검증
     public boolean refreshValidate(String refreshToken){
@@ -134,6 +132,9 @@ public class JwtProvider {
    public String extractRefreshToken(HttpServletRequest request) {
 
         String token = request.getHeader(REFRESH_TOKEN_HEADER);
+
+       log.info("refresh-token check : " + token);
+
         if(token == null) return null;
 
         return token;

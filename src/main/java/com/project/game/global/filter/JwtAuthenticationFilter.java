@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Claims claims = jwtProvider.accessValidate(accessToken); // 토큰 유효성 검사
         if (claims == null) {
+            log.info("토큰 테스트 " + claims);
             filterChain.doFilter(request, response);
             return;
         }
