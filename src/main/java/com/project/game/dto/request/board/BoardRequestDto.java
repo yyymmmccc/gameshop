@@ -35,6 +35,10 @@ public class BoardRequestDto {
     @NotNull
     private List<String> imageList;
 
+    public void bodyNewline(){
+        this.content = this.content.replaceAll("\n", "<br>");
+    }
+
     public BoardEntity toEntity(UserEntity userEntity){
         return BoardEntity.builder()
                 .title(title)

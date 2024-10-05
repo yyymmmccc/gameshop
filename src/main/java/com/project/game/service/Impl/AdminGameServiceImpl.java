@@ -18,6 +18,7 @@ import com.project.game.repository.UserRepository;
 import com.project.game.service.AdminGameService;
 import com.project.game.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminGameServiceImpl implements AdminGameService {
 
     private final UserRepository userRepository;
@@ -48,6 +50,8 @@ public class AdminGameServiceImpl implements AdminGameService {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
+        dto.bodyNewline();
+
         GameEntity gameEntity = gameRepository.save(dto.toEntity(gameCategoryEntity, userEntity));
 
         gameImageRepository.saveAll(dto.convertToEntityList(dto.getGameImageList(), gameEntity));
@@ -63,6 +67,8 @@ public class AdminGameServiceImpl implements AdminGameService {
 
         GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
                 -> new CustomException(ResponseCode.GAME_NOT_FOUND));
+
+        dto.bodyNewline();
 
         gameEntity.update(dto, gameCategoryEntity);
 

@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Slf4j
 public class AdminPostGameRequestDto {
 
     @Schema(example = "게임카테고리 숫자 1, 2, 3...")
@@ -65,6 +66,10 @@ public class AdminPostGameRequestDto {
                 .releaseDate(releaseDate)
                 .userEntity(userEntity)
                 .build();
+    }
+
+    public void bodyNewline(){
+        this.gameDc = this.gameDc.replaceAll("\n", "<br>");
     }
 
     public int discountPriceCalc(int originalPrice, int discountPercentage){

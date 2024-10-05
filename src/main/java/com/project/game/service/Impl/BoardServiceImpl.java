@@ -49,6 +49,8 @@ public class BoardServiceImpl implements BoardService {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
+        dto.bodyNewline();
+
         BoardEntity boardEntity = boardRepository.save(dto.toEntity(userEntity));
 
         boardImageRepository.saveAll(dto.convertToEntityList(dto.getImageList(), boardEntity));
@@ -65,6 +67,7 @@ public class BoardServiceImpl implements BoardService {
         if(!boardEntity.getUserEntity().getEmail().equals(email))
             throw new CustomException(ResponseCode.NO_PERMISSION);
 
+        dto.bodyNewline();
         boardEntity.update(dto);
 
         List<BoardImageEntity> currentBoardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);

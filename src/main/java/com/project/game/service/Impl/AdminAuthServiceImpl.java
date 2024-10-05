@@ -37,7 +37,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         if(!userEntity.getRole().equals("ROLE_ADMIN"))
             throw new CustomException(ResponseCode.NO_PERMISSION);
 
-        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getRole(), userEntity.getRole());
+        String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), userEntity.getRole());
         String refreshToken = jwtProvider.createRefreshToken();
 
         redisService.setValues(refreshToken, userEntity.getEmail(), Duration.ofDays(14));
