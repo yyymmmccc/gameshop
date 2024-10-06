@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface GameRepository extends JpaRepository<GameEntity, Integer>, GameCustomRepository{
 
+    Boolean existsByGameName(String gameName);
 }

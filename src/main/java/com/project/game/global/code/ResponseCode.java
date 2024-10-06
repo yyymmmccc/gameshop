@@ -29,6 +29,7 @@ public enum ResponseCode {
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
     DUPLICATE_TEL_NUMBER(HttpStatus.CONFLICT, "이미 사용 중인 전화번호입니다."),
     DUPLICATE_CART(HttpStatus.CONFLICT, "이미 장바구니에 있는 게임입니다."),
+    DUPLICATE_GAME(HttpStatus.CONFLICT, "이미 등록된 게임입니다."),
 
     // 401 Unauthorized : 요청자는 인증(authentication) 되지 않아 수행할 수 없음을 표현
     AUTHORIZATION_FAIL(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),

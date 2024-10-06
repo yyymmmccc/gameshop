@@ -65,7 +65,9 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/user/board/**"
                                 , "/api/user/game/**"
                                 , "/api/user/review/**"
-                                , "/api/user/comment/**").permitAll() // 로그인 필요 x
+                                , "/api/user/comment/**"
+                                , "/game"
+                                , "/gameList").permitAll() // 로그인 필요 x
 
                         .requestMatchers(swaggerPath).permitAll()
                         .anyRequest().authenticated()

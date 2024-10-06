@@ -85,7 +85,6 @@ public class AdminPostGameRequestDto {
     }
 
     public List<GameImageEntity> convertToEntityList(List<String> imageList, GameEntity gameEntity){
-        // Process the first image separately to set it as thumbnail
         return IntStream.range(0, imageList.size())
                 .mapToObj(i -> toEntity(imageList.get(i), gameEntity, i == 0))
                 .collect(Collectors.toList());

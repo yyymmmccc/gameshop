@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String accessToken = jwtProvider.extractAccessToken(request); // 사용자 요청에서 토큰 추출
-        log.info("오류 엑세스 토큰 테스트 : " + accessToken);
 
         if (accessToken == null) {
             filterChain.doFilter(request, response);
@@ -41,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Claims claims = jwtProvider.accessValidate(accessToken); // 토큰 유효성 검사
-        log.info("claims 테스트 " + claims);
         if (claims == null) {
             filterChain.doFilter(request, response);
             return;
