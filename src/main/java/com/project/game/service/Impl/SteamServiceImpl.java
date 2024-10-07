@@ -3,16 +3,10 @@ package com.project.game.service.Impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.game.dto.response.ResponseDto;
-import com.project.game.entity.GameCategoryEntity;
-import com.project.game.entity.GameEntity;
-import com.project.game.entity.GameImageEntity;
-import com.project.game.entity.UserEntity;
+import com.project.game.entity.*;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.global.handler.CustomException;
-import com.project.game.repository.GameCategoryRepository;
-import com.project.game.repository.GameImageRepository;
-import com.project.game.repository.GameRepository;
-import com.project.game.repository.UserRepository;
+import com.project.game.repository.*;
 import com.project.game.service.SteamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +27,7 @@ public class SteamServiceImpl implements SteamService {
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
     private final GameImageRepository gameImageRepository;
+    private final GameSpecificationsRepository gameSpecificationsRepository;
 
     @Override
     public ResponseEntity<?> regSteamGame(long gameId) {
@@ -57,9 +52,8 @@ public class SteamServiceImpl implements SteamService {
 
                 String gameName = (String) data.get("name");
                 Boolean gameCheck = gameRepository.existsByGameName(gameName);
-                if(gameCheck){
-                    return ResponseDto.success("이미 존재하는 게임입니다.");
-                }
+                if(gameCheck)
+                    return ResponseDto.success("이미 등록된 게임입니다.");
 
                 String gameDc = (String) data.get("about_the_game");
                 String gameImage = (String) data.get("header_image");
@@ -126,6 +120,36 @@ public class SteamServiceImpl implements SteamService {
                     discountPercentage = Integer.parseInt(discount);
                 }
 
+                Map<String, Object> platforms = (Map<String, Object>)data.get("platforms");
+
+                String winMinSpecifications = null;
+                String winMaxSpecifications = null;
+                String macMinSpecifications = null;
+                String macMaxSpecifications = null;
+                String linuxMinSpecifications = null;
+                String linuxMaxSpecifications = null;
+
+                if((boolean) platforms.get("windows")){
+
+                    Map<String, Object> specifications = (Map<String, Object>)data.get("pc_requirements");
+                    winMinSpecifications = (String)specifications.get("minimum");
+                    winMaxSpecifications = (String)specifications.get("recommended");
+                }
+
+                if((boolean) platforms.get("mac")){
+
+                    Map<String, Object> specifications = (Map<String, Object>)data.get("mac_requirements");
+                    macMinSpecifications = (String)specifications.get("minimum");
+                    macMaxSpecifications = (String)specifications.get("recommended");
+                }
+
+                if((boolean) platforms.get("linux")){
+
+                    Map<String, Object> specifications = (Map<String, Object>)data.get("linux_requirements");
+                    linuxMinSpecifications = (String)specifications.get("minimum");
+                    linuxMaxSpecifications = (String)specifications.get("recommended");
+                }
+
                 GameEntity gameEntity = GameEntity.builder()
                         .gameCategoryEntity(gameCategoryEntity)
                         .gameName(gameName)
@@ -142,12 +166,25 @@ public class SteamServiceImpl implements SteamService {
 
                 GameEntity game = gameRepository.save(gameEntity);
 
-                GameImageEntity gameImageEntity = GameImageEntity.builder()
-                        .gameEntity(game)
-                        .gameImageUrl(gameImage)
-                        .thumbnail("Y")
-                        .build();
+                GameSpecificationsEntity gameSpecificationsEntity =
+                        GameSpecificationsEntity.builder()
+                                .gameEntity(game)
+                                .windowsMinSpecifications(winMinSpecifications)
+                                .windowsMaxSpecifications(winMaxSpecifications)
+                                .macMinSpecifications(macMinSpecifications)
+                                .macMaxSpecifications(macMaxSpecifications)
+                                .linuxMinSpecifications(linuxMinSpecifications)
+                                .linuxMaxSpecifications(linuxMaxSpecifications)
+                                .build();
 
+                gameSpecificationsRepository.save(gameSpecificationsEntity);
+
+                GameImageEntity gameImageEntity =
+                        GameImageEntity.builder()
+                                .gameEntity(game)
+                                .gameImageUrl(gameImage)
+                                .thumbnail("Y")
+                                .build();
                 gameImageRepository.save(gameImageEntity);
             }
 

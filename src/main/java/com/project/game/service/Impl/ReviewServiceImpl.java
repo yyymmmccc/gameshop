@@ -1,10 +1,11 @@
 package com.project.game.service.Impl;
 
+import com.project.game.dto.response.review.ReviewResponseDto;
 import com.project.game.entity.OrderDetailEntity;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.review.ReviewRequestDto;
 import com.project.game.dto.response.ResponseDto;
-import com.project.game.dto.response.review.ReviewResponseDto;
+import com.project.game.dto.response.review.ReviewListResponseDto;
 import com.project.game.entity.GameEntity;
 import com.project.game.entity.ReviewEntity;
 import com.project.game.entity.UserEntity;
@@ -106,6 +107,14 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<ReviewEntity> reviewEntityList = reviewRepository.findByGameEntity(gameEntity);
 
-        return ResponseDto.success(ReviewResponseDto.convertToDtoList(reviewEntityList));
+        int sumRating = 0;
+        for(ReviewEntity reviewEntity : reviewEntityList){
+            sumRating += reviewEntity.getRating();
+        }
+
+        Double avgRating = (double)sumRating / reviewEntityList.size();
+        List<ReviewListResponseDto> responseDto = ReviewListResponseDto.convertToDtoList(reviewEntityList);
+
+        return ResponseDto.success(new ReviewResponseDto(avgRating, responseDto));
     }
 }

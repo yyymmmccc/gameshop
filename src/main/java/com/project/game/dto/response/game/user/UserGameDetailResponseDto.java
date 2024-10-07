@@ -27,9 +27,15 @@ public class UserGameDetailResponseDto {
     private String regDate;
     private String updatedDate;
     private String nickname;
+    private String windowsMinSpecifications;
+    private String windowsMaxSpecifications;
+    private String macMinSpecifications;
+    private String macMaxSpecifications;
+    private String linuxMinSpecifications;
+    private String linuxMaxSpecifications;
     private List<String> gameImageList;
 
-    public static UserGameDetailResponseDto of(GameEntity gameEntity, List<GameImageEntity> gameImageEntityList){
+    public static UserGameDetailResponseDto of(GameEntity gameEntity, List<GameImageEntity> gameImageEntityList, GameSpecificationsEntity gameSpecificationsEntity){
         return UserGameDetailResponseDto.builder()
                 .gameId(gameEntity.getGameId())
                 .categoryName(gameEntity.getGameCategoryEntity().getCategoryName())
@@ -45,6 +51,12 @@ public class UserGameDetailResponseDto {
                 .regDate(gameEntity.getRegDate())
                 .updatedDate(gameEntity.getUpdatedDate())
                 .nickname(gameEntity.getUserEntity().getNickname())
+                .windowsMinSpecifications(gameSpecificationsEntity.getWindowsMinSpecifications())
+                .windowsMaxSpecifications(gameSpecificationsEntity.getWindowsMaxSpecifications())
+                .macMinSpecifications(gameSpecificationsEntity.getMacMinSpecifications())
+                .macMaxSpecifications(gameSpecificationsEntity.getMacMaxSpecifications())
+                .linuxMinSpecifications(gameSpecificationsEntity.getLinuxMinSpecifications())
+                .linuxMaxSpecifications(gameSpecificationsEntity.getLinuxMaxSpecifications())
                 .gameImageList(convertToDtoList(gameImageEntityList))
                 .build();
     }

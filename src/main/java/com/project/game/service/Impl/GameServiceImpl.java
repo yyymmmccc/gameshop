@@ -1,5 +1,6 @@
 package com.project.game.service.Impl;
 
+import com.project.game.entity.GameSpecificationsEntity;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.response.PaginatedResponseDto;
 import com.project.game.dto.response.ResponseDto;
@@ -27,6 +28,7 @@ public class GameServiceImpl implements GameService {
 
     private final GameRepository gameRepository;
     private final GameCategoryRepository gameCategoryRepository;
+    private final GameSpecificationsRepository gameSpecificationsRepository;
     private final GameImageRepository gameImageRepository;
     private final RedisServiceImpl redisService;
 
@@ -36,13 +38,16 @@ public class GameServiceImpl implements GameService {
         GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
                 -> new CustomException(ResponseCode.GAME_NOT_FOUND));
 
+        GameSpecificationsEntity gameSpecificationsEntity =
+                gameSpecificationsRepository.findByGameEntity(gameEntity);
+
         if(!email.equals("anonymousUser")) {
             redisService.setRecentViewGame(email, gameId);
         }
 
         List <GameImageEntity> gameImageEntityList = gameImageRepository.findByGameEntity(gameEntity);
 
-        return ResponseDto.success(UserGameDetailResponseDto.of(gameEntity, gameImageEntityList));
+        return ResponseDto.success(UserGameDetailResponseDto.of(gameEntity, gameImageEntityList, gameSpecificationsEntity));
     }
 
     @Override
