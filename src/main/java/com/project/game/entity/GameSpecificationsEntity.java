@@ -41,5 +41,4 @@ public class GameSpecificationsEntity {
     @Column(name = "linux_max_specifications")
     private String linuxMaxSpecifications;
 
-
 }

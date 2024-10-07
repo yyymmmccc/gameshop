@@ -30,6 +30,7 @@ public class GameServiceImpl implements GameService {
     private final GameCategoryRepository gameCategoryRepository;
     private final GameSpecificationsRepository gameSpecificationsRepository;
     private final GameImageRepository gameImageRepository;
+    private final GameCategoryMappingRepository gameCategoryMappingRepository;
     private final RedisServiceImpl redisService;
 
     @Override

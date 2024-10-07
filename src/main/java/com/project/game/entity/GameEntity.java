@@ -25,9 +25,12 @@ public class GameEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int gameId;
 
+    /*
     @ManyToOne
     @JoinColumn(name = "category_id")
     private GameCategoryEntity gameCategoryEntity;
+
+     */
 
     @Column(name = "game_name")
     private String gameName;
@@ -68,6 +71,9 @@ public class GameEntity {
     private UserEntity userEntity;
 
     @OneToMany(mappedBy = "gameEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GameCategoryMappingEntity> gameCategoryMappingEntityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "gameEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameImageEntity> gameImageEntityList = new ArrayList<>();
 
     @OneToMany(mappedBy = "gameEntity", fetch = FetchType.LAZY , cascade = CascadeType.ALL, orphanRemoval = true)
@@ -77,7 +83,7 @@ public class GameEntity {
     private List<CartEntity> cartEntityList = new ArrayList<>();
 
     public void update(AdminPostGameRequestDto dto, GameCategoryEntity gameCategoryEntity) {
-        this.gameCategoryEntity = gameCategoryEntity;
+        //this.gameCategoryEntity = gameCategoryEntity;
         this.gameName = dto.getGameName();
         this.gameDc = dto.getGameDc();
         this.publisher = dto.getPublisher();

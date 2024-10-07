@@ -56,7 +56,7 @@ public class AdminPostGameRequestDto {
 
     public GameEntity toEntity(GameCategoryEntity gameCategoryEntity, UserEntity userEntity){
         return GameEntity.builder()
-                .gameCategoryEntity(gameCategoryEntity)
+                //.gameCategoryEntity(gameCategoryEntity)
                 .gameName(gameName)
                 .gameDc(gameDc)
                 .publisher(publisher)

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class AdminGameResponseDto {
 
     private int gameId;
-    private String categoryName;
+    // private String categoryName;
     private String gameName;
     private String gameDc;
     private String publisher;
@@ -31,7 +31,7 @@ public class AdminGameResponseDto {
     public static AdminGameResponseDto of(GameEntity gameEntity, List<GameImageEntity> gameImageEntityList){
         return AdminGameResponseDto.builder()
                 .gameId(gameEntity.getGameId())
-                .categoryName(gameEntity.getGameCategoryEntity().getCategoryName())
+                //.categoryName(gameEntity.getGameCategoryEntity().getCategoryName())
                 .gameName(gameEntity.getGameName())
                 .gameDc(gameEntity.getGameDc())
                 .publisher(gameEntity.getPublisher())

@@ -24,7 +24,7 @@ public class GameController implements SwaggerGameApi {
 
         return gameService.getGame(gameId, email);
     }
-
+    
     @GetMapping("/{categoryId}/list")
     public ResponseEntity getGames(@RequestParam(defaultValue = "1") int page,
                                    @RequestParam(defaultValue = "rating")  String orderBy,

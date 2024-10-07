@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ public class SteamServiceImpl implements SteamService {
     private final GameCategoryRepository gameCategoryRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
+    private final GameCategoryMappingRepository gameCategoryMappingRepository;
     private final GameImageRepository gameImageRepository;
     private final GameSpecificationsRepository gameSpecificationsRepository;
 
@@ -46,19 +48,40 @@ public class SteamServiceImpl implements SteamService {
             if (response.getStatusCode() == HttpStatus.OK) {
                 String jsonString = response.getBody();
                 Map<String, Object> jsonMap = objectMapper.readValue(jsonString, new TypeReference<>() {});
-
                 Map<String, Object> gameData = (Map<String, Object>) jsonMap.get(String.valueOf(gameId));
                 Map<String, Object> data = (Map<String, Object>) gameData.get("data");
+                System.out.println(data);
+
+                if(data == null)
+                    return ResponseDto.success("게임등록에 실패하였습니다.");
 
                 String gameName = (String) data.get("name");
                 Boolean gameCheck = gameRepository.existsByGameName(gameName);
                 if(gameCheck)
                     return ResponseDto.success("이미 등록된 게임입니다.");
 
+                // 게임 설명
                 String gameDc = (String) data.get("about_the_game");
-                String gameImage = (String) data.get("header_image");
+
+                // 게임 배급사
                 List<String> list = (List<String>) data.get("publishers");
 
+                List<String> gameThumbnailList = new ArrayList<>();
+                // 게임 썸네일 이미지
+                String gameImage = (String) data.get("header_image");
+                gameThumbnailList.add(gameImage);
+
+                // 게임 썸네일 동영상
+                List<Object> movieList = (List<Object>)data.get("movies");
+                if(!movieList.isEmpty()){
+                    Map<String, Object> movie = (Map<String, Object>) movieList.get(0);
+                    Map<String, Object> webm = (Map<String, Object>)movie.get("webm");
+                    String maxMovie = (String)webm.get("max");
+                    System.out.println(maxMovie);
+                    gameThumbnailList.add(maxMovie);
+                }
+
+                // 게임 출시일
                 Map<String, Object> release_date = (Map<String, Object>) data.get("release_date");
                 String date = (String) release_date.get("date");
                 date = date.replace("년", "-").replace("월", "-").replace("일", "");
@@ -72,25 +95,54 @@ public class SteamServiceImpl implements SteamService {
 
                 int categoryId;
                 List<Map<String, Object>> genres = (List<Map<String, Object>>) data.get("genres");
-                String categoryName = (String)genres.get(0).get("description");
-                if(categoryName.contains("무")) categoryId = 1;
-                else if(categoryName.contains("액")) categoryId = 2;
-                else if(categoryName.contains("어드")) categoryId = 3;
-                else if(categoryName.contains("RPG")) categoryId = 4;
-                else if(categoryName.contains("MMO")) categoryId = 5;
-                else if(categoryName.contains("레이싱")) categoryId = 6;
-                else if(categoryName.contains("스포츠")) categoryId = 7;
-                else if(categoryName.contains("전략")) categoryId = 8;
-                else if(categoryName.contains("시뮬레이션")) categoryId = 9;
-                else if(categoryName.contains("인디")) categoryId = 10;
-                else if(categoryName.contains("캐주얼")) categoryId = 11;
-                else{
-                    log.info("category_not_found" + categoryName);
-                    return null;
+
+                List<Integer> categoryIdList = new ArrayList<>();
+
+                for(Map<String, Object> category : genres){
+                    String categoryName = (String)category.get("description");
+
+                    switch (categoryName) {
+                        case String name when name.contains("무"):
+                            categoryId = 1;
+                            break;
+                        case String name when name.contains("액"):
+                            categoryId = 2;
+                            break;
+                        case String name when name.contains("어드"):
+                            categoryId = 3;
+                            break;
+                        case String name when name.contains("RPG"):
+                            categoryId = 4;
+                            break;
+                        case String name when name.contains("MMO"):
+                            categoryId = 5;
+                            break;
+                        case String name when name.contains("레이싱"):
+                            categoryId = 6;
+                            break;
+                        case String name when name.contains("스포츠"):
+                            categoryId = 7;
+                            break;
+                        case String name when name.contains("전략"):
+                            categoryId = 8;
+                            break;
+                        case String name when name.contains("시뮬레이션"):
+                            categoryId = 9;
+                            break;
+                        case String name when name.contains("인디"):
+                            categoryId = 10;
+                            break;
+                        case String name when name.contains("캐주얼"):
+                            categoryId = 11;
+                            break;
+                        default:
+                            log.info("category_not_found" + categoryName);
+                            return null;
+                    }
+                    categoryIdList.add(categoryId);
                 }
 
-                GameCategoryEntity gameCategoryEntity = gameCategoryRepository.findById(categoryId).orElseThrow(()
-                        -> new CustomException(ResponseCode.CATEGORY_NOT_FOUND));
+                List<GameCategoryEntity> gameCategoryEntityList = gameCategoryRepository.findByCategoryIdIn(categoryIdList);
 
                 int originalAmount = 0;
                 int finalAmount = 0;
@@ -151,7 +203,6 @@ public class SteamServiceImpl implements SteamService {
                 }
 
                 GameEntity gameEntity = GameEntity.builder()
-                        .gameCategoryEntity(gameCategoryEntity)
                         .gameName(gameName)
                         .gameDc(gameDc)
                         .publisher(list.get(0).trim())
@@ -166,6 +217,7 @@ public class SteamServiceImpl implements SteamService {
 
                 GameEntity game = gameRepository.save(gameEntity);
 
+                // 게임 사양 저장하기
                 GameSpecificationsEntity gameSpecificationsEntity =
                         GameSpecificationsEntity.builder()
                                 .gameEntity(game)
@@ -179,13 +231,35 @@ public class SteamServiceImpl implements SteamService {
 
                 gameSpecificationsRepository.save(gameSpecificationsEntity);
 
-                GameImageEntity gameImageEntity =
-                        GameImageEntity.builder()
-                                .gameEntity(game)
-                                .gameImageUrl(gameImage)
-                                .thumbnail("Y")
-                                .build();
-                gameImageRepository.save(gameImageEntity);
+                // 게임 : 게임카테고리 매핑 테이블 저장하기
+                List<GameCategoryMappingEntity> gameCategoryMappingEntityList = new ArrayList<>();
+                for(GameCategoryEntity gameCategoryEntity : gameCategoryEntityList){
+                    GameCategoryMappingEntity gameCategoryMappingEntity =
+                            GameCategoryMappingEntity.builder()
+                                    .gameEntity(game)
+                                    .gameCategoryEntity(gameCategoryEntity)
+                                    .build();
+                    gameCategoryMappingEntityList.add(gameCategoryMappingEntity);
+                }
+                gameCategoryMappingRepository.saveAll(gameCategoryMappingEntityList);
+
+                // 게임이미지 repository 에 저장하기
+                List<GameImageEntity> gameImageEntityList = new ArrayList<>();
+                for (int i = 0; i < gameThumbnailList.size(); i++) {
+                    String url = gameThumbnailList.get(i);
+                    String thumbnailFlag = (i == 0) ? "Y" : "N";
+
+                    GameImageEntity gameImageEntity =
+                            GameImageEntity.builder()
+                                    .gameEntity(game)
+                                    .gameImageUrl(url)
+                                    .thumbnail(thumbnailFlag)
+                                    .build();
+
+                    gameImageEntityList.add(gameImageEntity);
+                }
+
+                gameImageRepository.saveAll(gameImageEntityList);
             }
 
             else {
