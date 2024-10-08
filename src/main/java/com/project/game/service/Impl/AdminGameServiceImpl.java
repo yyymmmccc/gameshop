@@ -133,5 +133,4 @@ public class AdminGameServiceImpl implements AdminGameService {
         return PageRequest.of(page > 0 ? page-1 : 0, 10);
     }
 
-
 }

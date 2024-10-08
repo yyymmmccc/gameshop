@@ -13,6 +13,7 @@ import java.util.List;
 public class OrderFormResponseDto {
 
     private List<OrderFormGameListResponseDto> orderList;
+    private String email;
     private String name;
     private String tel;
     private int totalPrice;
@@ -20,6 +21,7 @@ public class OrderFormResponseDto {
     public static OrderFormResponseDto of(List<OrderFormGameListResponseDto> orderList, UserEntity userEntity, int totalPrice){
         return OrderFormResponseDto.builder()
                 .orderList(orderList)
+                .email(userEntity.getEmail())
                 .name(userEntity.getName())
                 .tel(userEntity.getTel())
                 .totalPrice(totalPrice)

@@ -102,7 +102,7 @@ public class SteamServiceImpl implements SteamService {
                     String categoryName = (String)category.get("description");
 
                     switch (categoryName) {
-                        case String name when name.contains("무"):
+                        case String name when name.contains("무료"):
                             categoryId = 1;
                             break;
                         case String name when name.contains("액"):
@@ -136,8 +136,8 @@ public class SteamServiceImpl implements SteamService {
                             categoryId = 11;
                             break;
                         default:
-                            log.info("category_not_found" + categoryName);
-                            return null;
+                            log.info("category_not_found: " + categoryName);
+                            continue;
                     }
                     categoryIdList.add(categoryId);
                 }
