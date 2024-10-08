@@ -14,7 +14,9 @@ public class UserResponseDto {
     private String name;
     private String profileImage;
     private String nickname;
+    private String provider;
     private String tel;
+    private String gender;
     private String birthDate;
     private String regDate;
 
@@ -24,7 +26,9 @@ public class UserResponseDto {
                 .name(userEntity.getName())
                 .profileImage(userEntity.getProfileImage())
                 .nickname(userEntity.getNickname())
+                .provider(userEntity.getProvider())
                 .tel(userEntity.getTel())
+                .gender(userEntity.getGender())
                 .birthDate(userEntity.getBirthDate())
                 .regDate(userEntity.getRegDate())
                 .build();

@@ -13,6 +13,7 @@ import com.project.game.global.handler.CustomException;
 import com.project.game.repository.*;
 import com.project.game.service.GameService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GameServiceImpl implements GameService {
 
     private final GameRepository gameRepository;
@@ -54,8 +56,8 @@ public class GameServiceImpl implements GameService {
     @Override
     public ResponseEntity getGames(int page, String orderBy, int categoryId, String searchKeyword) {
 
-        GameCategoryEntity gameCategoryEntity = gameCategoryRepository.findById(categoryId).orElseThrow(()
-                -> new CustomException(ResponseCode.CATEGORY_NOT_FOUND));
+        GameCategoryEntity gameCategoryEntity =
+                gameCategoryRepository.findById(categoryId).orElse(null);
 
         Page <UserGameListResponseDto> gameListDto =
                 gameRepository.findUserGameAll(pageOf(page, orderBy), gameCategoryEntity, searchKeyword);

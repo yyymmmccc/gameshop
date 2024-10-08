@@ -54,7 +54,6 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                                 .and(gameImageEntity.thumbnail.eq("Y")))
                         .leftJoin(reviewEntity)
                         .on(gameEntity.gameId.eq(reviewEntity.gameEntity.gameId))
-                        .where(gameCategoryMappingEntity.gameCategoryEntity.eq(gameCategoryEntity))
                         .groupBy(
                                 gameEntity.gameId,
                                 gameEntity.gameName,
@@ -67,17 +66,17 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .orderBy(orderSpecifier(pageable), gameEntity.regDate.desc());
-        if(!searchKeyword.isEmpty()){
-            query.where(gameEntity.gameName.contains(searchKeyword)
-                    .or(gameEntity.gameDc.contains(searchKeyword)));
+
+        if(gameCategoryEntity != null){
+            query.where(gameCategoryMappingEntity.gameCategoryEntity.eq(gameCategoryEntity));
+            if(!searchKeyword.isEmpty()){ // 검색어가 있을경우
+                query.where(gameEntity.gameName.contains(searchKeyword));
+            }
         }
 
-        if(!searchKeyword.isEmpty()){
-            query.where(gameEntity.gameName.contains(searchKeyword));
-        }
+        else query.where(gameEntity.gameName.contains(searchKeyword));
 
         List<UserGameListResponseDto> result = query.fetch();
-
         long count = query.fetchCount();
 
         return new PageImpl<>(result, pageable, count);
@@ -139,8 +138,13 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         for(Sort.Order order : pageable.getSort()){
             
             switch (order.getProperty()){
-                case "rating": return new OrderSpecifier(Order.DESC, reviewEntity.rating.avg());
-                case "recent": return new OrderSpecifier(Order.DESC, gameEntity.regDate);
+                case "orderByReview":
+                    return new OrderSpecifier(Order.DESC, gameEntity.reviewCount); // 후기많은순
+                case "orderByRecent": return new OrderSpecifier(Order.DESC, gameEntity.regDate);      // 최신순
+                case "orderBySales": return new OrderSpecifier(Order.DESC, gameEntity.purchaseCount); // 판매순
+                case "orderByPriceAsc": return new OrderSpecifier(Order.ASC, gameEntity.discountPrice.min());   // 낮은 가격순
+                case "orderByPriceDesc": return new OrderSpecifier(Order.DESC, gameEntity.discountPrice.max());  // 높은 가격순
+
             }
         }
 
