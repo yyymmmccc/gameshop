@@ -65,7 +65,8 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         )
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(orderSpecifier(pageable), gameEntity.regDate.desc());
+                        .orderBy(orderSpecifier(pageable), gameEntity.regDate.desc())
+                        .distinct();
 
         if(gameCategoryEntity != null){
             query.where(gameCategoryMappingEntity.gameCategoryEntity.eq(gameCategoryEntity));
@@ -82,19 +83,18 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         return new PageImpl<>(result, pageable, count);
     }
 
-
     @Override
     public Page<AdminGameListResponseDto> findAdminGameAll(Pageable pageable, int categoryId, String searchKeyword) {
         JPQLQuery<AdminGameListResponseDto> query =
                 jpaQueryFactory.select(new QAdminGameListResponseDto(
                         gameEntity.gameId,
-                        gameCategoryMappingEntity.gameCategoryEntity.categoryName,
                         gameEntity.gameName,
                         gameEntity.originalPrice,
                         gameEntity.discountPrice,
                         gameEntity.regDate,
                         gameEntity.updatedDate,
-                        gameEntity.purchaseCount
+                        gameEntity.purchaseCount,
+                        gameImageEntity.gameImageUrl
                 ))
                         .from(gameEntity)
                         .join(gameCategoryMappingEntity)
@@ -102,9 +102,20 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         .leftJoin(gameImageEntity)
                         .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
                                 .and(gameImageEntity.thumbnail.eq("Y")))
+                        .groupBy(
+                                gameEntity.gameId,
+                                gameEntity.gameName,
+                                gameEntity.originalPrice,
+                                gameEntity.discountPrice,
+                                gameEntity.discountPercentage,
+                                gameEntity.reviewCount,
+                                gameImageEntity.gameImageUrl
+                        )
+                        .distinct()
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(gameEntity.purchaseCount.desc());
+                        .orderBy(gameEntity.purchaseCount.desc(), gameEntity.regDate.desc());
+
 
         long count;
 

@@ -22,6 +22,7 @@ public enum ResponseCode {
     VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "입력값이 형식에 맞지 않습니다."),
     FILE_REQUEST_FAIL(HttpStatus.BAD_REQUEST, "jpg, jpeg, png 이미지 파일만 가능합니다."),
     PAYMENT_FAIL(HttpStatus.BAD_REQUEST, "주문금액과 결제금액이 일치하지 않습니다."),
+    GAME_REG_FAIL(HttpStatus.BAD_REQUEST, "게임 등록에 실패하였습니다."),
 
     // 409 Conflict : 중복된 자원
     DUPLICATE_ORDER(HttpStatus.CONFLICT, "이미 구매한 게임입니다."),

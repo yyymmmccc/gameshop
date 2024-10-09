@@ -27,7 +27,7 @@ public class GameController implements SwaggerGameApi {
 
     @GetMapping("/{categoryId}/list")
     public ResponseEntity getGames(@RequestParam(defaultValue = "1") int page,
-                                   @RequestParam(defaultValue = "orderByReview") String orderBy,
+                                   @RequestParam(defaultValue = "orderBySales") String orderBy,
                                    @PathVariable("categoryId") int categoryId,
                                    @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword){
 

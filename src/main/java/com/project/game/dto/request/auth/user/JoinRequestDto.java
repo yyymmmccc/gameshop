@@ -38,7 +38,7 @@ public class JoinRequestDto {
 
     @Schema(example = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
     @NotBlank(message = "닉네임을 입력해주세요.")
-    @Pattern(regexp = "^(?:[가-힣]{2,8}|[a-zA-Z0-9]{4,16})$", message = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
+    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,8}$", message = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
     private String nickname;
 
     @Schema(example = "-없이 숫자만 입력해주세요.")

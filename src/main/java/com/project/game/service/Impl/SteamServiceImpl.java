@@ -53,12 +53,12 @@ public class SteamServiceImpl implements SteamService {
                 System.out.println(data);
 
                 if(data == null)
-                    return ResponseDto.success("게임등록에 실패하였습니다.");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게임정보를 찾을 수 없습니다");
 
                 String gameName = (String) data.get("name");
                 Boolean gameCheck = gameRepository.existsByGameName(gameName);
                 if(gameCheck)
-                    return ResponseDto.success("이미 등록된 게임입니다.");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 등록된 게임입니다.");
 
                 // 게임 설명
                 String gameDc = (String) data.get("about_the_game");
@@ -73,11 +73,12 @@ public class SteamServiceImpl implements SteamService {
 
                 // 게임 썸네일 동영상
                 List<Object> movieList = (List<Object>)data.get("movies");
+                if(movieList == null)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게임 설명 동영상이 없습니다.");
                 if(!movieList.isEmpty()){
                     Map<String, Object> movie = (Map<String, Object>) movieList.get(0);
                     Map<String, Object> webm = (Map<String, Object>)movie.get("webm");
                     String maxMovie = (String)webm.get("max");
-                    System.out.println(maxMovie);
                     gameThumbnailList.add(maxMovie);
                 }
 
@@ -264,7 +265,7 @@ public class SteamServiceImpl implements SteamService {
 
             else {
                 log.info("게임 응답에 실패하였습니다.");
-                return (ResponseEntity<?>) ResponseEntity.badRequest();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("알 수 없는 오류입니다.");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -59,15 +59,14 @@ public class WebSecurityConfig {
 
                         .requestMatchers("/api/admin/auth/**",
                                 "/api/user/auth/**"
+                                ,"/api/admin/steam/**"
                                 , "/oauth2/**"
                                 , "/file/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/user/board/**"
                                 , "/api/user/game/**"
                                 , "/api/user/review/**"
-                                , "/api/user/comment/**"
-                                , "/game"
-                                , "/gameList").permitAll() // 로그인 필요 x
+                                , "/api/user/comment/**").permitAll() // 로그인 필요 x
 
                         .requestMatchers(swaggerPath).permitAll()
                         .anyRequest().authenticated()
