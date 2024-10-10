@@ -1,5 +1,7 @@
 package com.project.game.service.Impl;
 
+import com.project.game.dto.response.game.user.UserTop4NewGamesResponseDto;
+import com.project.game.dto.response.game.user.UserTop4PopularGamesResponseDto;
 import com.project.game.entity.GameSpecificationsEntity;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.response.PaginatedResponseDto;
@@ -64,6 +66,23 @@ public class GameServiceImpl implements GameService {
 
         return ResponseDto.success(PaginatedResponseDto.of(gameListDto));
     }
+
+    @Override
+    public ResponseEntity getTop4PopularGames() {
+        List<UserTop4PopularGamesResponseDto> userTop4PopularGamesResponseDtoList =
+                gameRepository.getTop4PopularGames();
+
+        return ResponseDto.success(userTop4PopularGamesResponseDtoList);
+    }
+
+    @Override
+    public ResponseEntity getTop4NewGames() {
+        List<UserTop4NewGamesResponseDto> UserTop4NewGamesResponseDtoList =
+                gameRepository.getTop4NewGames();
+
+        return ResponseDto.success(UserTop4NewGamesResponseDtoList);
+    }
+
 
     public Pageable pageOf(int page, String orderBy){
         return PageRequest.of(page > 0 ? page - 1 : 0, 8, Sort.by(orderBy).descending());

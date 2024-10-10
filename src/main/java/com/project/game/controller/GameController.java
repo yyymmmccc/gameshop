@@ -33,4 +33,16 @@ public class GameController implements SwaggerGameApi {
 
         return gameService.getGames(page,  orderBy, categoryId, searchKeyword);
     }
+
+    @GetMapping("/popular")
+    public ResponseEntity<?> getTop4PopularGames(){
+
+        return gameService.getTop4PopularGames();
+    }
+
+    @GetMapping("/new")
+    public ResponseEntity<?> getTop4NewGames(){
+
+        return gameService.getTop4NewGames();
+    }
 }

@@ -2,6 +2,7 @@ package com.project.game.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "library")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class LibraryEntity {
 
     @Id

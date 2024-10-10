@@ -2,11 +2,14 @@ package com.project.game.repository.custom;
 
 import com.project.game.dto.response.game.admin.AdminGameListResponseDto;
 import com.project.game.dto.response.game.admin.QAdminGameListResponseDto;
-import com.project.game.dto.response.game.user.UserGameListResponseDto;
-import com.project.game.dto.response.game.user.QUserGameListResponseDto;
+import com.project.game.dto.response.game.user.*;
 import com.project.game.entity.GameCategoryEntity;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
@@ -23,6 +26,7 @@ import static com.project.game.entity.QGameCategoryMappingEntity.gameCategoryMap
 import static com.project.game.entity.QGameEntity.gameEntity;
 import static com.project.game.entity.QGameImageEntity.gameImageEntity;
 import static com.project.game.entity.QReviewEntity.reviewEntity;
+import static com.querydsl.jpa.JPAExpressions.select;
 
 @Repository
 @AllArgsConstructor
@@ -65,17 +69,15 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         )
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(orderSpecifier(pageable), gameEntity.regDate.desc())
-                        .distinct();
+                        .orderBy(orderSpecifier(pageable));
 
+        // 검색어가 있을경우
         if(gameCategoryEntity != null){
             query.where(gameCategoryMappingEntity.gameCategoryEntity.eq(gameCategoryEntity));
-            if(!searchKeyword.isEmpty()){ // 검색어가 있을경우
-                query.where(gameEntity.gameName.contains(searchKeyword));
-            }
         }
-
-        else query.where(gameEntity.gameName.contains(searchKeyword));
+        if(!searchKeyword.isEmpty()){ // 검색어가 있을경우
+            query.where(gameEntity.gameName.contains(searchKeyword));
+        }
 
         List<UserGameListResponseDto> result = query.fetch();
         long count = query.fetchCount();
@@ -111,7 +113,6 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                                 gameEntity.reviewCount,
                                 gameImageEntity.gameImageUrl
                         )
-                        .distinct()
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .orderBy(gameEntity.purchaseCount.desc(), gameEntity.regDate.desc());
@@ -143,15 +144,54 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         return new PageImpl<>(result, pageable, count);
     }
 
+    @Override
+    public List<UserTop4PopularGamesResponseDto> getTop4PopularGames() {
+        JPQLQuery<UserTop4PopularGamesResponseDto> query =
+                jpaQueryFactory.select(new QUserTop4PopularGamesResponseDto(
+                                gameEntity.gameId,
+                                gameEntity.gameName,
+                                gameImageEntity.gameImageUrl
+                        ))
+                        .from(gameEntity)
+                        .leftJoin(gameImageEntity)
+                        .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
+                                .and(gameImageEntity.thumbnail.eq("Y")))
+                        .orderBy(gameEntity.purchaseCount.desc(), gameEntity.reviewCount.desc(), gameEntity.releaseDate.desc())
+                        .limit(4);
+
+        List<UserTop4PopularGamesResponseDto> result = query.fetch();
+
+        return result;
+    }
+
+    @Override
+    public List<UserTop4NewGamesResponseDto> getTop4NewGames() {
+        JPQLQuery<UserTop4NewGamesResponseDto> query =
+                jpaQueryFactory.select(new QUserTop4NewGamesResponseDto(
+                                gameEntity.gameId,
+                                gameEntity.gameName,
+                                gameImageEntity.gameImageUrl
+                        ))
+                        .from(gameEntity)
+                        .leftJoin(gameImageEntity)
+                        .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
+                                .and(gameImageEntity.thumbnail.eq("Y")))
+                        .orderBy(gameEntity.releaseDate.desc(), gameEntity.regDate.desc())
+                        .limit(4);
+
+        List<UserTop4NewGamesResponseDto> result = query.fetch();
+
+        return result;
+    }
+
 
     private OrderSpecifier orderSpecifier(Pageable pageable){
-
         for(Sort.Order order : pageable.getSort()){
-            
             switch (order.getProperty()){
-                case "orderByReview":
-                    return new OrderSpecifier(Order.DESC, gameEntity.reviewCount); // 후기많은순
-                case "orderByRecent": return new OrderSpecifier(Order.DESC, gameEntity.regDate);      // 최신순
+
+                case "orderByPopular":
+                    return new OrderSpecifier(Order.DESC, gameEntity.reviewCount);  // 평균 평점 가중치 30%
+                case "orderByRecent": return new OrderSpecifier(Order.DESC, gameEntity.releaseDate);      // 신작게임
                 case "orderBySales": return new OrderSpecifier(Order.DESC, gameEntity.purchaseCount); // 판매순
                 case "orderByPriceAsc": return new OrderSpecifier(Order.ASC, gameEntity.discountPrice.min());   // 낮은 가격순
                 case "orderByPriceDesc": return new OrderSpecifier(Order.DESC, gameEntity.discountPrice.max());  // 높은 가격순
