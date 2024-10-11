@@ -31,9 +31,4 @@ public class LibraryEntity {
     @Column(name = "add_date")
     @CreationTimestamp
     private String addDate;
-
-    public LibraryEntity(UserEntity userEntity, GameEntity gameEntity) {
-        this.userEntity = userEntity;
-        this.gameEntity = gameEntity;
-    }
 }

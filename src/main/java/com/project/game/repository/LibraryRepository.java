@@ -13,4 +13,6 @@ import java.util.List;
 public interface LibraryRepository extends JpaRepository<LibraryEntity, Integer>, LibraryCustomRepository {
 
     boolean existsByUserEntityAndGameEntity(UserEntity userEntity, GameEntity gameEntity);
+
+    void deleteByUserEntityAndGameEntity(UserEntity userEntity, GameEntity gameEntity);
 }

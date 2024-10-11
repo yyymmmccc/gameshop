@@ -18,6 +18,7 @@ public class UserResponseDto {
     private String tel;
     private String gender;
     private String birthDate;
+    private int rewardPoints;
     private String regDate;
 
     public static UserResponseDto of(UserEntity userEntity){
@@ -30,6 +31,7 @@ public class UserResponseDto {
                 .tel(userEntity.getTel())
                 .gender(userEntity.getGender())
                 .birthDate(userEntity.getBirthDate())
+                .rewardPoints(userEntity.getRewardPoints())
                 .regDate(userEntity.getRegDate())
                 .build();
     }

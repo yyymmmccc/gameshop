@@ -16,15 +16,17 @@ public class OrderFormResponseDto {
     private String email;
     private String name;
     private String tel;
-    private int totalPrice;
+    private int originalAmount;
+    private int rewardPoints;
 
-    public static OrderFormResponseDto of(List<OrderFormGameListResponseDto> orderList, UserEntity userEntity, int totalPrice){
+    public static OrderFormResponseDto of(List<OrderFormGameListResponseDto> orderList, UserEntity userEntity, int originalAmount){
         return OrderFormResponseDto.builder()
                 .orderList(orderList)
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
                 .tel(userEntity.getTel())
-                .totalPrice(totalPrice)
+                .rewardPoints(userEntity.getRewardPoints())
+                .originalAmount(originalAmount)
                 .build();
     }
 }

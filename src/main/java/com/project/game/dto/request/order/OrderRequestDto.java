@@ -16,14 +16,18 @@ public class OrderRequestDto {
 
     private List<Integer> cartIdList;
     private List<Integer> gamePriceList;
+    private int originalAmount;
     private int totalAmount;
+    private int rewardPoints;
     private String email;
 
     public OrdersEntity toEntity(UserEntity userEntity, String orderId){
         return OrdersEntity.builder()
                 .orderId(orderId)
                 .userEntity(userEntity)
+                .originalAmount(originalAmount)
                 .totalAmount(totalAmount)
+                .usedRewardPoints(rewardPoints)
                 .orderStatus(String.valueOf(OrderType.ORDERING))
                 .build();
     }

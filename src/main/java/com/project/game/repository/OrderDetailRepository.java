@@ -15,4 +15,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetailEntity, 
 
 
     void deleteAllByOrdersEntity(OrdersEntity ordersEntity);
+
+    List<OrderDetailEntity> findAllByOrdersEntity(OrdersEntity ordersEntity);
 }

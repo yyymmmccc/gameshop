@@ -1,14 +1,12 @@
 package com.project.game.repository;
 
+import com.project.game.dto.response.order.OrderListResponseDto;
 import com.project.game.entity.OrdersEntity;
 import com.project.game.entity.UserEntity;
 import com.project.game.repository.custom.OrderCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +20,6 @@ public interface OrdersRepository extends JpaRepository<OrdersEntity, String>, O
     List<OrdersEntity> findAllByUserEntityOrderByOrderDateDesc(UserEntity userEntity);
 
     Page<OrdersEntity> findAllByOrderStatus(String cancelOrder, Pageable pageable);
+
+    OrdersEntity findByOrderId(String orderId);
 }

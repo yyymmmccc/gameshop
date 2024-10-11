@@ -23,6 +23,7 @@ public enum ResponseCode {
     FILE_REQUEST_FAIL(HttpStatus.BAD_REQUEST, "jpg, jpeg, png 이미지 파일만 가능합니다."),
     PAYMENT_FAIL(HttpStatus.BAD_REQUEST, "주문금액과 결제금액이 일치하지 않습니다."),
     GAME_REG_FAIL(HttpStatus.BAD_REQUEST, "게임 등록에 실패하였습니다."),
+    ORDERING_REWARD_POINTS_FAIL(HttpStatus.BAD_REQUEST, "적립금을 확인해주세요."),
 
     // 409 Conflict : 중복된 자원
     DUPLICATE_ORDER(HttpStatus.CONFLICT, "이미 구매한 게임입니다."),
@@ -31,6 +32,7 @@ public enum ResponseCode {
     DUPLICATE_TEL_NUMBER(HttpStatus.CONFLICT, "이미 사용 중인 전화번호입니다."),
     DUPLICATE_CART(HttpStatus.CONFLICT, "이미 장바구니에 있는 게임입니다."),
     DUPLICATE_GAME(HttpStatus.CONFLICT, "이미 등록된 게임입니다."),
+    DUPLICATE_PAYMENT_CANCEL(HttpStatus.CONFLICT, "이미 취소된 결제입니다."),
 
     // 401 Unauthorized : 요청자는 인증(authentication) 되지 않아 수행할 수 없음을 표현
     AUTHORIZATION_FAIL(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),

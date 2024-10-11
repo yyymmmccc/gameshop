@@ -27,8 +27,14 @@ public class OrdersEntity {
     @JoinColumn(name = "user_email")
     private UserEntity userEntity;
 
+    @Column(name = "original_amount")
+    private int originalAmount;
+
     @Column(name = "total_amount")
     private int totalAmount;
+
+    @Column(name = "used_reward_points")
+    private int usedRewardPoints;
 
     @Column(name = "order_status")
     private String orderStatus;
@@ -41,6 +47,10 @@ public class OrdersEntity {
     private List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
 
     public void update(OrderType orderCompleted) {
-        orderStatus = String.valueOf(orderCompleted);
+        this.orderStatus = String.valueOf(orderCompleted);
+    }
+
+    public void disableRefundAfterReview(OrderType nonRefundable) {
+        this.orderStatus = String.valueOf(nonRefundable);
     }
 }

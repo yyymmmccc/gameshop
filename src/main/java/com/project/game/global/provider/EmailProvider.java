@@ -39,7 +39,7 @@ public class EmailProvider{
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
 
-            String resetLink = "http://localhost:3000/api/auth/reset-token?token=" + resetToken;
+            String resetLink = "https://genu99.github.io/Graduation-work/reset_password.html?token=" + resetToken;
             String htmlContent = getResetPasswordMessage(resetLink);
 
             messageHelper.setTo(email);

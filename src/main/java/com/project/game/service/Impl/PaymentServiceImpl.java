@@ -1,10 +1,7 @@
 package com.project.game.service.Impl;
 
 import com.project.game.dto.response.ResponseDto;
-import com.project.game.entity.LibraryEntity;
-import com.project.game.entity.OrderDetailEntity;
-import com.project.game.entity.OrdersEntity;
-import com.project.game.entity.PaymentEntity;
+import com.project.game.entity.*;
 import com.project.game.global.code.OrderType;
 import com.project.game.global.code.PaymentType;
 import com.project.game.global.code.ResponseCode;
@@ -65,7 +62,6 @@ public class PaymentServiceImpl implements PaymentService {
         for(OrderDetailEntity orderDetailEntity : orderDetailEntityList){
             // 구매한 게임상품 구매횟수 1씩 증가
             orderDetailEntity.getGameEntity().incPurchaseCount();
-
             // 구매한 게임들 라이브러리에 추가
             LibraryEntity libraryEntity = LibraryEntity.builder()
                                         .userEntity(orderDetailEntity.getOrdersEntity().getUserEntity())
@@ -76,7 +72,13 @@ public class PaymentServiceImpl implements PaymentService {
 
         libraryRepository.saveAll(libraryEntityList);
 
-        ordersEntity.update(OrderType.ORDER_COMPLETED);
+        ordersEntity.update(OrderType.ORDER_COMPLETED); // 주문내역 주문중 -> 주문완료 변경
+
+        UserEntity userEntity = ordersEntity.getUserEntity();
+        if(ordersEntity.getUsedRewardPoints() > 0){
+            userEntity.decrementUsedPointsForPayment(ordersEntity.getUsedRewardPoints()); // 주문 후 사용자 적립금 차감
+        }
+        userEntity.incrementPointsForPayment(ordersEntity.getTotalAmount()); // 주문 후 금액에 따른 적립금 부여
 
         // 결제가 성공하면 -> 결제 테이블에 실제 결제내역을 기록
         paymentRepository.save(PaymentEntity.builder()
@@ -88,6 +90,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         List<Object> cartIdList = redisService.getValueList(ordersEntity.getOrderId());
 
+        // 구매 완료된 상품 제거
         cartRepository.deleteAllByCartIdIn(cartIdList.stream()
                 .map(item -> Integer.parseInt(item.toString()))
                 .collect(Collectors.toList()));

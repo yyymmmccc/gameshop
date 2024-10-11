@@ -104,4 +104,8 @@ public class GameEntity {
     public void incPurchaseCount(){
         purchaseCount++;
     }
+
+    public void decPurchaseCount(){
+        purchaseCount--;
+    }
 }

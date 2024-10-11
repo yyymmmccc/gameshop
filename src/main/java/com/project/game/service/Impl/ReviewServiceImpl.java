@@ -1,14 +1,12 @@
 package com.project.game.service.Impl;
 
 import com.project.game.dto.response.review.ReviewResponseDto;
-import com.project.game.entity.OrderDetailEntity;
+import com.project.game.entity.*;
+import com.project.game.global.code.OrderType;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.review.ReviewRequestDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.review.ReviewListResponseDto;
-import com.project.game.entity.GameEntity;
-import com.project.game.entity.ReviewEntity;
-import com.project.game.entity.UserEntity;
 import com.project.game.global.handler.CustomException;
 import com.project.game.repository.GameRepository;
 import com.project.game.repository.OrderDetailRepository;
@@ -41,16 +39,20 @@ public class ReviewServiceImpl implements ReviewService {
         OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(dto.getOrderDetailId()).orElseThrow(()
                 -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
 
-        if(!orderDetailEntity.isOrderReview())
+        if(!orderDetailEntity.isOrderReview()) // 주문아이템이 리뷰가능한지 체크
             throw new CustomException(ResponseCode.BAD_REQUEST);
 
-        if(!orderDetailEntity.getOrdersEntity().getUserEntity().equals(userEntity))
+        if(!orderDetailEntity.getOrdersEntity().getUserEntity().equals(userEntity)) // 리뷰 작성자와 주문자가 같은지 체크
             throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        OrdersEntity ordersEntity = orderDetailEntity.getOrdersEntity();
+        ordersEntity.disableRefundAfterReview(OrderType.NON_REFUNDABLE);
 
         GameEntity gameEntity = orderDetailEntity.getGameEntity();
         gameEntity.incReviewCount();
 
         reviewRepository.save(dto.toEntity(gameEntity, userEntity));
+        userEntity.incrementPointsForReview(); // 해당 작성자 리뷰를 작성했으므로, 500원 적립금 추가
 
         orderDetailEntity.reviewStatusUpdate(false);  // 주문상세보기에서 해당 상품리뷰 안되게
 

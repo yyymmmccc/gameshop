@@ -42,6 +42,10 @@ public class OrdersServiceImpl implements OrdersService {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
+        if(userEntity.getProvider().equals("kakao") || userEntity.getProvider().equals("naver")){
+            userEntity.orderEmail();
+        }
+
         // 나의 카트에 해당 카트번호가 없을경우
         long cartCount = cartRepository.countByUserEntityAndCartIdIn(userEntity, dto.getCartIdList());
         if(dto.getCartIdList().size() != cartCount)
@@ -50,13 +54,13 @@ public class OrdersServiceImpl implements OrdersService {
         List<OrderFormGameListResponseDto> orderFormGameListResponseDto =
                 cartRepository.findByCartId(dto.getCartIdList());
 
-        int totalPrice = 0;
+        int originalAmount = 0;
 
         for(OrderFormGameListResponseDto product : orderFormGameListResponseDto){
-            totalPrice += product.getDiscountPrice();
+            originalAmount += product.getDiscountPrice();
         }
 
-        return ResponseDto.success(OrderFormResponseDto.of(orderFormGameListResponseDto, userEntity, totalPrice));
+        return ResponseDto.success(OrderFormResponseDto.of(orderFormGameListResponseDto, userEntity, originalAmount));
     }
 
     @Override
@@ -93,17 +97,23 @@ public class OrdersServiceImpl implements OrdersService {
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
+        if(dto.getRewardPoints() > userEntity.getRewardPoints()) // 적립금보다 많이 쓴 경우
+            throw new CustomException(ResponseCode.ORDERING_REWARD_POINTS_FAIL);
+
+        int totalAmountCheck = dto.getOriginalAmount() - dto.getRewardPoints();
+        if(totalAmountCheck != dto.getTotalAmount())
+            throw new CustomException(ResponseCode.ORDERING_REWARD_POINTS_FAIL);
+
         // 요청 장바구니 id 갯수와 실제 데이터베이스에 있는 cartId 갯수가 일치하는지 검사
         long countByCartId = cartRepository.countByUserEntityAndCartIdIn(userEntity, dto.getCartIdList());
         if(countByCartId != dto.getCartIdList().size())
             throw new CustomException(ResponseCode.CART_NOT_FOUND);
 
-        List<CartEntity> cartEntityList = cartRepository.findByCartIdIn(dto.getCartIdList());
-
         String orderId = generateOrderNumber(); // 주문번호 생성
 
         OrdersEntity ordersEntity = ordersRepository.save(dto.toEntity(userEntity, orderId));
 
+        List<CartEntity> cartEntityList = cartRepository.findByCartIdIn(dto.getCartIdList());
         List <OrderDetailEntity> orderDetailEntityList = OrderRequestDto.convertToEntityList(ordersEntity, cartEntityList, dto.getGamePriceList());
 
         orderDetailRepository.saveAll(orderDetailEntityList);

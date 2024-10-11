@@ -117,7 +117,6 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         .limit(pageable.getPageSize())
                         .orderBy(gameEntity.purchaseCount.desc(), gameEntity.regDate.desc());
 
-
         long count;
 
         if(categoryId != 0){ // 0번 카테고리가 아니면서

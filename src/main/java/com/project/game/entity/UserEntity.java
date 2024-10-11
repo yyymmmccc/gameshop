@@ -21,7 +21,6 @@ public class UserEntity {
 
     @Id
     private String email;
-
     private String password;
     private String name;
     private String nickname;
@@ -46,6 +45,10 @@ public class UserEntity {
 
     private String role;
 
+    @Builder.Default
+    @Column(name = "reward_points")
+    private int rewardPoints = 2000;
+
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY,  cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardEntity> boardEntityList = new ArrayList<>();
 
@@ -69,6 +72,30 @@ public class UserEntity {
     public void update(UserUpdateRequestDto dto){
         this.nickname = dto.getNickname();
         this.tel = dto.getTel();
+    }
+
+    public void orderEmail(){
+        this.email = null;
+    }
+
+    public void incrementPointsForReview(){
+        this.rewardPoints += 500;
+    }
+
+    public void incrementPointsForPayment(int totalAmount){
+        this.rewardPoints += (int)(totalAmount * 0.05);
+    }
+
+    public void decrementPointsForPayment(int totalAmount){
+        this.rewardPoints -= (int)(totalAmount * 0.05);
+    }
+
+    public void incrementPointsForPaymentCancel(int orderedRewardPoints){
+        this.rewardPoints += orderedRewardPoints;
+    }
+
+    public void decrementUsedPointsForPayment(int rewardPoints){
+        this.rewardPoints -= rewardPoints;
     }
 
     public void update(AdminPatchUserRequestDto dto) {
