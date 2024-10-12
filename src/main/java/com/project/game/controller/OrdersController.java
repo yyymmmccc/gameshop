@@ -4,6 +4,7 @@ import com.project.game.controller.swagger.SwaggerOrdersApi;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.dto.request.order.OrderRequestDto;
 import com.project.game.service.OrdersService;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @RestController
@@ -46,9 +48,16 @@ public class OrdersController implements SwaggerOrdersApi {
 
     @PatchMapping("/user-cancel/{orderId}")
     public ResponseEntity<?> userCancelOrder(@PathVariable("orderId") String orderId,
-                                             @AuthenticationPrincipal String email){
+                                             @AuthenticationPrincipal String email) throws IamportResponseException, IOException {
 
         return ordersService.userCancelOrder(orderId, email);
+    }
+
+    @PatchMapping("/user-confirm/{orderId}")
+    public ResponseEntity<?> ConfirmPurchase(@PathVariable("orderId") String orderId,
+                                             @AuthenticationPrincipal String email) throws IamportResponseException, IOException {
+
+        return ordersService.userConfirmPurchase(orderId, email);
     }
 
     @GetMapping("/list")

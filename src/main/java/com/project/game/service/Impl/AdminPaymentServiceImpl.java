@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -54,7 +53,7 @@ public class AdminPaymentServiceImpl implements AdminPaymentService {
         String impUid = paymentEntity.getImpUid();
         iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
 
-        paymentEntity.update();   // 결제 상태를 취소로 바꿔주기
+        paymentEntity.update(PaymentType.CANCELLED);   // 결제 상태를 취소로 바꿔주기
         ordersEntity.update(OrderType.CANCEL_COMPLETED);
 
         UserEntity userEntity = ordersEntity.getUserEntity();

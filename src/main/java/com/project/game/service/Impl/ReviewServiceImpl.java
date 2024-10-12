@@ -39,20 +39,24 @@ public class ReviewServiceImpl implements ReviewService {
         OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(dto.getOrderDetailId()).orElseThrow(()
                 -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
 
+        OrdersEntity ordersEntity = orderDetailEntity.getOrdersEntity();
+        if(!ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.PURCHASE_CONFIRMED))
+                || !ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.NON_REFUNDABLE))){
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+        }
+
         if(!orderDetailEntity.isOrderReview()) // 주문아이템이 리뷰가능한지 체크
             throw new CustomException(ResponseCode.BAD_REQUEST);
 
         if(!orderDetailEntity.getOrdersEntity().getUserEntity().equals(userEntity)) // 리뷰 작성자와 주문자가 같은지 체크
             throw new CustomException(ResponseCode.BAD_REQUEST);
 
-        OrdersEntity ordersEntity = orderDetailEntity.getOrdersEntity();
-        ordersEntity.disableRefundAfterReview(OrderType.NON_REFUNDABLE);
-
         GameEntity gameEntity = orderDetailEntity.getGameEntity();
         gameEntity.incReviewCount();
 
         reviewRepository.save(dto.toEntity(gameEntity, userEntity));
-        userEntity.incrementPointsForReview(); // 해당 작성자 리뷰를 작성했으므로, 500원 적립금 추가
+        if(ordersEntity.getTotalAmount() != 0)
+            userEntity.incrementPointsForReview(); // 무료가 아닌 게임에 작성자가 리뷰를 작성했을 때, 500원 적립금 추가
 
         orderDetailEntity.reviewStatusUpdate(false);  // 주문상세보기에서 해당 상품리뷰 안되게
 

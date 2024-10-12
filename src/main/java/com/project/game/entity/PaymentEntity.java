@@ -43,7 +43,7 @@ public class PaymentEntity {
     @Column(name = "imp_uid")
     private String impUid;
 
-    public void update() {
-        paymentStatus = String.valueOf(PaymentType.CANCELLED);
+    public void update(PaymentType cancelled) {
+        this.paymentStatus = String.valueOf(cancelled);
     }
 }

@@ -31,9 +31,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ResponseEntity postComment(int boardId, String email, CommentRequestDto dto) {
 
-        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
+        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
+                -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
 
-        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
+                -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         CommentEntity commentEntity = commentRepository.save(dto.toEntity(userEntity, boardEntity));
         boardEntity.incCommentCount();

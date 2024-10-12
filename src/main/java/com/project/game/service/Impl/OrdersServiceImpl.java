@@ -3,6 +3,7 @@ package com.project.game.service.Impl;
 import com.project.game.dto.request.order.OrderRequestDto;
 import com.project.game.entity.*;
 import com.project.game.global.code.OrderType;
+import com.project.game.global.code.PaymentType;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.request.order.OrderFormRequestDto;
 import com.project.game.dto.response.ResponseDto;
@@ -10,19 +11,18 @@ import com.project.game.dto.response.order.*;
 import com.project.game.global.handler.CustomException;
 import com.project.game.repository.*;
 import com.project.game.service.OrdersService;
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.request.CancelData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,7 +34,9 @@ public class OrdersServiceImpl implements OrdersService {
     private final OrderDetailRepository orderDetailRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final LibraryRepository libraryRepository;
     private final RedisServiceImpl redisService;
+    private final IamportClient iamportClient;
     @Override
     public ResponseEntity<?> getOrderFormProduct(OrderFormRequestDto dto, String email) {
         // 상품주문 페이지에 상품들 불러오기
@@ -97,17 +99,24 @@ public class OrdersServiceImpl implements OrdersService {
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail()).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        if(dto.getRewardPoints() > userEntity.getRewardPoints()) // 적립금보다 많이 쓴 경우
-            throw new CustomException(ResponseCode.ORDERING_REWARD_POINTS_FAIL);
+        int originalAmount = dto.getOriginalAmount();
+        int rewardPoints = dto.getRewardPoints();
+        int maxAvailablePoints = (int)(originalAmount * 0.3); // 최대 사용 가능 적립금 (총 가격애 30퍼 사용가능)
 
-        int totalAmountCheck = dto.getOriginalAmount() - dto.getRewardPoints();
+        if(rewardPoints > maxAvailablePoints || rewardPoints > userEntity.getRewardPoints()) {  // 입력된 적립금이 최대 사용가능 적립금보다 많은경우
+            log.info("아마 여기오류");
+            throw new CustomException(ResponseCode.ORDERING_REWARD_POINTS_FAIL);
+        }
+
+        int totalAmountCheck = originalAmount - rewardPoints;
         if(totalAmountCheck != dto.getTotalAmount())
             throw new CustomException(ResponseCode.ORDERING_REWARD_POINTS_FAIL);
 
         // 요청 장바구니 id 갯수와 실제 데이터베이스에 있는 cartId 갯수가 일치하는지 검사
         long countByCartId = cartRepository.countByUserEntityAndCartIdIn(userEntity, dto.getCartIdList());
-        if(countByCartId != dto.getCartIdList().size())
+        if(countByCartId != dto.getCartIdList().size()){
             throw new CustomException(ResponseCode.CART_NOT_FOUND);
+        }
 
         String orderId = generateOrderNumber(); // 주문번호 생성
 
@@ -119,7 +128,7 @@ public class OrdersServiceImpl implements OrdersService {
         orderDetailRepository.saveAll(orderDetailEntityList);
         redisService.setValues(orderId, dto.getCartIdList());
 
-        return ResponseDto.success(orderId);
+        return ResponseDto.success(OrdersResponseDto.of(orderId));
     }
 
     @Transactional
@@ -138,23 +147,67 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional
     @Override
-    public ResponseEntity<?> userCancelOrder(String orderId, String email) {
+    public ResponseEntity<?> userConfirmPurchase(String orderId, String email) {
 
         OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
                 -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
 
-        String userEmail = ordersEntity.getUserEntity().getEmail();
-        if(!email.equals(userEmail))
+        // 구매확정을 눌렀을 때 주문자의 이메일과 api 요청을 보낸 이메일이 다른경우
+        if(!ordersEntity.getUserEntity().getEmail().equals(email))
             throw new CustomException(ResponseCode.BAD_REQUEST);
 
-        ordersEntity.update(OrderType.CANCEL_REQUESTED);
+        // 주문상태가 주문완료가 아닌 경우
+        if(!ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.ORDER_COMPLETED)))
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        ordersEntity.update(OrderType.PURCHASE_CONFIRMED);
+
+        return ResponseDto.success(null);
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<?> userCancelOrder(String orderId, String email) throws IamportResponseException, IOException {
+
+        OrdersEntity ordersEntity = ordersRepository.findById(orderId).orElseThrow(()
+                -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
+
+        if(!ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.ORDER_COMPLETED)))
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        PaymentEntity paymentEntity = paymentRepository.findByOrdersEntity(ordersEntity).orElseThrow(()
+                -> new CustomException(ResponseCode.PAYMENT_NOT_FOUND));
+
+        String impUid = paymentEntity.getImpUid();
+        iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
+
+        paymentEntity.update(PaymentType.CANCELLED);   // 결제 상태를 취소로 바꿔주기
+        ordersEntity.update(OrderType.CANCEL_COMPLETED);
+
+        UserEntity userEntity = ordersEntity.getUserEntity();
+
+        int usedRewardPoints = ordersEntity.getUsedRewardPoints();
+        if(usedRewardPoints != 0) { // 적립금을 사용 했을 때, 해당 적립금 만큼 다시 돌려줌
+            userEntity.incrementPointsForPaymentCancel(ordersEntity.getUsedRewardPoints());
+        }
+
+        // 상품주문하면 0.05의 페이백을 하는데 다시 취소
+        userEntity.decrementPointsForPayment(ordersEntity.getTotalAmount());
+
+        List<OrderDetailEntity> orderDetailEntityList = orderDetailRepository.findAllByOrdersEntity(ordersEntity);
+        for(OrderDetailEntity orderDetailEntity : orderDetailEntityList){
+            GameEntity gameEntity = orderDetailEntity.getGameEntity();
+            gameEntity.decPurchaseCount();
+            libraryRepository.deleteByUserEntityAndGameEntity(userEntity, gameEntity);
+            orderDetailEntity.reviewStatusUpdate(false);
+        }
 
         return ResponseDto.success(null);
     }
 
     public String generateOrderNumber() {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // 날짜 포맷 정의
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         Date now = new Date();

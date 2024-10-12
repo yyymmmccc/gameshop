@@ -11,14 +11,10 @@ import lombok.*;
 public class OrdersResponseDto {
 
     private String orderId;
-    private String status;
-    private String orderDate;
 
-    public static OrdersResponseDto of(OrdersEntity ordersEntity){
+    public static OrdersResponseDto of(String orderId){
         return OrdersResponseDto.builder()
-                .orderId(ordersEntity.getOrderId())
-                .status(ordersEntity.getOrderStatus())
-                .orderDate(ordersEntity.getOrderDate())
+                .orderId(orderId)
                 .build();
     }
 }

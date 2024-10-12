@@ -46,11 +46,8 @@ public class OrdersEntity {
     @OneToMany(mappedBy = "ordersEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
 
-    public void update(OrderType orderCompleted) {
-        this.orderStatus = String.valueOf(orderCompleted);
+    public void update(OrderType orderStatus) {
+        this.orderStatus = String.valueOf(orderStatus);
     }
 
-    public void disableRefundAfterReview(OrderType nonRefundable) {
-        this.orderStatus = String.valueOf(nonRefundable);
-    }
 }
