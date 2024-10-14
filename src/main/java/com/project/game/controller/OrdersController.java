@@ -39,6 +39,13 @@ public class OrdersController implements SwaggerOrdersApi {
         return ordersService.createOrder(dto);
     }
 
+    @PostMapping("/purchase-now/{gameId}")
+    public ResponseEntity<?> purchaseNow(@PathVariable("gameId") int gameId,
+                                         @AuthenticationPrincipal String email){
+
+        return ordersService.purchaseNow(gameId, email);
+    }
+
     // 결제 Api 닫기 버튼 눌렀을 때 -> 자동 주문취소
     @DeleteMapping("/cancel/{orderId}")
     public ResponseEntity<?> cancelOrder(@PathVariable("orderId") String orderId){

@@ -15,4 +15,6 @@ public interface OrdersService {
     ResponseEntity cancelOrder(String orderId);
     ResponseEntity userConfirmPurchase(String orderId, String email);
     ResponseEntity userCancelOrder(String orderId, String email) throws IamportResponseException, IOException;
+
+    ResponseEntity<?> purchaseNow(int gameId, String email);
 }

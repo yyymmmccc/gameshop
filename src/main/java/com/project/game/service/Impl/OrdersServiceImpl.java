@@ -32,6 +32,7 @@ public class OrdersServiceImpl implements OrdersService {
     private final PaymentRepository paymentRepository;
     private final OrdersRepository ordersRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final GameRepository gameRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final LibraryRepository libraryRepository;
@@ -203,6 +204,52 @@ public class OrdersServiceImpl implements OrdersService {
         }
 
         return ResponseDto.success(null);
+    }
+
+    @Override
+    public ResponseEntity<?> purchaseNow(int gameId, String email) {
+
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
+                -> new CustomException(ResponseCode.USER_NOT_FOUND));
+
+        GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
+                -> new CustomException(ResponseCode.GAME_NOT_FOUND));
+
+        int priceCheck = gameEntity.getDiscountPrice();
+        if(priceCheck != 0) // 0원이 아닌 상품을 바로 구매 시도 할 때
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        boolean isExistsGame = libraryRepository.existsByUserEntityAndGameEntity(userEntity, gameEntity);
+        if(isExistsGame)
+            throw new CustomException(ResponseCode.DUPLICATE_ORDER);
+
+        gameEntity.incPurchaseCount();
+
+        String orderId = generateOrderNumber(); // 주문번호 생성
+
+        OrdersEntity ordersEntity =
+                    ordersRepository.save(OrdersEntity.builder()
+                        .orderId(orderId)
+                        .userEntity(userEntity)
+                        .originalAmount(gameEntity.getOriginalPrice())
+                        .totalAmount(gameEntity.getDiscountPrice())
+                        .usedRewardPoints(0)
+                        .orderStatus(String.valueOf(OrderType.ORDER_COMPLETED))
+                        .build());
+
+        orderDetailRepository.save(OrderDetailEntity.builder()
+                .ordersEntity(ordersEntity)
+                .gameEntity(gameEntity)
+                .price(gameEntity.getDiscountPrice())
+                .orderReview(true)
+                .build());
+
+        libraryRepository.save(LibraryEntity.builder()
+                .userEntity(userEntity)
+                .gameEntity(gameEntity)
+                .build());
+
+        return ResponseDto.success(orderId);
     }
 
     public String generateOrderNumber() {
