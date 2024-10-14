@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -21,6 +23,7 @@ public class UserGameListResponseDto {
     private String regDate;
     private double rating;
     private String gameImageUrl;
+    private List<String> gameCategoryList;
 
     @QueryProjection
     public UserGameListResponseDto(int gameId, String gameName, int originalPrice, int discountPrice,

@@ -2,15 +2,12 @@ package com.project.game.service.Impl;
 
 import com.project.game.dto.response.game.user.UserTop4NewGamesResponseDto;
 import com.project.game.dto.response.game.user.UserTop4PopularGamesResponseDto;
-import com.project.game.entity.GameSpecificationsEntity;
+import com.project.game.entity.*;
 import com.project.game.global.code.ResponseCode;
 import com.project.game.dto.response.PaginatedResponseDto;
 import com.project.game.dto.response.ResponseDto;
 import com.project.game.dto.response.game.user.UserGameListResponseDto;
 import com.project.game.dto.response.game.user.UserGameDetailResponseDto;
-import com.project.game.entity.GameCategoryEntity;
-import com.project.game.entity.GameEntity;
-import com.project.game.entity.GameImageEntity;
 import com.project.game.global.handler.CustomException;
 import com.project.game.repository.*;
 import com.project.game.service.GameService;
@@ -23,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,16 +41,24 @@ public class GameServiceImpl implements GameService {
         GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
                 -> new CustomException(ResponseCode.GAME_NOT_FOUND));
 
-        GameSpecificationsEntity gameSpecificationsEntity =
-                gameSpecificationsRepository.findByGameEntity(gameEntity);
-
         if(!email.equals("anonymousUser")) {
             redisService.setRecentViewGame(email, gameId);
         }
 
+        GameSpecificationsEntity gameSpecificationsEntity =
+                gameSpecificationsRepository.findByGameEntity(gameEntity);
+
+        List<String> gameCategoryList = new ArrayList<>();
+        List<GameCategoryMappingEntity> gameCategoryMappingEntityList =
+                gameCategoryMappingRepository.findAllByGameEntity(gameEntity);
+
+        for(GameCategoryMappingEntity gameCategoryMappingEntity : gameCategoryMappingEntityList){
+            gameCategoryList.add(gameCategoryMappingEntity.getGameCategoryEntity().getCategoryName());
+        }
+
         List <GameImageEntity> gameImageEntityList = gameImageRepository.findByGameEntity(gameEntity);
 
-        return ResponseDto.success(UserGameDetailResponseDto.of(gameEntity, gameImageEntityList, gameSpecificationsEntity));
+        return ResponseDto.success(UserGameDetailResponseDto.of(gameEntity, gameImageEntityList, gameCategoryList, gameSpecificationsEntity));
     }
 
     @Override
@@ -63,6 +69,8 @@ public class GameServiceImpl implements GameService {
 
         Page <UserGameListResponseDto> gameListDto =
                 gameRepository.findUserGameAll(pageOf(page, orderBy), gameCategoryEntity, searchKeyword);
+
+        // 각각의 게임을 통해 -> gameCategoryMapping 에 연관된 것들 가져와야함
 
         return ResponseDto.success(PaginatedResponseDto.of(gameListDto));
     }

@@ -44,11 +44,12 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository{
                             orderDetailEntity.gameEntity.gameId,
                             gameImageEntity.gameImageUrl,
                             orderDetailEntity.gameEntity.gameName,
+                            orderDetailEntity.orderDetailId,
                             orderDetailEntity.price,
                             orderDetailEntity.orderReview
                     ))
                     .from(orderDetailEntity)
-                    .leftJoin(orderDetailEntity.gameEntity)
+                    .join(orderDetailEntity.gameEntity)
                     .leftJoin(gameImageEntity)
                     .on(orderDetailEntity.gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
                             .and(gameImageEntity.thumbnail.eq("Y")))

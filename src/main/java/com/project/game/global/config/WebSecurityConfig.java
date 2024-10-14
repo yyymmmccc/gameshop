@@ -61,9 +61,7 @@ public class WebSecurityConfig {
                                 "/api/user/auth/**"
                                 ,"/api/admin/steam/**"
                                 , "/oauth2/**"
-                                , "/file/**"
-                        ,"/api/user/order/**"
-                        ,"/api/user/payment/**").permitAll()
+                                , "/file/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/user/board/**"
                                 , "/api/user/game/**"

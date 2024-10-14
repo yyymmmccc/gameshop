@@ -4,11 +4,8 @@ import com.project.game.dto.response.game.admin.AdminGameListResponseDto;
 import com.project.game.dto.response.game.admin.QAdminGameListResponseDto;
 import com.project.game.dto.response.game.user.*;
 import com.project.game.entity.GameCategoryEntity;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,11 +19,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.project.game.entity.QGameCategoryEntity.gameCategoryEntity;
 import static com.project.game.entity.QGameCategoryMappingEntity.gameCategoryMappingEntity;
 import static com.project.game.entity.QGameEntity.gameEntity;
 import static com.project.game.entity.QGameImageEntity.gameImageEntity;
 import static com.project.game.entity.QReviewEntity.reviewEntity;
-import static com.querydsl.jpa.JPAExpressions.select;
 
 @Repository
 @AllArgsConstructor
@@ -36,7 +33,8 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<UserGameListResponseDto> findUserGameAll(Pageable pageable, GameCategoryEntity gameCategoryEntity, String searchKeyword) {
+    public Page<UserGameListResponseDto> findUserGameAll(Pageable pageable, GameCategoryEntity gameCategory, String searchKeyword) {
+        // 첫 번째 쿼리: 게임 목록을 조회하면서 기본 정보와 썸네일 이미지를 가져오기
         JPQLQuery<UserGameListResponseDto> query =
                 jpaQueryFactory.select(new QUserGameListResponseDto(
                                 gameEntity.gameId,
@@ -51,7 +49,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                                 gameImageEntity.gameImageUrl
                         ))
                         .from(gameEntity)
-                        .join(gameCategoryMappingEntity)
+                        .leftJoin(gameCategoryMappingEntity)
                         .on(gameEntity.gameId.eq(gameCategoryMappingEntity.gameEntity.gameId))
                         .leftJoin(gameImageEntity)
                         .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
@@ -71,19 +69,36 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         .limit(pageable.getPageSize())
                         .orderBy(orderSpecifier(pageable));
 
-        // 검색어가 있을경우
-        if(gameCategoryEntity != null){
-            query.where(gameCategoryMappingEntity.gameCategoryEntity.eq(gameCategoryEntity));
+        // 특정 카테고리 선택 시 필터링
+        if(gameCategory != null){
+            query.where(gameCategoryMappingEntity.gameCategoryEntity.eq(gameCategory));
         }
-        if(!searchKeyword.isEmpty()){ // 검색어가 있을경우
+
+        // 검색어가 있을 경우 필터링
+        if(!searchKeyword.isEmpty()){
             query.where(gameEntity.gameName.contains(searchKeyword));
         }
 
         List<UserGameListResponseDto> result = query.fetch();
         long count = query.fetchCount();
 
+        // 각 게임에 대해 카테고리 리스트 조회 및 설정
+        for (UserGameListResponseDto gameDto : result) {
+            // 두 번째 쿼리: 해당 게임의 카테고리 리스트 조회
+            List<String> categoryNames = jpaQueryFactory
+                    .select(gameCategoryEntity.categoryName)
+                    .from(gameCategoryMappingEntity)
+                    .join(gameCategoryMappingEntity.gameCategoryEntity, gameCategoryEntity)
+                    .where(gameCategoryMappingEntity.gameEntity.gameId.eq(gameDto.getGameId()))
+                    .fetch();
+
+            // 조회된 카테고리 리스트를 DTO에 설정
+            gameDto.setGameCategoryList(categoryNames);
+        }
+
         return new PageImpl<>(result, pageable, count);
     }
+
 
     @Override
     public Page<AdminGameListResponseDto> findAdminGameAll(Pageable pageable, int categoryId, String searchKeyword) {

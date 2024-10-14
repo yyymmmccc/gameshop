@@ -54,8 +54,8 @@ public class OrdersController implements SwaggerOrdersApi {
     }
 
     @PatchMapping("/user-confirm/{orderId}")
-    public ResponseEntity<?> ConfirmPurchase(@PathVariable("orderId") String orderId,
-                                             @AuthenticationPrincipal String email) throws IamportResponseException, IOException {
+    public ResponseEntity<?> userConfirmPurchase(@PathVariable("orderId") String orderId,
+                                                @AuthenticationPrincipal String email) {
 
         return ordersService.userConfirmPurchase(orderId, email);
     }

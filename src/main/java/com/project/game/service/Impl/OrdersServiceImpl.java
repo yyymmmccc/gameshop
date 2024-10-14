@@ -104,7 +104,6 @@ public class OrdersServiceImpl implements OrdersService {
         int maxAvailablePoints = (int)(originalAmount * 0.3); // 최대 사용 가능 적립금 (총 가격애 30퍼 사용가능)
 
         if(rewardPoints > maxAvailablePoints || rewardPoints > userEntity.getRewardPoints()) {  // 입력된 적립금이 최대 사용가능 적립금보다 많은경우
-            log.info("아마 여기오류");
             throw new CustomException(ResponseCode.ORDERING_REWARD_POINTS_FAIL);
         }
 
@@ -112,12 +111,13 @@ public class OrdersServiceImpl implements OrdersService {
         if(totalAmountCheck != dto.getTotalAmount())
             throw new CustomException(ResponseCode.ORDERING_REWARD_POINTS_FAIL);
 
+        /*
         // 요청 장바구니 id 갯수와 실제 데이터베이스에 있는 cartId 갯수가 일치하는지 검사
         long countByCartId = cartRepository.countByUserEntityAndCartIdIn(userEntity, dto.getCartIdList());
         if(countByCartId != dto.getCartIdList().size()){
             throw new CustomException(ResponseCode.CART_NOT_FOUND);
         }
-
+         */
         String orderId = generateOrderNumber(); // 주문번호 생성
 
         OrdersEntity ordersEntity = ordersRepository.save(dto.toEntity(userEntity, orderId));
@@ -128,7 +128,7 @@ public class OrdersServiceImpl implements OrdersService {
         orderDetailRepository.saveAll(orderDetailEntityList);
         redisService.setValues(orderId, dto.getCartIdList());
 
-        return ResponseDto.success(OrdersResponseDto.of(orderId));
+        return ResponseDto.success(orderId);
     }
 
     @Transactional
@@ -207,7 +207,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     public String generateOrderNumber() {
 
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         // 날짜 포맷 정의
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         Date now = new Date();

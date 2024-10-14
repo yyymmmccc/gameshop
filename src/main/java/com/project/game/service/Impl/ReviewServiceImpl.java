@@ -40,10 +40,11 @@ public class ReviewServiceImpl implements ReviewService {
                 -> new CustomException(ResponseCode.ORDER_NOT_FOUND));
 
         OrdersEntity ordersEntity = orderDetailEntity.getOrdersEntity();
-        if(!ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.PURCHASE_CONFIRMED))
-                || !ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.NON_REFUNDABLE))){
+        if(!ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.PURCHASE_CONFIRMED))){
             throw new CustomException(ResponseCode.BAD_REQUEST);
         }
+
+        // 주문 상태 환불 불가일때 조건도 추가하기
 
         if(!orderDetailEntity.isOrderReview()) // 주문아이템이 리뷰가능한지 체크
             throw new CustomException(ResponseCode.BAD_REQUEST);

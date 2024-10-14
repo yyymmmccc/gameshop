@@ -34,11 +34,12 @@ public class UserGameDetailResponseDto {
     private String linuxMinSpecifications;
     private String linuxMaxSpecifications;
     private List<String> gameImageList;
+    private List<String> gameCategoryList;
 
-    public static UserGameDetailResponseDto of(GameEntity gameEntity, List<GameImageEntity> gameImageEntityList, GameSpecificationsEntity gameSpecificationsEntity){
+    public static UserGameDetailResponseDto of(GameEntity gameEntity, List<GameImageEntity> gameImageEntityList, List<String> gameCategoryMappingEntityList, GameSpecificationsEntity gameSpecificationsEntity){
         return UserGameDetailResponseDto.builder()
                 .gameId(gameEntity.getGameId())
-                //.categoryName(gameEntity.getGameCategoryEntity().getCategoryName())
+                .gameCategoryList(gameCategoryMappingEntityList)
                 .gameName(gameEntity.getGameName())
                 .gameDc(gameEntity.getGameDc())
                 .publisher(gameEntity.getPublisher())
