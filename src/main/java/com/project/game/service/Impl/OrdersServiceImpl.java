@@ -176,16 +176,30 @@ public class OrdersServiceImpl implements OrdersService {
         if(!ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.ORDER_COMPLETED)))
             throw new CustomException(ResponseCode.BAD_REQUEST);
 
-        PaymentEntity paymentEntity = paymentRepository.findByOrdersEntity(ordersEntity).orElseThrow(()
-                -> new CustomException(ResponseCode.PAYMENT_NOT_FOUND));
+        UserEntity userEntity = ordersEntity.getUserEntity();
+
+        PaymentEntity paymentEntity = paymentRepository.findByOrdersEntity(ordersEntity).orElse(null);
+
+        // 무료게임상품 일 때
+        if(paymentEntity == null){
+            ordersEntity.update(OrderType.CANCEL_COMPLETED);
+
+            List<OrderDetailEntity> orderDetailEntityList = orderDetailRepository.findAllByOrdersEntity(ordersEntity);
+            for(OrderDetailEntity orderDetailEntity : orderDetailEntityList){
+                GameEntity gameEntity = orderDetailEntity.getGameEntity();
+                gameEntity.decPurchaseCount();
+                libraryRepository.deleteByUserEntityAndGameEntity(userEntity, gameEntity);
+                orderDetailEntity.reviewStatusUpdate(false);
+            }
+
+            return ResponseDto.success(null);
+        }
 
         String impUid = paymentEntity.getImpUid();
         iamportClient.cancelPaymentByImpUid(new CancelData(impUid, true));
 
         paymentEntity.update(PaymentType.CANCELLED);   // 결제 상태를 취소로 바꿔주기
         ordersEntity.update(OrderType.CANCEL_COMPLETED);
-
-        UserEntity userEntity = ordersEntity.getUserEntity();
 
         int usedRewardPoints = ordersEntity.getUsedRewardPoints();
         if(usedRewardPoints != 0) { // 적립금을 사용 했을 때, 해당 적립금 만큼 다시 돌려줌

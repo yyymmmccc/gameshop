@@ -26,7 +26,7 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
                 .setSubject("AccessToken") // Subject를 AccessToken으로 지정
                 .setIssuedAt(Date.from(Instant.now()))    // setIssuedAt은 토큰 발행일
-                .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // 만료일 설정
+                .setExpiration(Date.from(Instant.now().plus(14, ChronoUnit.DAYS))) // 만료일 설정
                 .claim("email", email) // 이메일 클레임 추가
                 .claim("role", role)
                 .compact();
@@ -40,7 +40,7 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 시크릿키를 HS256알고리즘을 사용
                 .setSubject("AccessToken") // Subject를 AccessToken으로 지정
                 .setIssuedAt(Date.from(Instant.now()))    // setIssuedAt은 토큰 발행일
-                .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // 만료일 설정
+                .setExpiration(Date.from(Instant.now().plus(14, ChronoUnit.DAYS))) // 만료일 설정
                 .claim("email", email) // 이메일 클레임 추가
                 .claim("nickname", nickname)
                 .claim("role", role)

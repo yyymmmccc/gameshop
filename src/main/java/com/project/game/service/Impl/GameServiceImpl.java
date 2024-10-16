@@ -41,6 +41,8 @@ public class GameServiceImpl implements GameService {
         GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
                 -> new CustomException(ResponseCode.GAME_NOT_FOUND));
 
+        log.info("getGame email : " + email);
+
         if(!email.equals("anonymousUser")) {
             redisService.setRecentViewGame(email, gameId);
         }
