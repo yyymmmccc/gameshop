@@ -21,8 +21,12 @@ public class ReviewListResponseDto {
     private int rating;
     private String createdDate;
     private String updatedDate;
+    private int status;
 
-    public static ReviewListResponseDto of(ReviewEntity reviewEntity) {
+    public static ReviewListResponseDto of(ReviewEntity reviewEntity, String email) {
+
+        int status = (email.equals(reviewEntity.getUserEntity().getEmail())) ? 1 : 0;
+
         return ReviewListResponseDto.builder()
                 .reviewId(reviewEntity.getReviewId())
                 .gameId(reviewEntity.getGameEntity().getGameId())
@@ -32,12 +36,13 @@ public class ReviewListResponseDto {
                 .rating(reviewEntity.getRating())
                 .createdDate(reviewEntity.getCreatedDate())
                 .updatedDate(reviewEntity.getUpdatedDate())
+                .status(status)
                 .build();
     }
 
-    public static List<ReviewListResponseDto> convertToDtoList(List<ReviewEntity> reviewEntityList) {
+    public static List<ReviewListResponseDto> convertToDtoList(List<ReviewEntity> reviewEntityList, String email) {
         return reviewEntityList.stream()
-                .map(ReviewListResponseDto::of)
+                .map(reviewEntity -> ReviewListResponseDto.of(reviewEntity, email))
                 .collect(Collectors.toList());
     }
 }

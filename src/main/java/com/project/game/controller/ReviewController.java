@@ -1,6 +1,7 @@
 package com.project.game.controller;
 
 import com.project.game.controller.swagger.SwaggerReviewApi;
+import com.project.game.dto.request.review.ReviewPatchRequestDto;
 import com.project.game.dto.request.review.ReviewRequestDto;
 import com.project.game.service.ReviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +29,7 @@ public class ReviewController implements SwaggerReviewApi {
 
     @PatchMapping("/{reviewId}")
     public ResponseEntity patchReview(@PathVariable("reviewId") int reviewId,
-                                     @RequestBody @Valid ReviewRequestDto dto,
+                                     @RequestBody @Valid ReviewPatchRequestDto dto,
                                       @AuthenticationPrincipal String email) {
 
         return reviewService.patchReview(reviewId, dto, email);
@@ -42,8 +43,9 @@ public class ReviewController implements SwaggerReviewApi {
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity getReviews(@PathVariable("gameId") int gameId){
+    public ResponseEntity getReviews(@PathVariable("gameId") int gameId,
+                                     @AuthenticationPrincipal String email){
 
-        return reviewService.getReviews(gameId);
+        return reviewService.getReviews(gameId, email);
     }
 }

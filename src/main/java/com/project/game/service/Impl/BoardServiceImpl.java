@@ -136,7 +136,7 @@ public class BoardServiceImpl implements BoardService {
     public ResponseEntity<?> getBoards(int page, String orderBy, int categoryId, String searchType, String searchKeyword) {
 
         Page <BoardListResponseDto> boardListViews =
-                boardRepository.findAllSearch(pageOf(page, orderBy), categoryId, searchType, searchKeyword);
+                boardRepository.findAllBoardList(pageOf(page, orderBy), categoryId, searchType, searchKeyword);
 
         return ResponseDto.success(PaginatedResponseDto.of(boardListViews));
     }

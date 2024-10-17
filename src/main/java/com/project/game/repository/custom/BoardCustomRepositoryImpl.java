@@ -30,7 +30,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<BoardListResponseDto> findAllSearch(Pageable pageable, int boardCategoryId, String searchType, String searchKeyword) {
+    public Page<BoardListResponseDto> findAllBoardList(Pageable pageable, int boardCategoryId, String searchType, String searchKeyword) {
 
         JPQLQuery<BoardListResponseDto> query =
                 jpaQueryFactory.select(new QBoardListResponseDto(

@@ -1,7 +1,6 @@
 package com.project.game.entity;
 
-import com.project.game.dto.request.comment.CommentRequestDto;
-import com.project.game.dto.request.review.ReviewRequestDto;
+import com.project.game.dto.request.review.ReviewPatchRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +41,7 @@ public class ReviewEntity {
     @Column(name = "updated_date")
     private String updatedDate;
 
-    public void update(ReviewRequestDto dto){
+    public void update(ReviewPatchRequestDto dto){
         this.rating = dto.getRating();
         this.content = dto.getContent();
     }

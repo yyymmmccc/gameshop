@@ -19,7 +19,7 @@ public interface OrdersRepository extends JpaRepository<OrdersEntity, String>, O
 
     List<OrdersEntity> findAllByUserEntityOrderByOrderDateDesc(UserEntity userEntity);
 
-    Page<OrdersEntity> findAllByOrderStatus(String cancelOrder, Pageable pageable);
+    Page<OrdersEntity> findAll(Pageable pageable);
 
     OrdersEntity findByOrderId(String orderId);
 }

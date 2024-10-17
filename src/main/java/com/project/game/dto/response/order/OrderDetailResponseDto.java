@@ -27,6 +27,7 @@ public class OrderDetailResponseDto {
                                             UserEntity userEntity,
                                             List <OrderDetailListResponseDto> orderDetailListResponseDto,
                                             PaymentEntity paymentEntity){
+
         return OrderDetailResponseDto.builder()
                 .orderDate(ordersEntity.getOrderDate())
                 .orderId(ordersEntity.getOrderId())

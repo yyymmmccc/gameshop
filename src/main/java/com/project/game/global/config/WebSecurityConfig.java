@@ -55,7 +55,8 @@ public class WebSecurityConfig {
                                 ("/api/admin/game/**",
                                         "/api/admin/user/**",
                                         "/api/admin/order/**",
-                                        "/api/admin/payment/**").hasRole("ADMIN")
+                                        "/api/admin/payment/**",
+                                        "/api/admin/board/**").hasRole("ADMIN")
 
                         .requestMatchers("/api/admin/auth/**",
                                 "/api/user/auth/**"

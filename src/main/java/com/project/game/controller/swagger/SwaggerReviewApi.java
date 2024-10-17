@@ -1,5 +1,6 @@
 package com.project.game.controller.swagger;
 
+import com.project.game.dto.request.review.ReviewPatchRequestDto;
 import com.project.game.dto.request.review.ReviewRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +28,7 @@ public interface SwaggerReviewApi {
     @ApiResponse(responseCode = "404", description = "후기 또는 사용자 찾을 수 없음")
     @PatchMapping("/{reviewId}")
     ResponseEntity patchReview(@PathVariable("reviewId") int reviewId,
-                               @RequestBody @Valid ReviewRequestDto dto,
+                               @RequestBody @Valid ReviewPatchRequestDto dto,
                                @AuthenticationPrincipal String email);
 
     @Operation(summary = "게임 후기 삭제", description = "작성한 게임 후기를 삭제합니다.")
@@ -41,6 +42,7 @@ public interface SwaggerReviewApi {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @ApiResponse(responseCode = "404", description = "게임 찾을 수 없음")
     @GetMapping("/{gameId}")
-    ResponseEntity getReviews(@PathVariable("gameId") int gameId);
+    ResponseEntity getReviews(@PathVariable("gameId") int gameId,
+                              @AuthenticationPrincipal String email);
 }
 

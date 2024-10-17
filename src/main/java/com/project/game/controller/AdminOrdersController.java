@@ -19,6 +19,6 @@ public class AdminOrdersController implements SwaggerAdminOrdersApi {
     @GetMapping("/cancel-list")
     public ResponseEntity<?> getProductCancelRequestList(@RequestParam(defaultValue = "1") int page){
 
-        return adminOrdersService.getProductCancelRequestList(page);
+        return adminOrdersService.getProductOrderList(page);
     }
 }

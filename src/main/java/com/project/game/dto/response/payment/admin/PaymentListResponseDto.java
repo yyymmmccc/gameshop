@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentCancelReqListResponseDto {
+public class PaymentListResponseDto {
 
     private String orderId;
     private String email;
@@ -18,8 +18,8 @@ public class PaymentCancelReqListResponseDto {
     private String status;
     private String orderDate;
 
-    public static PaymentCancelReqListResponseDto of(OrdersEntity ordersEntity){
-        return PaymentCancelReqListResponseDto.builder()
+    public static PaymentListResponseDto of(OrdersEntity ordersEntity){
+        return PaymentListResponseDto.builder()
                 .orderId(ordersEntity.getOrderId())
                 .email(ordersEntity.getUserEntity().getEmail())
                 .totalAmount(ordersEntity.getTotalAmount())

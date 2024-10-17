@@ -1,5 +1,6 @@
 package com.project.game.service.Impl;
 
+import com.project.game.dto.request.review.ReviewPatchRequestDto;
 import com.project.game.dto.response.review.ReviewResponseDto;
 import com.project.game.entity.*;
 import com.project.game.global.code.OrderType;
@@ -13,6 +14,7 @@ import com.project.game.repository.OrderDetailRepository;
 import com.project.game.repository.ReviewRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.ReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -66,7 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public ResponseEntity patchReview(int reviewId, ReviewRequestDto dto, String email){
+    public ResponseEntity patchReview(int reviewId, ReviewPatchRequestDto dto, String email){
 
         ReviewEntity reviewEntity = reviewRepository.findById(reviewId).orElseThrow(()
                 -> new CustomException(ResponseCode.REVIEW_NOT_FOUND));
@@ -107,7 +109,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
     */
     @Override
-    public ResponseEntity getReviews(int gameId) {
+    public ResponseEntity getReviews(int gameId, String email) {
 
         GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
                 -> new CustomException(ResponseCode.GAME_NOT_FOUND));
@@ -120,7 +122,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         Double avgRating = (double)sumRating / reviewEntityList.size();
-        List<ReviewListResponseDto> responseDto = ReviewListResponseDto.convertToDtoList(reviewEntityList);
+        List<ReviewListResponseDto> responseDto = ReviewListResponseDto.convertToDtoList(reviewEntityList, email);
 
         return ResponseDto.success(new ReviewResponseDto(avgRating, responseDto));
     }

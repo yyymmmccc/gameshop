@@ -2,7 +2,8 @@ package com.project.game.service.Impl;
 
 import com.project.game.dto.response.PaginatedResponseDto;
 import com.project.game.dto.response.ResponseDto;
-import com.project.game.dto.response.payment.admin.PaymentCancelReqListResponseDto;
+import com.project.game.dto.response.order.AdminGetProductOrderListResponseDto;
+import com.project.game.dto.response.payment.admin.PaymentListResponseDto;
 import com.project.game.entity.OrdersEntity;
 import com.project.game.global.code.OrderType;
 import com.project.game.repository.OrdersRepository;
@@ -11,12 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +22,20 @@ public class AdminOrdersServiceImpl implements AdminOrdersService {
     private final OrdersRepository ordersRepository;
 
     @Override
-    public ResponseEntity<?> getProductCancelRequestList(int page) {
+    public ResponseEntity<?> getProductOrderList(int page) {
 
-        Page<OrdersEntity> ordersEntityList = ordersRepository.findAllByOrderStatus(String.valueOf(OrderType.CANCEL_REQUESTED), pageOf(page));
+        Page<OrdersEntity> ordersEntityList = ordersRepository.findAll(pageOf(page));
 
-        Page<PaymentCancelReqListResponseDto> dtoPage = ordersEntityList.map(PaymentCancelReqListResponseDto::of);
+        int totalAmount = 0;
+        for(OrdersEntity ordersEntity : ordersEntityList){
+            if(ordersEntity.getOrderStatus().equals(String.valueOf(OrderType.ORDER_COMPLETED))){
+                totalAmount += ordersEntity.getTotalAmount();
+            }
+        }
 
-        return ResponseDto.success(PaginatedResponseDto.of(dtoPage));
+        Page<PaymentListResponseDto> dtoPage = ordersEntityList.map(PaymentListResponseDto::of);
+
+        return ResponseDto.success(new AdminGetProductOrderListResponseDto(totalAmount, PaginatedResponseDto.of(dtoPage)));
     }
 
     public Pageable pageOf(int page){
