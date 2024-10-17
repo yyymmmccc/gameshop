@@ -1,6 +1,7 @@
 package com.project.game.entity;
 
 import com.project.game.dto.request.review.ReviewPatchRequestDto;
+import com.project.game.dto.response.review.MyReviewListResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

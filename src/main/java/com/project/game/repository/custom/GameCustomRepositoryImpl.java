@@ -6,6 +6,7 @@ import com.project.game.dto.response.game.user.*;
 import com.project.game.entity.GameCategoryEntity;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -67,7 +68,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         )
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(orderSpecifier(pageable));
+                        .orderBy(orderSpecifier(pageable), gameEntity.regDate.desc());
 
         // 특정 카테고리 선택 시 필터링
         if(gameCategory != null){
@@ -204,7 +205,8 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
             switch (order.getProperty()){
 
                 case "orderByPopular":
-                    return new OrderSpecifier(Order.DESC, gameEntity.reviewCount);  // 평균 평점 가중치 30%
+
+                    return new OrderSpecifier(Order.DESC, gameEntity.reviewCount);   // 구매 카운트 가중치 50
                 case "orderByRecent": return new OrderSpecifier(Order.DESC, gameEntity.releaseDate);      // 신작게임
                 case "orderBySales": return new OrderSpecifier(Order.DESC, gameEntity.purchaseCount); // 판매순
                 case "orderByPriceAsc": return new OrderSpecifier(Order.ASC, gameEntity.discountPrice.min());   // 낮은 가격순

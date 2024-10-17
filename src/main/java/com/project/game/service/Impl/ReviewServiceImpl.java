@@ -1,6 +1,7 @@
 package com.project.game.service.Impl;
 
 import com.project.game.dto.request.review.ReviewPatchRequestDto;
+import com.project.game.dto.response.review.MyReviewListResponseDto;
 import com.project.game.dto.response.review.ReviewResponseDto;
 import com.project.game.entity.*;
 import com.project.game.global.code.OrderType;
@@ -14,12 +15,12 @@ import com.project.game.repository.OrderDetailRepository;
 import com.project.game.repository.ReviewRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.ReviewService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -97,17 +98,22 @@ public class ReviewServiceImpl implements ReviewService {
         return ResponseDto.success(null);
     }
 
-    /*
     @Override
-    public ResponseEntity getReview(int gameId, String email) {
+    public ResponseEntity getMyReviews(String email) {
 
-        GameEntity gameEntity = gameRepository.findById(gameId).orElseThrow(()
-                -> new CustomException(ResponseCode.GAME_NOT_FOUND));
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
+                -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        reviewRepository.findByGameEntityAnd
+        List<ReviewEntity> reviewEntityList = reviewRepository.findAllByUserEntity(userEntity);
 
+        List<MyReviewListResponseDto> myReviewResponseDto = new ArrayList<>();
+        for(ReviewEntity reviewEntity : reviewEntityList){
+            myReviewResponseDto.add(MyReviewListResponseDto.of(reviewEntity));
+        }
+
+        return ResponseDto.success(myReviewResponseDto);
     }
-    */
+
     @Override
     public ResponseEntity getReviews(int gameId, String email) {
 

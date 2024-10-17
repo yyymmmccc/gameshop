@@ -2,6 +2,7 @@ package com.project.game.repository;
 
 import com.project.game.entity.GameEntity;
 import com.project.game.entity.ReviewEntity;
+import com.project.game.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +13,5 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Integer> {
 
     List<ReviewEntity> findByGameEntity(GameEntity gameEntity);
 
+    List<ReviewEntity> findAllByUserEntity(UserEntity userEntity);
 }

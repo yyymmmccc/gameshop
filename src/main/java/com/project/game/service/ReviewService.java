@@ -10,6 +10,7 @@ public interface ReviewService {
     ResponseEntity patchReview(int reviewId, @Valid ReviewPatchRequestDto dto, String email);
     ResponseEntity deleteReview(int reviewId, String email);
 
-    //ResponseEntity getReview(int gameId, String email);
+    ResponseEntity getMyReviews(String email);
+
     ResponseEntity getReviews(int gameId, String email);
 }

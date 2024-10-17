@@ -42,6 +42,12 @@ public class ReviewController implements SwaggerReviewApi {
         return reviewService.deleteReview(reviewId, email);
     }
 
+    @GetMapping("")
+    public ResponseEntity getMyReviews(@AuthenticationPrincipal String email){
+
+        return reviewService.getMyReviews(email);
+    }
+
     @GetMapping("/{gameId}")
     public ResponseEntity getReviews(@PathVariable("gameId") int gameId,
                                      @AuthenticationPrincipal String email){
