@@ -72,6 +72,7 @@ public class UserEntity {
     public void update(UserUpdateRequestDto dto){
         this.nickname = dto.getNickname();
         this.tel = dto.getTel();
+        this.profileImage = dto.getProfileImage();
     }
 
     public void orderEmail(){

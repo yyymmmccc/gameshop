@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @Getter
 @Setter
@@ -12,6 +13,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserUpdateRequestDto {
+
+    private String profileImage;
 
     @Schema(example = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
     @NotBlank(message = "닉네임을 입력해주세요.")
