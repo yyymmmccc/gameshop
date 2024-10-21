@@ -104,7 +104,7 @@ public class ReviewServiceImpl implements ReviewService {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        List<ReviewEntity> reviewEntityList = reviewRepository.findAllByUserEntity(userEntity);
+        List<ReviewEntity> reviewEntityList = reviewRepository.findAllByUserEntityOrderByCreatedDateDesc(userEntity);
 
         List<MyReviewListResponseDto> myReviewResponseDto = new ArrayList<>();
         for(ReviewEntity reviewEntity : reviewEntityList){

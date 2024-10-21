@@ -13,5 +13,5 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Integer> {
 
     List<ReviewEntity> findByGameEntity(GameEntity gameEntity);
 
-    List<ReviewEntity> findAllByUserEntity(UserEntity userEntity);
+    List<ReviewEntity> findAllByUserEntityOrderByCreatedDateDesc(UserEntity userEntity);
 }
