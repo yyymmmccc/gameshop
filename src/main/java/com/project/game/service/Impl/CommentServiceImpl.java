@@ -37,10 +37,10 @@ public class CommentServiceImpl implements CommentService {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
-        CommentEntity commentEntity = commentRepository.save(dto.toEntity(userEntity, boardEntity));
+        commentRepository.save(dto.toEntity(userEntity, boardEntity));
         boardEntity.incCommentCount();
 
-        return ResponseDto.success(CommentResponseDto.of(commentEntity));
+        return ResponseDto.success(null);
     }
 
     @Transactional
@@ -73,13 +73,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ResponseEntity getComment(int boardId) {
+    public ResponseEntity getComment(int boardId, String email) {
+
         BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(()
                 -> new CustomException(ResponseCode.BOARD_NOT_FOUND));
 
         List<CommentEntity> commentEntityList = commentRepository.findByBoardEntity(boardEntity);
 
-        List<CommentResponseDto> commentDtoList = CommentResponseDto.convertToDtoList(commentEntityList);
+        List<CommentResponseDto> commentDtoList = CommentResponseDto.convertToDtoList(commentEntityList, email);
 
         return ResponseDto.success(commentDtoList);
     }

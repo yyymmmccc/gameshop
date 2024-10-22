@@ -46,6 +46,7 @@ public interface SwaggerCommentApi {
     @ApiResponse(responseCode = "200", description = "댓글 조회 성공")
     @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     @GetMapping("/{boardId}")
-    ResponseEntity getComment(@PathVariable("boardId") int boardId);
+    ResponseEntity getComment(@PathVariable("boardId") int boardId,
+                              @AuthenticationPrincipal String email);
 }
 

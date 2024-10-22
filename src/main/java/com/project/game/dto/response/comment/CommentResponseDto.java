@@ -19,9 +19,13 @@ public class CommentResponseDto {
     private int boardId;
     private String profileImage;
     private String nickname;
+    private boolean status;
 
 
-    public static CommentResponseDto of(CommentEntity commentEntity) {
+    public static CommentResponseDto of(CommentEntity commentEntity, String email) {
+
+        boolean status = (email.equals(commentEntity.getUserEntity().getEmail())) ? true : false;
+
         return CommentResponseDto.builder()
                 .commentId(commentEntity.getCommentId())
                 .content(commentEntity.getContent())
@@ -29,12 +33,13 @@ public class CommentResponseDto {
                 .boardId(commentEntity.getBoardEntity().getBoardId())
                 .profileImage(commentEntity.getUserEntity().getProfileImage())
                 .nickname(commentEntity.getUserEntity().getNickname())
+                .status(status)
                 .build();
     }
 
-    public static List<CommentResponseDto> convertToDtoList(List<CommentEntity> commentEntityList) {
+    public static List<CommentResponseDto> convertToDtoList(List<CommentEntity> commentEntityList, String email) {
         return commentEntityList.stream()
-                .map(CommentResponseDto::of)
+                .map(commentEntity -> CommentResponseDto.of(commentEntity, email))
                 .collect(Collectors.toList());
     }
 }

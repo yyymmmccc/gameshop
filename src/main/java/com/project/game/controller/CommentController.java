@@ -43,9 +43,10 @@ public class CommentController implements SwaggerCommentApi {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity getComment(@PathVariable("boardId") int boardId){
+    public ResponseEntity getComment(@PathVariable("boardId") int boardId,
+                                     @AuthenticationPrincipal String email){
 
-        return commentService.getComment(boardId);
+        return commentService.getComment(boardId, email);
 
     }
 

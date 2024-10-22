@@ -128,7 +128,11 @@ public class BoardServiceImpl implements BoardService {
 
         List<BoardImageEntity> boardImageEntityList = boardImageRepository.findByBoardEntity(boardEntity);
 
-        return ResponseDto.success(BoardResponseDto.of(boardEntity, boardImageEntityList));
+        boolean favoriteStatus = true;
+        FavoriteEntity favoriteEntity = favoriteRepository.findByBoardEntityAndUserEntity(boardEntity, userEntity);
+        if(favoriteEntity == null) favoriteStatus = false;
+
+        return ResponseDto.success(BoardResponseDto.of(boardEntity, boardImageEntityList, userEntity, favoriteStatus));
     }
 
     @Transactional
@@ -151,14 +155,16 @@ public class BoardServiceImpl implements BoardService {
                 -> new CustomException(ResponseCode.USER_NOT_FOUND));
 
         FavoriteEntity favoriteEntity = favoriteRepository.findByBoardEntityAndUserEntity(boardEntity, userEntity);
+
+        // 좋아요를 처음 누른경우
         if(favoriteEntity == null) {
             favoriteRepository.save(new FavoriteEntity(boardEntity, userEntity));
             boardEntity.incFavoriteCount();
+            return ResponseDto.success(ResponseCode.SUCCESS);
         }
-        else {
-            favoriteRepository.delete(favoriteEntity);
-            boardEntity.decFavoriteCount();
-        }
+
+        favoriteRepository.delete(favoriteEntity);
+        boardEntity.decFavoriteCount();
 
         return ResponseDto.success(ResponseCode.SUCCESS);
     }

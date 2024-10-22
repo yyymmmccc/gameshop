@@ -2,7 +2,9 @@ package com.project.game.dto.response.board;
 
 import com.project.game.entity.BoardEntity;
 import com.project.game.entity.BoardImageEntity;
+import com.project.game.entity.UserEntity;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Slf4j
 public class BoardResponseDto {
 
     private int boardId;
@@ -27,9 +30,15 @@ public class BoardResponseDto {
     private int favoriteCount;
     private String profileImage;
     private String nickname;
+    private boolean status;
+    private boolean favoriteStatus;
     private List<String> imageUrlList;
 
-    public static BoardResponseDto of(BoardEntity boardEntity, List<BoardImageEntity> boardImageEntityList){
+    public static BoardResponseDto of(BoardEntity boardEntity, List<BoardImageEntity> boardImageEntityList,
+                                      UserEntity userEntity, boolean favoriteStatus){
+
+        log.info("FavoriteStatus Check : " + favoriteStatus);
+        boolean status = (boardEntity.getUserEntity().equals(userEntity) ? true : false);
         return BoardResponseDto.builder()
                 .boardId(boardEntity.getBoardId())
                 .title(boardEntity.getTitle())
@@ -42,6 +51,8 @@ public class BoardResponseDto {
                 .categoryId(boardEntity.getCategoryId())
                 .profileImage(boardEntity.getUserEntity().getProfileImage())
                 .nickname(boardEntity.getUserEntity().getNickname())
+                .status(status)
+                .favoriteStatus(favoriteStatus)
                 .imageUrlList(convertToDtoList(boardImageEntityList))
                 .build();
     }
