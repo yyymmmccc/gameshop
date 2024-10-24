@@ -56,11 +56,6 @@ public class UserServiceImpl implements UserService {
                 throw new CustomException(ResponseCode.DUPLICATE_NICKNAME);
         }
 
-        if(!userEntity.getTel().equals(dto.getTel())){
-            if(userRepository.existsByTel(dto.getTel()))
-                throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
-        }
-
         userEntity.update(dto);
 
         String accessToken = jwtProvider.createAccessToken(userEntity.getEmail(), userEntity.getNickname(), userEntity.getRole());

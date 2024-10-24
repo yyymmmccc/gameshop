@@ -114,9 +114,6 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (userRepository.existsByNickname(dto.getNickname()))
             throw new CustomException(ResponseCode.DUPLICATE_NICKNAME);
 
-        if (userRepository.existsByTel(dto.getTel()))
-            throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
-
         userRepository.save(dto.toEntity(passwordEncoder));
         //UserEntity userEntity = userRepository.save(dto.toEntity(passwordEncoder));
 
@@ -148,9 +145,6 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         if (userRepository.existsByNickname(dto.getNickname()))
             throw new CustomException(ResponseCode.DUPLICATE_NICKNAME);
-
-        if (userRepository.existsByTel(dto.getTel()))
-            throw new CustomException(ResponseCode.DUPLICATE_TEL_NUMBER);
 
         userEntity.update(dto);
 
