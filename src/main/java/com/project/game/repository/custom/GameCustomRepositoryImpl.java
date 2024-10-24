@@ -6,8 +6,8 @@ import com.project.game.dto.response.game.user.*;
 import com.project.game.entity.GameCategoryEntity;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
@@ -32,10 +32,11 @@ import static com.project.game.entity.QReviewEntity.reviewEntity;
 public class GameCustomRepositoryImpl implements GameCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-
     @Override
     public Page<UserGameListResponseDto> findUserGameAll(Pageable pageable, GameCategoryEntity gameCategory, String searchKeyword) {
-        // 첫 번째 쿼리: 게임 목록을 조회하면서 기본 정보와 썸네일 이미지를 가져오기
+
+        NumberExpression<Double> averageRating = reviewEntity.rating.avg();
+
         JPQLQuery<UserGameListResponseDto> query =
                 jpaQueryFactory.select(new QUserGameListResponseDto(
                                 gameEntity.gameId,
@@ -46,7 +47,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                                 gameEntity.reviewCount,
                                 gameEntity.purchaseCount,
                                 gameEntity.regDate,
-                                reviewEntity.rating.avg(),
+                                Expressions.template(Double.class, "ROUND({0}, 1)", reviewEntity.rating.avg()),
                                 gameImageEntity.gameImageUrl
                         ))
                         .from(gameEntity)
@@ -68,7 +69,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         )
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(orderSpecifier(pageable), gameEntity.regDate.desc());
+                        .orderBy(orderSpecifier(pageable, averageRating), gameEntity.reviewCount.desc());
 
         // 특정 카테고리 선택 시 필터링
         if(gameCategory != null){
@@ -81,6 +82,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         }
 
         List<UserGameListResponseDto> result = query.fetch();
+
         long count = query.fetchCount();
 
         // 각 게임에 대해 카테고리 리스트 조회 및 설정
@@ -99,7 +101,6 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
         return new PageImpl<>(result, pageable, count);
     }
-
 
     @Override
     public Page<AdminGameListResponseDto> findAdminGameAll(Pageable pageable, int categoryId, String searchKeyword) {
@@ -161,6 +162,13 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
     @Override
     public List<UserTop4PopularGamesResponseDto> getTop4PopularGames() {
+
+        NumberExpression<Double> averageRating = reviewEntity.rating.avg();
+
+        // 기준 리뷰 수와 기준 점수를 설정 (리뷰 데이터가 적기 때문에 기준 리뷰 수를 높게 설정)
+        NumberExpression<Integer> baseReviewCount = Expressions.asNumber(1000);  // 기준 리뷰 수
+        NumberExpression<Double> baseScore = Expressions.asNumber(3.0);  // 기준 평균 점수
+
         JPQLQuery<UserTop4PopularGamesResponseDto> query =
                 jpaQueryFactory.select(new QUserTop4PopularGamesResponseDto(
                                 gameEntity.gameId,
@@ -171,7 +179,14 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                         .leftJoin(gameImageEntity)
                         .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
                                 .and(gameImageEntity.thumbnail.eq("Y")))
-                        .orderBy(gameEntity.purchaseCount.desc(), gameEntity.reviewCount.desc(), gameEntity.releaseDate.desc())
+                        .leftJoin(reviewEntity)
+                        .on(reviewEntity.gameEntity.eq(gameEntity))
+                        .groupBy(gameEntity.gameId,
+                                gameEntity.gameName,
+                                gameImageEntity.gameImageUrl)
+                        .orderBy(gameEntity.reviewCount.multiply(averageRating)  // 실제 평균 점수에 리뷰 수 곱함
+                                .add(baseReviewCount.multiply(baseScore))  // 기준 리뷰 수와 기준 평균 점수 곱함
+                                .divide(gameEntity.reviewCount.add(baseReviewCount)).desc(), gameEntity.releaseDate.desc())
                         .limit(4);
 
         List<UserTop4PopularGamesResponseDto> result = query.fetch();
@@ -200,21 +215,31 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
     }
 
 
-    private OrderSpecifier orderSpecifier(Pageable pageable){
+    private OrderSpecifier orderSpecifier(Pageable pageable, NumberExpression<Double> rating){
+
+        // 기준 리뷰 수와 기준 점수를 설정 (리뷰 데이터가 적기 때문에 기준 리뷰 수를 높게 설정)
+        NumberExpression<Integer> baseReviewCount = Expressions.asNumber(1000);  // 기준 리뷰 수
+        NumberExpression<Double> baseScore = Expressions.asNumber(3.0);  // 기준 평균 점수
+
         for(Sort.Order order : pageable.getSort()){
             switch (order.getProperty()){
 
                 case "orderByPopular":
-
-                    return new OrderSpecifier(Order.DESC, gameEntity.reviewCount);   // 구매 카운트 가중치 50
+                    return new OrderSpecifier(Order.DESC,
+                            gameEntity.reviewCount.multiply(rating)  // 실제 평균 점수에 리뷰 수 곱함
+                                    .add(baseReviewCount.multiply(baseScore))  // 기준 리뷰 수와 기준 평균 점수 곱함
+                                    .divide(gameEntity.reviewCount.add(baseReviewCount)));  // 리뷰 수 합으로 나누기
                 case "orderByRecent": return new OrderSpecifier(Order.DESC, gameEntity.releaseDate);      // 신작게임
                 case "orderBySales": return new OrderSpecifier(Order.DESC, gameEntity.purchaseCount); // 판매순
                 case "orderByPriceAsc": return new OrderSpecifier(Order.ASC, gameEntity.discountPrice.min());   // 낮은 가격순
                 case "orderByPriceDesc": return new OrderSpecifier(Order.DESC, gameEntity.discountPrice.max());  // 높은 가격순
+                // 0.1 * 1 = 0.1
+                // 0.1 * 5 = 0.5
 
+                // 0.1 * 100 = 10
+                // 0.1 * 1 = 0.1
             }
         }
-
         return null;
     }
 }

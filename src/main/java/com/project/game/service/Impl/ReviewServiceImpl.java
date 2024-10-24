@@ -128,6 +128,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         Double avgRating = (double)sumRating / reviewEntityList.size();
+        avgRating = Double.parseDouble(String.format("%.1f", avgRating));
+
         List<ReviewListResponseDto> responseDto = ReviewListResponseDto.convertToDtoList(reviewEntityList, email);
 
         return ResponseDto.success(new ReviewResponseDto(avgRating, responseDto));
