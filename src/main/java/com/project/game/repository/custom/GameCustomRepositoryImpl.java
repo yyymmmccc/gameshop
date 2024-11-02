@@ -224,6 +224,8 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         for(Sort.Order order : pageable.getSort()){
             switch (order.getProperty()){
 
+                // (4.4 * 3) + (3.0 * 1000) / (1000 + 3)
+                //
                 case "orderByPopular":
                     return new OrderSpecifier(Order.DESC,
                             gameEntity.reviewCount.multiply(rating)  // 실제 평균 점수에 리뷰 수 곱함
@@ -233,11 +235,6 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                 case "orderBySales": return new OrderSpecifier(Order.DESC, gameEntity.purchaseCount); // 판매순
                 case "orderByPriceAsc": return new OrderSpecifier(Order.ASC, gameEntity.discountPrice.min());   // 낮은 가격순
                 case "orderByPriceDesc": return new OrderSpecifier(Order.DESC, gameEntity.discountPrice.max());  // 높은 가격순
-                // 0.1 * 1 = 0.1
-                // 0.1 * 5 = 0.5
-
-                // 0.1 * 100 = 10
-                // 0.1 * 1 = 0.1
             }
         }
         return null;

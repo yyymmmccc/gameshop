@@ -41,5 +41,4 @@ public class MyReviewListResponseDto {
                 .gameName(reviewEntity.getGameEntity().getGameName())
                 .build();
     }
-
 }

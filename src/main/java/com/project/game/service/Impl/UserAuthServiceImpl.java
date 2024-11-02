@@ -8,8 +8,6 @@ import com.project.game.entity.UserEntity;
 import com.project.game.global.handler.CustomException;
 import com.project.game.global.provider.EmailProvider;
 import com.project.game.global.provider.JwtProvider;
-import com.project.game.repository.CouponRepository;
-import com.project.game.repository.UserCouponRepository;
 import com.project.game.repository.UserRepository;
 import com.project.game.service.UserAuthService;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +34,6 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final JwtProvider jwtProvider;
     private final RedisServiceImpl redisService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final CouponRepository couponRepository;
-    private final UserCouponRepository userCouponRepository;
 
     @Override
     public ResponseEntity<?> emailDuplicateCheck(CheckEmailRequestDto dto) {
@@ -115,20 +111,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             throw new CustomException(ResponseCode.DUPLICATE_NICKNAME);
 
         userRepository.save(dto.toEntity(passwordEncoder));
-        //UserEntity userEntity = userRepository.save(dto.toEntity(passwordEncoder));
 
-        /*
-        CouponEntity couponEntity = couponRepository.findById(1).orElseThrow(()
-                -> new CustomException(ResponseCode.COUPON_NOT_FOUND));
-
-        userCouponRepository.save(UserCouponEntity.builder()
-                .userEntity(userEntity)
-                .couponEntity(couponEntity)
-                .issued_at(String.valueOf(LocalDateTime.now()))    // 현재 시간
-                .expires_at(String.valueOf(LocalDateTime.now().plusMonths(1)))  // 한 달 뒤 만료일
-                .state(CouponType.ACTIVE.toString())
-                .build());
-         */
         return ResponseDto.success(null);
     }
 
