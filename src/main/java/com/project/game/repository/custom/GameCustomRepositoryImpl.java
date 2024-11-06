@@ -4,11 +4,15 @@ import com.project.game.dto.response.game.admin.AdminGameListResponseDto;
 import com.project.game.dto.response.game.admin.QAdminGameListResponseDto;
 import com.project.game.dto.response.game.user.*;
 import com.project.game.entity.GameCategoryEntity;
+import com.project.game.entity.GameCategoryMappingEntity;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +29,8 @@ import static com.project.game.entity.QGameCategoryMappingEntity.gameCategoryMap
 import static com.project.game.entity.QGameEntity.gameEntity;
 import static com.project.game.entity.QGameImageEntity.gameImageEntity;
 import static com.project.game.entity.QReviewEntity.reviewEntity;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 @Repository
 @AllArgsConstructor
@@ -37,39 +43,41 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
         NumberExpression<Double> averageRating = reviewEntity.rating.avg();
 
-        JPQLQuery<UserGameListResponseDto> query =
-                jpaQueryFactory.select(new QUserGameListResponseDto(
-                                gameEntity.gameId,
-                                gameEntity.gameName,
-                                gameEntity.originalPrice,
-                                gameEntity.discountPrice,
-                                gameEntity.discountPercentage,
-                                gameEntity.reviewCount,
-                                gameEntity.purchaseCount,
-                                gameEntity.regDate,
-                                Expressions.template(Double.class, "ROUND({0}, 1)", reviewEntity.rating.avg()),
-                                gameImageEntity.gameImageUrl
-                        ))
-                        .from(gameEntity)
-                        .leftJoin(gameCategoryMappingEntity)
-                        .on(gameEntity.gameId.eq(gameCategoryMappingEntity.gameEntity.gameId))
-                        .leftJoin(gameImageEntity)
-                        .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
-                                .and(gameImageEntity.thumbnail.eq("Y")))
-                        .leftJoin(reviewEntity)
-                        .on(gameEntity.gameId.eq(reviewEntity.gameEntity.gameId))
-                        .groupBy(
-                                gameEntity.gameId,
-                                gameEntity.gameName,
-                                gameEntity.originalPrice,
-                                gameEntity.discountPrice,
-                                gameEntity.discountPercentage,
-                                gameEntity.reviewCount,
-                                gameImageEntity.gameImageUrl
-                        )
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .orderBy(orderSpecifier(pageable, averageRating), gameEntity.reviewCount.desc());
+        // 게임 및 관련 카테고리를 한 번의 쿼리로 가져오기 위한 JPQLQuery
+        JPQLQuery<UserGameListResponseDto> query = jpaQueryFactory.select(new QUserGameListResponseDto(
+                        gameEntity.gameId,
+                        gameEntity.gameName,
+                        gameEntity.originalPrice,
+                        gameEntity.discountPrice,
+                        gameEntity.discountPercentage,
+                        gameEntity.reviewCount,
+                        gameEntity.purchaseCount,
+                        gameEntity.regDate,
+                        Expressions.template(Double.class, "ROUND({0}, 1)", reviewEntity.rating.avg()),
+                        gameImageEntity.gameImageUrl
+                ))
+                .from(gameEntity)
+                .leftJoin(gameCategoryMappingEntity)
+                .on(gameEntity.gameId.eq(gameCategoryMappingEntity.gameEntity.gameId))
+                .leftJoin(gameCategoryEntity)
+                .on(gameCategoryMappingEntity.gameCategoryEntity.categoryId.eq(gameCategoryEntity.categoryId))
+                .leftJoin(gameImageEntity)
+                .on(gameEntity.gameId.eq(gameImageEntity.gameEntity.gameId)
+                        .and(gameImageEntity.thumbnail.eq("Y")))
+                .leftJoin(reviewEntity)
+                .on(gameEntity.gameId.eq(reviewEntity.gameEntity.gameId))
+                .groupBy(
+                        gameEntity.gameId,
+                        gameEntity.gameName,
+                        gameEntity.originalPrice,
+                        gameEntity.discountPrice,
+                        gameEntity.discountPercentage,
+                        gameEntity.reviewCount,
+                        gameImageEntity.gameImageUrl
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(orderSpecifier(pageable, averageRating), gameEntity.reviewCount.desc());
 
         // 특정 카테고리 선택 시 필터링
         if(gameCategory != null){
@@ -83,7 +91,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
         List<UserGameListResponseDto> result = query.fetch();
 
-        long count = query.fetchCount();
+        long totalCount = getCount(gameCategory, searchKeyword);
 
         // 각 게임에 대해 카테고리 리스트 조회 및 설정
         for (UserGameListResponseDto gameDto : result) {
@@ -99,7 +107,7 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
             gameDto.setGameCategoryList(categoryNames);
         }
 
-        return new PageImpl<>(result, pageable, count);
+        return new PageImpl<>(result, pageable, totalCount);
     }
 
     @Override
@@ -214,6 +222,24 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
         return result;
     }
 
+    private long getCount(GameCategoryEntity gameCategory, String searchKeyword) {
+        JPAQuery<Long> query = jpaQueryFactory.select(gameEntity.count())
+                .from(gameEntity);
+
+        if(gameCategory != null){
+            query.leftJoin(gameCategoryMappingEntity)
+                    .on(gameEntity.gameId.eq(gameCategoryMappingEntity.gameEntity.gameId))
+                    .where(gameCategoryMappingEntity.gameCategoryEntity.eq(gameCategory));
+        }
+
+        if(!searchKeyword.isEmpty()){
+            query.where(gameEntity.gameName.eq(searchKeyword));
+        }
+
+        long totalCount = query.fetchOne(); // 쿼리의 결과를 실제 데이터베이스에서 가져옴
+        return totalCount;
+    }
+
 
     private OrderSpecifier orderSpecifier(Pageable pageable, NumberExpression<Double> rating){
 
@@ -223,9 +249,6 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
 
         for(Sort.Order order : pageable.getSort()){
             switch (order.getProperty()){
-
-                // (4.4 * 3) + (3.0 * 1000) / (1000 + 3)
-                //
                 case "orderByPopular":
                     return new OrderSpecifier(Order.DESC,
                             gameEntity.reviewCount.multiply(rating)  // 실제 평균 점수에 리뷰 수 곱함
